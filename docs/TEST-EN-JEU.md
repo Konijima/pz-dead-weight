@@ -3,9 +3,9 @@
 Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 `_9`, en general dans un hopital ou une clinique.
 
-1. **Monter sur la balance.** S'approcher et se tenir sur la case de la
-   balance (ou la case adjacente si la case de la balance n'est pas
-   praticable). Le releve doit apparaitre en haut a droite du centre de
+1. **Monter sur la balance.** Se tenir sur la case de la balance, qui est
+   praticable (verifie en jeu, 2026-09-18 : la detection ne regarde plus que
+   cette case-la). Le releve doit apparaitre en haut a droite du centre de
    l'ecran, sans clic ni menu contextuel.
 2. **Regarder le fleau se stabiliser.** Le fleau bascule, le curseur glisse
    jusqu'a la valeur, puis une oscillation amortie le ramene a l'horizontale.
@@ -34,3 +34,14 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
     tout, ou si le fleau ne tourne pas (reste a plat), c'est attendu si l'une
     des API listees "B41 UNPROVEN" dans `docs/API-COMPAT.md` manque sur ce
     build : noter laquelle semble en cause.
+
+## Ajout 2026-09-18, clic droit
+
+9. **Menus contextuels partout.** Hors de la balance, clic droit sur une
+   porte, une fenetre, un meuble, le sol : le menu doit s'ouvrir normalement.
+   Puis monter sur la balance et refaire le meme test a cote du releve. Le
+   bug corrige ce jour-la tuait TOUS les menus contextuels du jeu des que le
+   mod etait actif.
+10. **Clic droit sur le releve.** Sur la balance, clic droit dans le releve :
+    il change de style (fleau <-> panneau) et aucun menu du monde ne s'ouvre.
+    Un pixel a cote du releve doit, lui, ouvrir le menu du monde.

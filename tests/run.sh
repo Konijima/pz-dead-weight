@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bench: mapX contact points, bandOf inclusivity, one-decimal format, prefs
-# parser robustness, and JS/Lua parity on the animation sampler. Fails loud
-# (missing lua5.1/lua/node, missing anim.js) rather than skipping silently.
+# parser robustness, the HUD's UI manager lifecycle, and JS/Lua parity on the
+# animation sampler. Fails loud (missing lua5.1/lua/node, missing anim.js)
+# rather than skipping silently.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -29,6 +30,9 @@ python3 tools/gen-geo.py --check
 
 echo "-- lua core bench ($LUA) --"
 "$LUA" tests/core_spec.lua
+
+echo "-- lua hud lifecycle bench ($LUA) --"
+"$LUA" tests/hud_spec.lua
 
 echo "-- js/lua parity --"
 node tests/parity_dump.js > tests/.parity_js.tsv

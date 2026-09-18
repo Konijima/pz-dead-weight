@@ -18,13 +18,11 @@ WeightScaleGeo.bands = {
 }
 
 WeightScaleGeo.readout = { w = 288, h = 132 }
-WeightScaleGeo.plate = { w = 288, h = 88 }
-WeightScaleGeo.recess = { x = 10, y = 48, w = 268, h = 34 }
 WeightScaleGeo.poise = { w = 16, h = 30 }
 WeightScaleGeo.slab = { x = 0, y = 88, w = 288, h = 44 }
 WeightScaleGeo.track = { x0 = 30, w = 218, tickBaseY = 38, minorH = 6, majorH = 12,
   bandY = 40, bandH = 5, majorEvery = 25, minorEvery = 5 }
 WeightScaleGeo.beam = { pivotX = 18, pivotY = 65, len = 248, h = 12, maxDeg = 1.9 }
-WeightScaleGeo.stops = { x = 250, y = 44, w = 18, h = 42, gap = 9 }
+WeightScaleGeo.stops = { x = 250, w = 18, gap = 9 }
 WeightScaleGeo.offset = { dx = 150, dy = -230 }
 WeightScaleGeo.panel = { w = 152, h = 52, dx = 150, dy = -170 }

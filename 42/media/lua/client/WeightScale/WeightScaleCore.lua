@@ -86,7 +86,6 @@ T.settleStart = T.slideStart + T.slide
 T.onEnd = T.settleStart + T.settle
 T.offEnd = T.offFall + T.offFade
 WeightScaleCore.T = T
-WeightScaleCore.clamp01 = clamp01
 
 -- Pure hit test for the readout rectangle: no hit while idle (nothing drawn,
 -- so no dead zone over the map), no hit once the leaving animation has fully

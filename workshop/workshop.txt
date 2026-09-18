@@ -1,6 +1,7 @@
 # The Steam Workshop item, as downloaded from the original B41 upload.
-# id and description are copied from the subscribed item and from
-# legacy/b41/mods/WeightScale/mod.info. Not resubmitted yet: this is
+# id and description are copied from the subscribed item and from the
+# 2022 release's mod.info (git history, commit 6631165). Not resubmitted
+# yet: this is
 # placement only, kept here for when the B42 rework goes back up.
 version=1
 id=2833096579

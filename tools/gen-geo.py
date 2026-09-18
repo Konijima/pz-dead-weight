@@ -44,7 +44,7 @@ def build(g):
     out.append(gen_bands(g["bands"]))
     out.append("}")
     out.append("")
-    for key in ("readout", "plate", "recess", "poise", "slab"):
+    for key in ("readout", "poise", "slab"):
         v = g[key]
         parts = ", ".join("%s = %s" % (k, v[k]) for k in v)
         out.append("WeightScaleGeo.%s = { %s }" % (key, parts))
@@ -57,8 +57,8 @@ def build(g):
     out.append("WeightScaleGeo.beam = { pivotX = %s, pivotY = %s, len = %s, h = %s, maxDeg = %s }"
                 % (b["pivotX"], b["pivotY"], b["len"], b["h"], b["maxDeg"]))
     s = g["stops"]
-    out.append("WeightScaleGeo.stops = { x = %s, y = %s, w = %s, h = %s, gap = %s }"
-                % (s["x"], s["y"], s["w"], s["h"], s["gap"]))
+    out.append("WeightScaleGeo.stops = { x = %s, w = %s, gap = %s }"
+                % (s["x"], s["w"], s["gap"]))
     o = g["offset"]
     out.append("WeightScaleGeo.offset = { dx = %s, dy = %s }" % (o["dx"], o["dy"]))
     p = g["panel"]
