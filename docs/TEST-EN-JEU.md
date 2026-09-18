@@ -3,7 +3,15 @@
 Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 `_9`, en general dans un hopital ou une clinique.
 
-0. **Activer le bon mod.** L'id du mod a change (`WeightScale` ->
+0. **Verifier quelle copie est testee.** Ecran de choix des mods, ouvrir la
+   fiche "Dead Weight" et regarder la ligne Path : si elle pointe vers
+   `~/Zomboid/Workshop/DeadWeight/...` (Source "Workshop"), c'est la copie
+   STAGEE par `tools/pack-workshop.sh` qui est chargee, pas la copie du
+   depot (prouve en jeu le 2026-09-18 : quand les deux portent le meme id,
+   le jeu charge la copie stagee). Apres tout changement dans le depot,
+   relancer `bash tools/pack-workshop.sh` avant de retester, sinon la
+   preuve porte sur du contenu perime.
+0bis. **Activer le bon mod.** L'id du mod a change (`WeightScale` ->
    `DeadWeight`), donc une sauvegarde qui avait l'ancien "Weight Scale"
    d'active doit avoir le nouveau "Dead Weight" active a la place: menu des
    mods, decocher "Weight Scale", cocher "Dead Weight". Les deux ne doivent

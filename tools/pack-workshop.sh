@@ -9,15 +9,15 @@
 # THE DOUBLE ID: while this staged copy exists, ~/Zomboid/mods/WeightScale
 # (the merged repo, mod.info id=DeadWeight after this rework) and
 # ~/Zomboid/Workshop/DeadWeight/Contents/mods/DeadWeight both declare the
-# same id. Which one the game's mod scanner keeps when it finds the id
-# twice is UNPROVEN on this machine (not tested), and CeroSec's own docs do
-# not resolve it either -- their workshop-sync.sh comment only says the
-# Workshop-side scan happens, not which copy wins. CeroSec's actual answer
-# is to never let the question matter: stage only right before uploading
-# (checklist step 9), upload immediately (step 10), then remove the staged
-# copy right after (step 14, "clean") so the repo copy is the only one
-# again. Follow the same discipline here: run this script, upload, then
-# run it with --clean before playing.
+# same id. PROVEN on this machine 2026-09-18 (mod info screen's Path row
+# read /home/mathieu/Zomboid/Workshop/DeadWeight/Contents/mods/DeadWeight,
+# Source "Workshop"): when both copies carry the same id, the game shows
+# and LOADS the STAGED copy, not the repo copy. So after ANY change to the
+# repo, rerun this script (or run it with --clean while developing straight
+# from the repo, so only one copy exists) before testing in game, or the
+# proof will be against stale content. CeroSec's discipline (stage only
+# right before uploading, upload, --clean right after) still applies for
+# the actual Workshop submission.
 #
 #   bash tools/pack-workshop.sh --check   list what would be staged, write nothing
 #   bash tools/pack-workshop.sh           stage the copy for real
@@ -29,7 +29,7 @@ WS="$HOME/Zomboid/Workshop/DeadWeight"
 DEST="$WS/Contents/mods/DeadWeight"
 
 # Only what the game needs to load the mod. No .git, src, tests, docs, tools.
-SHIP=(mod.info poster.png media 42 common)
+SHIP=(mod.info poster.png poster2.png media 42 common)
 
 usage() { echo "usage: $0 [--check|--clean]" >&2; exit 2; }
 

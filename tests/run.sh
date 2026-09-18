@@ -30,6 +30,9 @@ fi
 echo "-- geo generator drift check --"
 python3 tools/gen-geo.py --check
 
+echo "-- mod.info guard (id/name match, poster/icon files exist, no U+2014) --"
+python3 tests/modinfo_spec.py
+
 echo "-- translation bench (both builds, both langs) --"
 python3 tests/translate_spec.py
 
