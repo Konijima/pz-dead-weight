@@ -12,10 +12,15 @@ diff -rq "src/textures" "media/textures/WeightScale" || fail=1
 diff -rq "src/textures" "common/media/textures/WeightScale" || fail=1
 diff -rq "src/sounds" "media/sound/WeightScale" || fail=1
 diff -rq "src/sounds" "common/media/sound/WeightScale" || fail=1
-diff -rq "src/lua/shared/Translate/EN" "media/lua/shared/Translate/EN" || fail=1
-diff -rq "src/lua/shared/Translate/EN" "42/media/lua/shared/Translate/EN" || fail=1
-diff -rq "src/lua/shared/Translate/FR" "media/lua/shared/Translate/FR" || fail=1
-diff -rq "src/lua/shared/Translate/FR" "42/media/lua/shared/Translate/FR" || fail=1
+
+# Translations are generated (src/translate/strings.json -> B41 .txt, B42
+# .json, see tools/gen-translate.py), so regenerate into a temp tree and
+# diff that against what is committed rather than comparing to a src/ copy.
+TR_TMP="$(mktemp -d)"
+trap 'rm -rf "$TR_TMP"' EXIT
+python3 tools/gen-translate.py "$TR_TMP"
+diff -rq "$TR_TMP/media/lua/shared/Translate" "media/lua/shared/Translate" || fail=1
+diff -rq "$TR_TMP/42/media/lua/shared/Translate" "42/media/lua/shared/Translate" || fail=1
 
 # media/scripts and common/media/scripts also hold a .gitkeep (and, on
 # common/, other mods' nothing -- this mod owns only its own file), so these

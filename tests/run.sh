@@ -29,6 +29,9 @@ fi
 echo "-- geo generator drift check --"
 python3 tools/gen-geo.py --check
 
+echo "-- translation bench (both builds, both langs) --"
+python3 tests/translate_spec.py
+
 echo "-- lua core bench ($LUA) --"
 "$LUA" tests/core_spec.lua
 

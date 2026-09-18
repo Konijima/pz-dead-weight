@@ -1,5 +1,0 @@
-ContextMenu_EN = {
-
-    ContextMenu_WeightScale_StepOn = "Step on Scale",
-
-}
