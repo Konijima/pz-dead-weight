@@ -1,0 +1,7 @@
+ContextMenu_ID = {
+
+    ContextMenu_WeightScale_StepOn = "Naik ke Timbangan Berat Badan",
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

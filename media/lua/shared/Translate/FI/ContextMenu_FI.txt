@@ -1,0 +1,7 @@
+ContextMenu_FI = {
+
+    ContextMenu_WeightScale_StepOn = "Astu vaa'alle",
+
+    IGUI_WeightScale_Normal = "Normaali",
+
+}

@@ -168,3 +168,24 @@ orientation reste a verifier en jeu.
 38. **Le HUD est inchange.** Sur chaque cas ci-dessus, le releve du HUD doit
     toujours apparaitre a l'instant ou le joueur monte, exactement comme
     avant cet ajout.
+
+## Ajout 2026-09-18, toutes les langues
+
+39. **Une langue latine, ex. l'allemand.** Options > Langue > Deutsch,
+    relancer. Clic droit sur la balance : le libelle doit s'afficher sans
+    caractere casse ("Auf die Waage steigen", accents/trema corrects).
+    Monter sur la balance et ouvrir l'onglet Info : le mot "Normal" doit
+    s'afficher normalement.
+40. **Une langue cyrillique, ex. le russe.** Options > Langue > Russian,
+    relancer. Meme verification : le libelle du menu contextuel et le mot
+    de l'onglet Info doivent s'afficher en cyrillique lisible, sans carres
+    ni points d'interrogation (signe d'un mauvais jeu de caracteres).
+41. **Une langue asiatique, ex. le coreen ou le japonais.** Options >
+    Langue > Korean (ou Japanese), relancer. Meme verification : les
+    ideogrammes/hangeul doivent s'afficher lisibles, pas en carres vides.
+42. **Note pour cette machine :** aucune installation B41 disponible ici;
+    les etapes 39-41 ne couvrent que B42. Si une install B41 devient
+    disponible, refaire ces trois etapes dessus et noter tout caractere
+    casse par langue (verifierait alors la table de `LANG_CHARSET` dans
+    `tools/gen-translate.py`, marquee UNPROVEN pour B41 dans
+    `docs/API-COMPAT.md`).

@@ -1,0 +1,7 @@
+ContextMenu_NO = {
+
+    ContextMenu_WeightScale_StepOn = "Stå på personvekten",
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

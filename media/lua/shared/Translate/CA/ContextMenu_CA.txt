@@ -1,0 +1,7 @@
+ContextMenu_CA = {
+
+    ContextMenu_WeightScale_StepOn = "Pujar a la Bàscula",
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

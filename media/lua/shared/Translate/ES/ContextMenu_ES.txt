@@ -1,0 +1,7 @@
+ContextMenu_ES = {
+
+    ContextMenu_WeightScale_StepOn = "Subirse a la Balanza Médica",
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

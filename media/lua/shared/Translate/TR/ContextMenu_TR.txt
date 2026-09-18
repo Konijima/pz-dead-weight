@@ -1,0 +1,7 @@
+ContextMenu_TR = {
+
+    ContextMenu_WeightScale_StepOn = "Tartýya çýk",
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

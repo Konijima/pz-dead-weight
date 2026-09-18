@@ -1,0 +1,7 @@
+ContextMenu_HU = {
+
+    ContextMenu_WeightScale_StepOn = "Ráállás a mérlegre",
+
+    IGUI_WeightScale_Normal = "Normál",
+
+}

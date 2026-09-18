@@ -331,3 +331,76 @@ Bench: `tests/charscreen_spec.lua`, stubs built strictly from the proven
 lines above (same method names, same call signatures, same field names,
 same draw order and the same Zombies-Killed-equals-weight hazard a
 value-based patch would get wrong).
+
+## 2026-09-18, every language the game ships
+
+Owner's request (task 2026-09-18): translate for every language PZ supports,
+correctly encoded per language.
+
+**Language list, PROVEN** -- `media/lua/shared/Translate/*` on the installed
+B42 client lists 29 folders: AR, CA, CH, CN, CS, DA, DE, EN, ES, ES_CL,
+ES_MX, FI, FR, HU, ID, IT, JP, KO, NL, NO, PL, PT, PTBR, RO, RU, STREW, TH,
+TR, UA. `language.json` in each gives its display name; e.g. `AR` is
+"Español (Argentina)", not Arabic -- PZ ships no Arabic pack. **STREW is
+excluded**: its `language.json` reports "Strewberrie" and every string in it
+(checked `IGUI_Temp_Normal`, `ContextMenu_Walk_to`, item names) is the
+literal word "Strewberrie" -- a debug/test locale, not a language a player
+selects to play in, so this mod ships 28 real languages, not 29.
+
+**B42 reads UTF-8 JSON, PROVEN for non-Latin scripts too.**
+`42/media/lua/shared/Translate/{RU,KO,JP,CH,CN,TH}/*.json` were byte
+inspected: none start with the UTF-8 BOM (`EF BB BF`), all decode cleanly as
+UTF-8 (`json.loads` on the raw bytes succeeds and round trips), same flat
+`{"KEY": "value"}` shape as EN/FR. This confirms the `Translator.class` path
+format proven above (`"%s/media/lua/shared/Translate/%s/%s.json"`) is
+charset-blind by folder, not by content -- one JSON parser, UTF-8 always.
+
+**B41 encoding: UNPROVEN, no B41 install on this machine** (same posture as
+every other B41-UNPROVEN row in this file). `tools/gen-translate.py`
+(`LANG_CHARSET`) assigns each language a legacy Windows code page from
+documented PZ B41 modding knowledge, never from a file this machine can
+read: `cp1252` for EN/FR/DE/ES/ES_CL/ES_MX/AR/CA/IT/PT/PTBR/NL/DA/NO/FI/ID,
+`cp1250` for PL/CS/HU/RO, `cp1251` for RU/UA, `cp1254` for TR. The one
+exception with real evidence is **TH, PROVEN**: the B42 client still ships
+`Translate/TH/language.txt` (every other language dropped that file) with
+`charset = UTF-8,` inside it -- the only per-language charset declaration
+found anywhere in the install. CH/CN/JP/KO have no single-byte code page
+that can hold their scripts and no B41 evidence either way, so they get
+`utf-8` too: a deliberate fallback that can never lose data, not a guessed
+legacy page (documented in `tools/gen-translate.py`'s module docstring).
+The generator encodes each B41 `.txt` strictly in its assigned charset and
+raises (`sys.exit`, loud, not a silent replace) if any string cannot fit.
+
+**Vanilla wording reused, PROVEN per language** (client install,
+`media/lua/shared/Translate/<LANG>/*.json`):
+- `IGUI_WeightScale_Normal` copies `IGUI_Temp_Normal` (IG_UI.json) per
+  language: the closest vanilla "Normal" to a body-status reading (a
+  temperature status band, same shape as a scale reading Low/Normal/High).
+  Difficulty labels (`UI_StarterCondition_Normal`), item-type
+  (`IGUI_ItemType_Normal`), and sandbox-option "Normal" strings were
+  rejected as wrong sense (checked and listed in the 2026-09-13 entry
+  above too). `RO`'s `IGUI_Temp_Normal` is an empty string in vanilla (not
+  translated there either) -- own translation, "Normal", for RO.
+- The scale's noun reuses `Base.Mov_ScaleMedical` (ItemName.json), vanilla's
+  own name for this exact medical/weighing scale moveable, per language.
+  `CA` and `ES_CL` ship an empty string for that key in vanilla (own
+  translation used instead: "Báscula" reused from the ES/ES_MX pattern
+  glossed to each language). `KO`'s vanilla value is the literal English
+  "Weighing Scale" (untranslated upstream) -- own translation used for the
+  noun (che-jung-gye, "body-weight meter").
+- `ContextMenu_WeightScale_StepOn`'s grammatical form (imperative vs.
+  infinitive vs. nominalised gerund, capitalisation) was matched per
+  language against that language's own `ContextMenu_Walk_to` and
+  `ContextMenu_Climb_over` (ContextMenu.json) rather than translated in a
+  single fixed form; FR is unchanged. Languages where the exact wording is
+  this mod's own rendering (no vanilla phrase to copy verbatim, only the
+  grammatical pattern): AR, CA, ES, ES_CL, ES_MX, CS, DA, DE, FI, HU, ID,
+  IT, JP, KO, NL, NO, PL, PT, PTBR, RO, RU, TH, TR, UA -- every non-FR/EN
+  language, since "step on scale" itself has no vanilla precedent; flagged
+  here for a native speaker to review, same posture as any own-translation.
+
+Bench: `tests/translate_spec.py`, extended to loop every language in
+`tools/gen-translate.py`'s `LANGS`/`LANG_CHARSET` (imported, not
+duplicated): every key in every language, B41 decodes and round trips in
+its assigned charset with the vanilla `ContextMenu_<LANG> = {` header, B42
+JSON has no BOM and matches source, EN/FR unchanged.

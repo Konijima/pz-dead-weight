@@ -1,0 +1,7 @@
+ContextMenu_KO = {
+
+    ContextMenu_WeightScale_StepOn = "체중계에 올라가기",
+
+    IGUI_WeightScale_Normal = "적당함",
+
+}

@@ -1,0 +1,7 @@
+ContextMenu_UA = {
+
+    ContextMenu_WeightScale_StepOn = "Стати на ваги",
+
+    IGUI_WeightScale_Normal = "Норма",
+
+}

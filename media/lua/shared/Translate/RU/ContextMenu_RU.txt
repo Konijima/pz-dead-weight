@@ -1,0 +1,7 @@
+ContextMenu_RU = {
+
+    ContextMenu_WeightScale_StepOn = "Встать на весы",
+
+    IGUI_WeightScale_Normal = "Норм.",
+
+}
