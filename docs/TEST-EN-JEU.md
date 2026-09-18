@@ -71,3 +71,25 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
     (dehors, la nuit), monter et descendre de la balance plusieurs fois : les
     sons ne doivent attirer aucun zombie (`is3D = false`, aucun rayon dans le
     monde).
+
+## Ajout 2026-09-18, option de menu contextuel "Step on Scale"
+
+18. **Option en haut de la liste, avec icone.** Clic droit sur la balance
+    (ou sur une case adjacente qui la contient) alors qu'on n'est pas dessus :
+    "Step on Scale" (EN) / "Monter sur la balance" (FR) doit apparaitre EN
+    HAUT de la liste, pas en bas, avec la petite icone dediee, pas l'icone
+    generique par defaut.
+19. **La marche.** Selectionner l'option : le joueur marche jusqu'a la case
+    de la balance (chemin normal, pas de teleportation). A l'arrivee, le
+    releve, le style et le son de montee apparaissent tout seuls, sans code
+    d'affichage ajoute par l'option elle-meme.
+20. **Cachee si deja dessus.** Deja sur la balance, clic droit sur la
+    balance elle-meme : l'option "Step on Scale" ne doit pas apparaitre.
+21. **Aucun autre menu affecte.** Refaire l'etape "Menus contextuels
+    partout" (porte, fenetre, meuble, sol, un autre objet cliquable de
+    n'importe quel autre mod) : aucun nouvel item ne doit apparaitre ailleurs
+    que sur la balance, et l'ordre des autres options ne doit pas changer.
+22. **Splitscreen.** A deux joueurs locaux, chacun clic droit sur SA
+    balance : chacun ne voit l'option que pour sa propre balance, et la
+    selectionner fait marcher LE BON joueur vers SA propre case, jamais
+    l'autre.

@@ -9,6 +9,7 @@ require "WeightScale/WeightScaleDetect"
 require "WeightScale/WeightScaleHUD"
 require "WeightScale/WeightScalePrefs"
 require "WeightScale/WeightScaleSound"
+require "WeightScale/WeightScaleMenu"
 
 WeightScale = WeightScale or {}
 WeightScale.Main = WeightScale.Main or {}

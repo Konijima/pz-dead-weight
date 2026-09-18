@@ -77,6 +77,11 @@ Events = {
     OnPlayerUpdate = mkEvent("OnPlayerUpdate"),
     OnResolutionChange = mkEvent("OnResolutionChange"),
     OnTick = mkEvent("OnTick"),
+    -- WeightScaleMain now also requires WeightScaleMenu (task 2026-09-18,
+    -- point B), which registers itself on this event at load time; this
+    -- bench does not exercise the menu (see tests/menu_spec.lua), it only
+    -- needs the require chain not to error.
+    OnFillWorldObjectContextMenu = mkEvent("OnFillWorldObjectContextMenu"),
 }
 local function fire(name, ...)
     for i = 1, #events[name] do events[name][i](...) end

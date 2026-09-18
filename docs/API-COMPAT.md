@@ -41,6 +41,12 @@ carry the same client-only Lua (see the `drawSubTexture` correction below).
 | `playerObj:getPlayerNum()` | PROVEN (`client/ISUI/ISFitnessUI.lua:324,328`) | UNPROVEN | falls back to player 0 if missing |
 | `getPlayerScreenLeft/Top/Width/Height(n)` | PROVEN (`client/Hotbar/ISHotbar.lua:214-217`) | UNPROVEN | `WeightScaleHUD:anchor` falls back to `getCore():getScreenWidth/Height()` with left/top 0 |
 | `playerObj:playSound(name)` | PROVEN (`client/ISUI/ISWorldObjectContextMenu.lua:1111`, jar `IsoGameCharacter.playSound(String)`) | UNPROVEN | `WeightScaleSound.lua` checks `type(playerObj.playSound) == "function"` |
+| `Events.OnFillWorldObjectContextMenu` | PROVEN (`client/ISUI/ISWorldObjectContextMenu.lua:213`, `triggerEvent("OnFillWorldObjectContextMenu", ...)`) | UNPROVEN | none possible, this is the only hook for a world context menu entry |
+| `test`/`ISWorldObjectContextMenu.Test`/`.setTest()` convention | PROVEN (`client/ISUI/ISBBQMenu.lua:8,28`, `client/FeedingTrough/ISUI/ISFeedingTroughMenu.lua:6`, `ISWorldObjectContextMenu.lua:125-126,178,216`) | UNPROVEN | `WeightScaleMenu.lua` follows it exactly: cheap early return when `test and ISWorldObjectContextMenu.Test`, `ISWorldObjectContextMenu.setTest()` once a scale is found on a test pass |
+| `ISContextMenu:addOptionOnTop(name, target, onSelect, ...params)` | PROVEN (`client/ISUI/ISContextMenu.lua:914-928`) | UNPROVEN | `WeightScaleMenu.lua` checks `type(context.addOptionOnTop) == "function"` and falls back to `context:addOption(...)` |
+| `option.iconTexture = getTexture(path)` | PROVEN (`client/ISUI/ISContextMenu.lua:880,899,906,1059-1061`, `getTexture` already PROVEN above) | UNPROVEN | same `getTexture` nil guard as the HUD textures |
+| `ISTimedActionQueue.add(ISWalkToTimedAction:new(playerObj, square))` | PROVEN (`client/TimedActions/WalkToTimedAction.lua:79`, used the same bare way in `client/ISUI/ISBBQMenu.lua:91,136`, `client/ISUI/Hutch/ISHutchMenu.lua:98`, `client/Farming/ISUI/ISFarmingMenu.lua:561`; no `ISTimedActionQueue.clear` first in any of those, so none is added here either) | UNPROVEN | none possible, this is the only walk-to-square primitive |
+| `worldobjects:get(i):getSquare()` (context menu clicked objects) | PROVEN (jar `IsoObject.getSquare`, same pattern as `square:getObjects()` above) | UNPROVEN | nil-checked; a matching sprite with no square is skipped, same posture as `WeightScaleDetect.hasScaleSprite` |
 
 ## B41 UNPROVEN calls, summary
 
@@ -148,3 +154,66 @@ Every local player, not only player 0 (client install, per the rule above):
   gives them no world-space distance/radius at all, unlike CeroSec's `is3D`
   machine sounds -- the mod must not attract zombies, and a non-3D clip has
   no `distanceMax` to propagate on.
+
+## 2026-09-18, "Step on Scale" context menu option (task point B)
+
+New module `WeightScaleMenu.lua`, hooked on `Events.OnFillWorldObjectContextMenu`
+(client install, `~/.local/share/Steam/steamapps/common/ProjectZomboid/`, per
+the rule above):
+
+- The `test` convention: `ISWorldObjectContextMenu.lua:143-216` calls every
+  handler once with `test == true` before the real pass, purely to answer
+  "would any handler add an option" (used for controller users, `line 122`
+  comment). `ISBBQMenu.lua:8` and `ISFeedingTroughMenu.lua:6` both open with
+  `if test and ISWorldObjectContextMenu.Test then return true end` -- a cheap
+  early return once some earlier handler already confirmed a menu will show
+  -- then do their real scan, and only call `ISWorldObjectContextMenu.setTest()`
+  (`ISWorldObjectContextMenu.lua:125-126`, sets the shared flag and returns
+  `true`) once they know they would add an option. `WeightScaleMenu.lua`
+  follows the same shape.
+- `ISContextMenu:addOptionOnTop(name, target, onSelect, ...)` --
+  `client/ISUI/ISContextMenu.lua:914-928`: rebuilds `self.options` shifted by
+  one and inserts the new option at index 1, same parameter list as
+  `addOption`. PROVEN on B42; UNPROVEN on B41 (no B41 install here), so
+  `WeightScaleMenu.lua` checks `type(context.addOptionOnTop) == "function"`
+  and falls back to `context:addOption(...)` (bottom of the list) if absent.
+- `option.iconTexture = getTexture(path)` -- `ISContextMenu.lua:880` (nilled
+  by `addOption`), `:899` (`addColorBoxOption`), `:906` (`addDebugOption`,
+  `getTexture(...)` directly), `:1059-1061` (drawn with
+  `drawTextureScaledAspect` when set). Same `getTexture` call the HUD
+  textures already use (`WeightScaleHUD.lua`), same texture path convention
+  (`media/textures/WeightScale/weightscale_icon.png`), loaded once and
+  cached in a module-level local (`WeightScaleMenu.lua`'s `_icon`), never
+  per menu open (bench-covered, `tests/menu_spec.lua` point 7).
+- `option.onSelect(option.target, option.param1, ...)` --
+  `ISContextMenu.lua:70,145,259`: called as a plain function with `target` as
+  its first argument, not as a method on `target`. `WeightScaleMenu.lua`'s
+  `onSelect(playerObj, square)` matches that call shape exactly
+  (`context:addOption(label, playerObj, onSelect, square)`).
+- `ISTimedActionQueue.add(ISWalkToTimedAction:new(playerObj, square))` --
+  class defined in `client/TimedActions/WalkToTimedAction.lua:79`
+  (`function ISWalkToTimedAction:new(character, location, ...)`), added bare
+  (no `ISTimedActionQueue.clear` first) the same way vanilla's own
+  convenience "walk here and do X" menu options do it:
+  `client/ISUI/ISBBQMenu.lua:91,136`, `client/ISUI/Hutch/ISHutchMenu.lua:98`,
+  `client/Farming/ISUI/ISFarmingMenu.lua:561`. `ISTimedActionQueue.clear` is
+  only used elsewhere for actions that must pre-empt whatever the player is
+  already doing (map click-to-walk, world map, inventory context menu), which
+  is not this option's job, so `WeightScaleMenu.lua` does not clear the queue
+  either.
+- Detection scan reuses `WeightScale.Detect.spriteNames` (one source, already
+  defined in `WeightScaleDetect.lua`): the clicked `worldobjects` list, then
+  each matching object's own `:getSquare()` (`IsoObject.getSquare`, same jar
+  evidence class as `square:getObjects()` above), nil-guarded throughout.
+  Stops scanning at the first match, so the option is never added twice.
+- Translations: `src/lua/shared/Translate/EN/ContextMenu_EN.txt` and
+  `FR/ContextMenu_FR.txt`, `ContextMenu_<LANG> = { KEY = "value", }` Lua-table
+  format, CRLF line endings -- matches the old B41 release's own
+  `ContextMenu_EN.txt`/`ContextMenu_FR.txt` at git history commit `6631165`.
+  The current client install's own core translations have moved to JSON
+  (`media/lua/shared/Translate/EN/ContextMenu.json`), but that is the base
+  game's format, not a constraint on mod translations; the `.txt` Lua-table
+  format is the documented and still-supported mod convention and is what
+  `getText("ContextMenu_WeightScale_StepOn")` resolves against. `getText` is
+  used with a plain string fallback (`WeightScaleMenu.lua`) in case a runtime
+  is missing it, matching every other B41-UNPROVEN guard in this file.

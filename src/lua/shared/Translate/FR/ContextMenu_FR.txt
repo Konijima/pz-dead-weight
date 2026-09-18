@@ -1,0 +1,5 @@
+ContextMenu_FR = {
+
+    ContextMenu_WeightScale_StepOn = "Monter sur la balance",
+
+}
