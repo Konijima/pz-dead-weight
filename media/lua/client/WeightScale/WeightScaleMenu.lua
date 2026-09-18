@@ -26,11 +26,16 @@ end
 
 -- Reuses the mod's one sprite list (WeightScaleDetect.spriteNames): scans
 -- the clicked objects, then that object's own square, exactly as vanilla
--- handlers do (e.g. ISBBQMenu.lua walks worldobjects' squares).
+-- handlers do (e.g. ISBBQMenu.lua walks worldobjects' squares). `worldobjects`
+-- is the plain Lua array table ISObjectClickHandler.doRClick builds with
+-- table.insert and ISWorldObjectContextMenu.createMenu walks with
+-- ipairs(worldobjects) (proven in ISWorldObjectContextMenu.lua and
+-- ISBBQMenu.lua) -- NOT a Java list, so it has no :size()/:get(). The
+-- clicked entries can be any IsoObject subclass (IsoWorldInventoryObject,
+-- IsoDeadBody, IsoPlayer, IsoZombie...), so every accessor stays guarded.
 local function findScaleSquare(worldobjects)
     if not worldobjects then return nil end
-    for i = 0, worldobjects:size() - 1 do
-        local obj = worldobjects:get(i)
+    for _, obj in ipairs(worldobjects) do
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
         if name and WeightScale.Detect.spriteNames[name] then

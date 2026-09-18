@@ -40,7 +40,13 @@ local Menu = WeightScale.Menu
 local function player(square) return { getCurrentSquare = function() return square end } end
 local function scaleObj(square) return { getSprite = function() return { getName = function() return "location_community_medical_01_8" end } end, getSquare = function() return square end } end
 local function otherObj(square) return { getSprite = function() return { getName = function() return "some_other_sprite" end } end, getSquare = function() return square end } end
-local function list(items) return { size = function() return #items end, get = function(_, i) return items[i + 1] end } end
+-- `worldobjects` as ISObjectClickHandler.doRClick builds it and
+-- ISWorldObjectContextMenu.createMenu reads it: a plain Lua array table,
+-- walked with ipairs -- proven in ISWorldObjectContextMenu.lua and
+-- ISBBQMenu.lua (both vanilla, client install). NOT a Java list: giving this
+-- stub a :size()/:get() would be the code's own wrong assumption again, not
+-- vanilla, so it deliberately has neither.
+local function list(items) return items end
 
 local function newContext(withTop)
     local ctx = { options = {} }
@@ -130,6 +136,35 @@ for i = 1, 5 do
     check(ctx.options[1].iconTexture ~= nil, "the option carries an icon texture")
 end
 check(textureCalls == 1, "the icon texture is requested exactly once across many menu opens, got " .. textureCalls)
+
+-- 8: regression (game crash 2026-09-18, "Object tried to call nil in
+--    findScaleSquare"): `list()` above is the plain Lua array table vanilla
+--    actually hands OnFillWorldObjectContextMenu (ISObjectClickHandler.lua
+--    table.insert, walked with ipairs in ISWorldObjectContextMenu.lua /
+--    ISBBQMenu.lua), not a Java list. Every call above already exercises
+--    this true shape; against the old code (worldobjects:size()) this line
+--    alone throws "attempt to call method 'size' (a nil value)", the exact
+--    failure from console.txt. These cases cover the mixed-class worldobjects
+--    reality (IsoDeadBody/IsoPlayer/etc lack getSprite; nil sprite; nil name)
+--    plus an empty click.
+local ctxNoSprite = newContext(true)
+local noGetSprite = { getSquare = function() return square end }
+Menu.OnFillWorldObjectContextMenu(0, ctxNoSprite, list({ noGetSprite }), false)
+check(#ctxNoSprite.options == 0, "an entry without getSprite (e.g. IsoDeadBody/IsoPlayer) is skipped, not a crash")
+
+local ctxNilSprite = newContext(true)
+local nilSpriteObj = { getSprite = function() return nil end, getSquare = function() return square end }
+Menu.OnFillWorldObjectContextMenu(0, ctxNilSprite, list({ nilSpriteObj }), false)
+check(#ctxNilSprite.options == 0, "an object with a nil sprite is skipped, not a crash")
+
+local ctxNilName = newContext(true)
+local nilNameObj = { getSprite = function() return { getName = function() return nil end } end, getSquare = function() return square end }
+Menu.OnFillWorldObjectContextMenu(0, ctxNilName, list({ nilNameObj }), false)
+check(#ctxNilName.options == 0, "a sprite with a nil name is skipped, not a crash")
+
+local ctxEmpty = newContext(true)
+Menu.OnFillWorldObjectContextMenu(0, ctxEmpty, list({}), false)
+check(#ctxEmpty.options == 0, "an empty worldobjects list is a no-op, not a crash")
 
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")
