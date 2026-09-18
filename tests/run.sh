@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bench: mapX contact points, bandOf inclusivity, one-decimal format, prefs
 # parser robustness, the HUD's UI manager lifecycle, the context menu option,
-# the Info tab weight-word patch, and JS/Lua parity on the animation sampler.
+# the Info tab weight-word patch, facing the scale's column on foot or by
+# menu, and JS/Lua parity on the animation sampler.
 # Fails loud (missing lua5.1/lua/node, missing anim.js) rather than skipping
 # silently.
 set -euo pipefail
@@ -40,6 +41,9 @@ echo "-- lua hud lifecycle bench ($LUA) --"
 
 echo "-- lua context menu bench ($LUA) --"
 "$LUA" tests/menu_spec.lua
+
+echo "-- lua face-the-scale bench ($LUA) --"
+"$LUA" tests/face_spec.lua
 
 echo "-- lua char screen bench ($LUA) --"
 "$LUA" tests/charscreen_spec.lua

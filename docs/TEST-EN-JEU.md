@@ -123,3 +123,47 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
     si l'ecran de personnage differe de celui du client verifie ici, le
     garde-fou doit laisser l'affichage vanilla intact (le nombre reste
     visible) plutot que de planter; noter ce qui a ete observe.
+
+## Ajout 2026-09-18, faire face a la colonne en montant sur la balance
+
+[doute] Le sens exact (quel cote de la balance porte la colonne/tete de
+mesure) est deduit de la propriete `Facing` de chaque sprite place
+(prouve dans media/newtiledefinitions.tiles.txt) et de la regle de
+vanilla pour la position "Front" en s'assoyant (ISRestAction.lua) : le
+personnage fait face a la MEME direction que `Facing`. Seul un coup d'oeil
+en jeu confirme que la colonne est bien de ce cote-la pour chaque sprite.
+
+30. **Marcher dessus et s'arreter, par chaque cote.** Approcher une balance
+    par le nord, s'arreter dessus : le personnage doit tourner une seule
+    fois pour faire face a la colonne (le cote avec la tete de mesure), pas
+    seulement au hasard. Refaire par le sud, l'est et l'ouest (autant de
+    balances differentes que la carte en offre) : le personnage tourne
+    toujours vers la colonne de CETTE balance, pas vers un point fixe.
+31. **Traverser sans s'arreter.** Marcher A TRAVERS la case de la balance
+    sans s'y arreter (juste de passage) : le personnage ne doit jamais etre
+    tourne de force pendant la traversee.
+32. **Se retourner ensuite reste libre.** Une fois arrete sur la balance et
+    tourne vers la colonne, tourner volontairement dans une autre direction
+    (ou marcher, ou viser) : le mod ne doit jamais reforcer la tete vers la
+    colonne tant qu'on reste sur la meme case sans la quitter puis y
+    revenir.
+33. **Reste desarme apres avoir quitte.** Quitter la case puis y remonter :
+    le personnage doit de nouveau tourner une fois vers la colonne (la
+    tourne se re-arme uniquement en quittant puis en revenant).
+34. **Action du menu contextuel.** Clic droit sur une balance de loin,
+    "Step on Scale" : le personnage marche jusqu'a la case, s'arrete, puis
+    tourne vers la colonne, sans mouvement de tete parasite pendant la
+    marche.
+35. **Marche annulee.** Declencher "Step on Scale" puis annuler la marche
+    (bouger la souris/cliquer ailleurs, ou tout ce qui interrompt
+    ISWalkToTimedAction) avant d'arriver : le personnage ne doit jamais
+    tourner vers la balance qu'il n'a pas atteinte.
+36. **Vise ou autre action en cours.** Arriver sur la balance en train de
+    viser une arme (si possible en jeu) : la tourne ne doit pas se produire
+    pendant que le personnage vise; elle peut suivre une fois qu'il arrete.
+37. **Splitscreen.** A deux joueurs locaux, chacun monte sur SA propre
+    balance en meme temps : chacun tourne vers SA colonne, jamais influence
+    par l'autre joueur ni par l'orientation de l'autre balance.
+38. **Le HUD est inchange.** Sur chaque cas ci-dessus, le releve du HUD doit
+    toujours apparaitre a l'instant ou le joueur monte, exactement comme
+    avant cet ajout.

@@ -1,5 +1,8 @@
--- Wires the modules to game events. Nothing here computes geometry or motion;
--- it only starts/stops the HUDs and feeds them each player's weight.
+-- Wires the modules to game events. It computes nothing itself; it only
+-- starts/stops the HUDs, feeds them each player's weight, and calls into
+-- Detect every tick (Detect.update for presence, Detect.updateFacing for
+-- the queued once-per-step-on turn toward the scale's column, point B
+-- 2026-09-18).
 -- Splitscreen (task 2026-09-18, point A): one HUD instance and one Detect
 -- state slot per local player, keyed by player index; Prefs stays the one
 -- shared file (WeightScalePrefs.lua is untouched).
@@ -103,6 +106,7 @@ function Main.onPlayerUpdate(playerObj)
     if not playerObj then return end
     local n = (playerObj.getPlayerNum and playerObj:getPlayerNum()) or 0
     WeightScale.Detect.update(n, playerObj)
+    WeightScale.Detect.updateFacing(n, playerObj)
     local hud = Main.huds[n]
     if hud then hud:tick() end
     Main.pruneInactive()
@@ -125,6 +129,7 @@ function Main.onTick()
     for n = 0, c - 1 do
         local playerObj = getSpecificPlayer and getSpecificPlayer(n)
         WeightScale.Detect.update(n, playerObj)
+        WeightScale.Detect.updateFacing(n, playerObj)
         local hud = Main.huds[n]
         if hud then hud:tick() end
     end

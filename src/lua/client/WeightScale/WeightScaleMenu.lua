@@ -1,8 +1,10 @@
 -- Convenience context menu option (task 2026-09-18, point B): "Step on
 -- Scale" at the TOP of the right click menu, for players who use the mouse.
 -- Selecting it only queues a normal walk to the scale's square; detection,
--- the HUD and the sounds already fire on arrival by themselves (see
--- WeightScaleDetect.lua) -- this module draws nothing and tracks no state.
+-- the HUD, the sounds, and the turn toward the scale's column (point B,
+-- 2026-09-18: Detect.updateFacing) already fire on arrival by themselves
+-- (see WeightScaleDetect.lua) -- this module draws nothing and tracks no
+-- state.
 -- Hooked on Events.OnFillWorldObjectContextMenu, honouring the vanilla
 -- `test` convention (ISWorldObjectContextMenu.lua, e.g. ISBBQMenu.lua): a
 -- cheap early return when another handler already confirmed an option, and

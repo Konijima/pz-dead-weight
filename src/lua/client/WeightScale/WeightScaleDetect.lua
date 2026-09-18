@@ -23,7 +23,7 @@ Detect.onScaleOff = nil       -- function(n)
 local function stateFor(n)
     local s = Detect.players[n]
     if not s then
-        s = { tick = 0, onScale = false, lastSquare = false }
+        s = { tick = 0, onScale = false, lastSquare = false, pendingFace = false }
         Detect.players[n] = s
     end
     return s
@@ -35,20 +35,43 @@ function Detect.clear(n)
     Detect.players[n] = nil
 end
 
-local function hasScaleSprite(square)
-    if not square or not square.getObjects then return false end
+local function scaleObjectOn(square)
+    if not square or not square.getObjects then return nil end
     local objs = square:getObjects()
-    if not objs then return false end
+    if not objs then return nil end
     local n = objs:size()
     for i = 0, n - 1 do
         local obj = objs:get(i)
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
         if name and Detect.spriteNames[name] then
-            return true
+            return obj
         end
     end
-    return false
+    return nil
+end
+
+local function hasScaleSprite(square)
+    return scaleObjectOn(square) ~= nil
+end
+
+-- Face the scale's column (task 2026-09-18, point B): each placed scale
+-- carries its own `Facing` sprite property (N/S/E/W, proven per tile in
+-- media/newtiledefinitions.tiles.txt: location_community_medical_01_8 = E,
+-- _9 = S), read live off the object with IsoObject:getFacing() (PROVEN
+-- client lua, ISAddTakeDispenserBottle.lua, comparable directly against the
+-- IsoDirections.N/S/E/W globals) -- no hardcoded per-sprite table needed,
+-- every scale answers for itself. The player must face the SAME direction
+-- the scale faces: that is exactly how vanilla's own "Front" sit position
+-- works (client/shared/TimedActions/ISRestAction.lua: dir == facing when
+-- sideStr is nil), and the scale's front is the side that carries the
+-- column/beam head, the side one reads it from. [doute] 2026-09-18: only
+-- an in-game look confirms the column visually sits on the `Facing` side
+-- for both placed sprites; see docs/TEST-EN-JEU.md.
+function Detect.facingFor(square)
+    local obj = scaleObjectOn(square)
+    if not obj or type(obj.getFacing) ~= "function" then return nil end
+    return obj:getFacing()
 end
 
 local function playerSquare(playerObj)
@@ -77,9 +100,45 @@ function Detect.update(n, playerObj)
 
     if onNow and not s.onScale then
         s.onScale = true
+        s.pendingFace = Detect.facingFor(square) or false
         if Detect.onScaleOn then Detect.onScaleOn(n, square) end
     elseif not onNow and s.onScale then
         s.onScale = false
+        s.pendingFace = false
         if Detect.onScaleOff then Detect.onScaleOff(n) end
     end
+end
+
+-- Consumes the one queued turn for a player once they have actually
+-- stopped on the plate: never while still walking (foot traffic across the
+-- tile must not be yanked), never twice (cleared the instant it fires, and
+-- again the instant the player leaves the square in Detect.update above, so
+-- it only re-arms on a fresh step-on), and never over aiming or another
+-- timed action already in progress. Cheap while idle: one field read and
+-- return for every player who isn't mid-turn, no new per-frame scan. Called
+-- every tick from WeightScaleMain (both OnPlayerUpdate and the OnTick
+-- fallback), independent of Detect.update's own square-change throttle,
+-- because "has the player stopped yet" can change on any tick.
+--
+-- This single mechanism also covers the context menu path (point C): the
+-- walk it queues (WeightScaleMenu.lua) leaves the character motionless and
+-- standing on the scale square once it completes, which is exactly the
+-- state this function waits for -- so a cancelled walk, or one that ends
+-- adjacent to the square rather than on it, never arms a turn at all, and a
+-- completed one is turned by this same code, once, with no separate
+-- face-on-arrival plumbing and no risk of turning twice.
+function Detect.updateFacing(n, playerObj)
+    local s = Detect.players[n]
+    if not s or not s.pendingFace or not playerObj then return end
+    if type(playerObj.isPlayerMoving) ~= "function"
+        or type(playerObj.faceDirection) ~= "function" then
+        return -- API unproven on this build: no turn, no crash
+    end
+    if playerObj:isPlayerMoving() then return end
+    if (type(playerObj.isAiming) == "function" and playerObj:isAiming())
+        or (type(playerObj.hasTimedActions) == "function" and playerObj:hasTimedActions()) then
+        return
+    end
+    playerObj:faceDirection(s.pendingFace)
+    s.pendingFace = false
 end

@@ -2,9 +2,11 @@
 
 A small Project Zomboid mod: stand on a working medical scale and your body
 weight appears near the top right of screen centre, then leaves when you
-step off. A right click "Step on Scale" option on the scale itself is the
-only context menu action; the HUD, sounds and detection never gained a
-window or a timed action of their own.
+step off, and once stopped on the plate turns to face the scale's own
+column, the side you read it from. A right click "Step on Scale" option on
+the scale itself is the only context menu action; the HUD, sounds,
+detection and the facing turn never gained a window or a timed action of
+their own.
 
 Originally a Build 41 mod (Steam Workshop item `2833096579`) with a
 context-menu action and a nutrition-values window. Reworked from the
@@ -22,12 +24,17 @@ that player's own screen region, and plays a short step on/off sound from
 the stepping player's own emitter. A convenience "Step on Scale" context
 menu option (top of the list, with its own icon) walks the player onto the
 scale for mouse players; it adds no display code of its own, the existing
-detection/HUD/sound fire on arrival exactly as if the player had walked
-there themselves. Bench passes (`tests/run.sh`): mapX contact points, band
-inclusivity, one-decimal format, prefs parser robustness, the
-HUD/splitscreen/sound lifecycle bench, the context menu option bench, the
-Info tab weight-word patch bench, and a JS/Lua parity check against the
-maquette's own `anim.js` sampler. See
+detection/HUD/sound/facing fire on arrival exactly as if the player had
+walked there themselves. Stepping on and coming to a stop (on foot or via
+the menu) turns the player once toward the scale's own `Facing` sprite
+property, the side that carries the column/beam head; walking across
+without stopping never turns anyone, and the turn never re-fires until the
+player leaves the square and steps back on. Bench passes (`tests/run.sh`):
+mapX contact points, band inclusivity, one-decimal format, prefs parser
+robustness, the HUD/splitscreen/sound lifecycle bench, the context menu
+option bench, the Info tab weight-word patch bench, the face-the-scale
+bench, and a JS/Lua parity check against the maquette's own `anim.js`
+sampler. See
 `docs/API-COMPAT.md` for every game API call and its B41/B42 evidence, and
 `docs/TEST-EN-JEU.md` for the in-game checklist still to run (this machine
 has no B41 install to verify against).
