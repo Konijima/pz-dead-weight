@@ -8,6 +8,11 @@ install here, so B41 status is either PROVEN (the call appears in the 2022
 B41 release, kept in git history at commit `6631165`) or UNPROVEN (guarded at
 the call site).
 
+**2026-09-18 rule for this pass:** client APIs are proven against the CLIENT
+install only (`~/.local/share/Steam/steamapps/common/ProjectZomboid/`), never
+against `~/pzserver/`, which is the DEDICATED SERVER's install and does not
+carry the same client-only Lua (see the `drawSubTexture` correction below).
+
 | Call | B42 | B41 | Guard / fallback |
 | --- | --- | --- | --- |
 | `getSpecificPlayer(0)` | PROVEN (jar + lua usage) | PROVEN (2022 release `WeightScale.lua`) | none needed |
@@ -31,6 +36,11 @@ the call site).
 | `getFileWriter(name, true, false)` / `getFileReader(name, bool)` | PROVEN (lua usage, e.g. `ModOptions.lua`) | UNPROVEN | every call wrapped in `pcall`; missing/erroring falls back to defaults (`WeightScalePrefs`) |
 | `Events.OnGameStart`, `Events.OnResolutionChange` | PROVEN (lua usage) | UNPROVEN | none possible, these are the only hooks available |
 | `Events.OnPlayerUpdate` | PROVEN (lua usage, e.g. `Steps.lua`) | UNPROVEN | `if Events.OnPlayerUpdate then ... else Events.OnTick.Add(...)` in `WeightScaleMain.lua` |
+| `getNumActivePlayers()` | PROVEN (client lua, `Fishing/FishingHandler.lua:6`) | UNPROVEN | `Main.activeCount()` falls back to `1` if missing |
+| `getSpecificPlayer(n)`, n > 0 | PROVEN (same call as n=0, client lua) | UNPROVEN | nil-checked per player slot throughout `WeightScaleMain.lua`/`WeightScaleDetect.lua` |
+| `playerObj:getPlayerNum()` | PROVEN (`client/ISUI/ISFitnessUI.lua:324,328`) | UNPROVEN | falls back to player 0 if missing |
+| `getPlayerScreenLeft/Top/Width/Height(n)` | PROVEN (`client/Hotbar/ISHotbar.lua:214-217`) | UNPROVEN | `WeightScaleHUD:anchor` falls back to `getCore():getScreenWidth/Height()` with left/top 0 |
+| `playerObj:playSound(name)` | PROVEN (`client/ISUI/ISWorldObjectContextMenu.lua:1111`, jar `IsoGameCharacter.playSound(String)`) | UNPROVEN | `WeightScaleSound.lua` checks `type(playerObj.playSound) == "function"` |
 
 ## B41 UNPROVEN calls, summary
 
@@ -94,8 +104,47 @@ screen.
 `addToUIManager` instantiated the java object. The approved look therefore
 never had it, and dropping the call keeps the rendering identical.
 
-DOUBT, not fixed here because it would change approved pixels: there is no
-`drawSubTexture` anywhere in `~/pzserver/media/lua` (B42), and ISUIElement
-derives plainly from `ISBaseObject`, so `type(self.drawSubTexture)` is `nil`
-and `HUD:drawGlyphs` draws nothing. If the numeral is missing in game, that
-is why. The `ISUIElement.lua:1043` reference above could not be reproduced.
+CORRECTED 2026-09-18 (was a false doubt): the previous pass looked for
+`drawSubTexture` in `~/pzserver/media/lua`, which is the DEDICATED SERVER's
+install, not the client's -- a different install with different client-only
+Lua. It does not carry `media/lua/client/ISUI/ISUIElement.lua` at all in a
+form comparable to the client's. Checked instead against the CLIENT install,
+`~/.local/share/Steam/steamapps/common/ProjectZomboid/projectzomboid/media/lua/client/ISUI/ISUIElement.lua:1043`:
+
+    function ISUIElement:drawSubTexture(texture, subX, subY, subW, subH, x, y, w, h, a, r, g, b)
+
+`drawSubTexture` is PROVEN there, matching the signature `WeightScaleHUD.lua`
+already calls it with. The glyph atlas draws on B42 after all; the guard
+(`type(self.drawSubTexture) == "function"`) stays in place regardless, since
+B41 is still UNPROVEN and a missing method there must still degrade
+gracefully rather than error.
+
+## 2026-09-18, splitscreen and step on/off sounds (task point A/B)
+
+Every local player, not only player 0 (client install, per the rule above):
+
+- `getNumActivePlayers()` -- PROVEN, `client/Fishing/FishingHandler.lua:6`,
+  `client/ISUI/ISPostDeathUI.lua:79`, `client/ISUI/ISInventoryPage.lua:1331`.
+- `getSpecificPlayer(n)` for `n` beyond 0 -- PROVEN, same call already used
+  for player 0; nothing in its usage elsewhere is player-0-specific.
+- `playerObj:getPlayerNum()` -- PROVEN, `client/ISUI/ISFitnessUI.lua:324,328`.
+- `getPlayerScreenLeft/Top/Width/Height(n)` -- PROVEN,
+  `client/Hotbar/ISHotbar.lua:214-217`, `client/PZAPI/ui/atoms/Node.lua:118-119`,
+  `client/ISUI/ISFirearmRadialMenu.lua:226-229`. With one local player these
+  return `0, 0, screenWidth, screenHeight`, so `WeightScaleHUD:anchor`
+  collapses to the exact same anchor it always used (bench-covered).
+  B41 UNPROVEN; guarded, falls back to `getCore():getScreenWidth/Height()`
+  with left/top at 0 (today's single-player formula) if any of the four are
+  missing.
+- `playerObj:playSound(name)` -- PROVEN,
+  `client/ISUI/ISWorldObjectContextMenu.lua:1111`,
+  `client/ISUI/ISInventoryPage.lua:1031` (`getSpecificPlayer(n):playSound(...)`),
+  also `IsoGameCharacter.playSound(String): long` in the client jar
+  (`javap -p`). B41 UNPROVEN; `WeightScaleSound.lua` checks
+  `type(playerObj.playSound) == "function"` before calling it.
+- Sound script `is3d` field -- confirmed on `zombie.audio.GameSound` in the
+  client jar (`javap -p zombie.audio.GameSound`: `public boolean is3d;`).
+  `sounds_weightscale.txt` sets `is3D = false` on both clips so the engine
+  gives them no world-space distance/radius at all, unlike CeroSec's `is3D`
+  machine sounds -- the mod must not attract zombies, and a non-3D clip has
+  no `distanceMax` to propagate on.

@@ -1,0 +1,34 @@
+module Base
+{
+    /* Step on/off cue, played from the stepping player's own emitter
+       (WeightScaleSound.lua: playerObj:playSound(name)), never a world-space
+       IsoObject sound. is3D = false so the engine gives it no distanceMax /
+       world sound radius at all: it cannot draw zombies, unlike CeroSec's
+       is3D machine sounds (common/media/scripts/sounds_cerosec.txt), which
+       are meant to be heard across a room on purpose. category = UI mirrors
+       the vanilla click cues (media/scripts/generated/sounds/sounds_ui.txt),
+       which is the closest existing precedent for a non-3D, player-local cue.
+       Task 2026-09-18, point B. See docs/API-COMPAT.md. */
+
+    sound WeightScaleOn
+    {
+        category = UI,
+        is3D = false,
+        clip
+        {
+            file = media/sound/WeightScale/WeightScaleOn.ogg,
+            volume = 0.5,
+        }
+    }
+
+    sound WeightScaleOff
+    {
+        category = UI,
+        is3D = false,
+        clip
+        {
+            file = media/sound/WeightScale/WeightScaleOff.ogg,
+            volume = 0.5,
+        }
+    }
+}

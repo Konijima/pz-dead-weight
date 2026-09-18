@@ -45,3 +45,29 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 10. **Clic droit sur le releve.** Sur la balance, clic droit dans le releve :
     il change de style (fleau <-> panneau) et aucun menu du monde ne s'ouvre.
     Un pixel a cote du releve doit, lui, ouvrir le menu du monde.
+
+## Ajout 2026-09-18, splitscreen et sons
+
+11. **Deux manettes, deux balances.** Demarrer une partie splitscreen a deux
+    joueurs locaux. Chaque joueur monte sur sa propre balance (deux balances
+    differentes) : chacun voit son propre releve, avec son propre poids, au
+    centre de SA moitie d'ecran (pas celle de l'autre joueur).
+12. **Un seul joueur sur la balance.** Splitscreen actif, un seul des deux
+    joueurs monte : seul son releve apparait, dans sa moitie d'ecran; rien ne
+    s'affiche du cote de l'autre joueur.
+13. **Deconnexion/mort en splitscreen.** Le joueur sur la balance quitte la
+    partie (ou meurt) pendant que le releve est affiche : son element doit
+    disparaitre, sans laisser de residu ni de zone de clic morte.
+14. **Position solo inchangee.** Verifier qu'en solo (un seul joueur actif),
+    le releve est exactement au meme endroit qu'avant ce changement (centre
+    de l'ecran + le decalage de la maquette).
+15. **Son en montant.** Monter sur la balance : un court son doit se
+    declencher au moment ou le releve commence a apparaitre, une seule fois,
+    depuis le joueur qui monte (pas depuis l'autre joueur en splitscreen).
+16. **Son en descendant.** Descendre de la balance : un second son, plus
+    court, doit se declencher au moment ou le releve commence a partir. Rester
+    immobile sur la balance ne doit rejouer aucun son.
+17. **Aucun zombie attire.** Avec des zombies a portee d'oreille normale
+    (dehors, la nuit), monter et descendre de la balance plusieurs fois : les
+    sons ne doivent attirer aucun zombie (`is3D = false`, aucun rayon dans le
+    monde).

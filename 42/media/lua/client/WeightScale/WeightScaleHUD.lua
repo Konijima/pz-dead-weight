@@ -213,11 +213,24 @@ function HUD:drawRectBorderFallback(x, y, w, h, a, r, g, b)
     self:drawRect(x + w - 1, y, 1, h, a, r, g, b)
 end
 
+-- Anchored to the CENTRE OF THIS PLAYER'S OWN SCREEN REGION, splitscreen or
+-- not (task 2026-09-18, point A2). getPlayerScreenLeft/Top/Width/Height(n)
+-- are B42 PROVEN (client lua, e.g. Hotbar/ISHotbar.lua:214-217,
+-- PZAPI/ui/atoms/Node.lua:118-119) and B41 UNPROVEN, guarded here: with one
+-- local player, left/top are 0 and width/height are the full screen, which
+-- collapses to the exact same anchor this always used.
 function HUD:anchor(kind)
-    local w = getCore():getScreenWidth()
-    local h = getCore():getScreenHeight()
+    local n = self.playerNum or 0
+    local left, top, w, h
+    if getPlayerScreenLeft and getPlayerScreenTop and getPlayerScreenWidth and getPlayerScreenHeight then
+        left, top = getPlayerScreenLeft(n), getPlayerScreenTop(n)
+        w, h = getPlayerScreenWidth(n), getPlayerScreenHeight(n)
+    else
+        left, top = 0, 0
+        w, h = getCore():getScreenWidth(), getCore():getScreenHeight()
+    end
     local o = (kind == "beam") and Geo.offset or Geo.panel
-    return math.floor(w / 2 + o.dx), math.floor(h / 2 + o.dy)
+    return math.floor(left + w / 2 + o.dx), math.floor(top + h / 2 + o.dy)
 end
 
 function HUD:readoutRect()
@@ -319,12 +332,22 @@ end
 function HUD:onRightMouseDown(x, y)
     if not self:hitLocal(x, y) then return false end
     if WeightScale.Prefs then WeightScale.Prefs.toggleStyle() end
-    -- the two styles have their own size and offset, follow them.
-    self:applyBounds()
+    -- The style pref is shared (one file), so a toggle by whichever player's
+    -- readout was clicked must resize/reposition every OTHER player's
+    -- readout too, not just this one (task 2026-09-18, point A4).
+    for i = 1, #HUD._all do
+        local h = HUD._all[i]
+        if h.shown then h:applyBounds() end
+    end
     return true
 end
 
-function HUD.new(cls)
+-- All live instances, one per displayed local player. Used only to fan a
+-- shared-prefs style toggle out to every readout; HUD:destroy() below keeps
+-- this from growing across a player's whole disconnect/reconnect life.
+HUD._all = HUD._all or {}
+
+function HUD.new(cls, playerNum)
     local o = ISUIElement:new(0, 0, Geo.readout.w, Geo.readout.h)
     setmetatable(o, cls)
     cls.__index = cls
@@ -332,13 +355,25 @@ function HUD.new(cls)
     o.t0 = 0
     o.target = Geo.weight.start
     o.shown = false
+    o.playerNum = playerNum or 0
     -- No setAlwaysOnTop: it is a no-op before the element is instantiated
     -- (ISUIElement:setAlwaysOnTop guards on self.javaObject, which only
     -- exists once addToUIManager has run), so the approved look never had
     -- it. An element added last is drawn last anyway.
     -- plain ISUIElement paints no background/border unless told to; nothing
     -- to disable, unlike ISPanel-derived windows.
+    table.insert(HUD._all, o)
     return o
+end
+
+-- A player slot going away (disconnect, death, nil, task point A3): remove
+-- the element from the UI manager and drop every reference to it, so
+-- nothing about it can leak.
+function HUD:destroy()
+    self:hide()
+    for i = #HUD._all, 1, -1 do
+        if HUD._all[i] == self then table.remove(HUD._all, i) end
+    end
 end
 
 function HUD:onResolutionChange(oldW, oldH, newW, newH)

@@ -1,8 +1,10 @@
--- Presence detection: is the local player (player 0 only) standing on a
--- medical scale tile. The tile is walkable (verified in game), so only the
--- square under the player is ever looked at, and only when that square
--- changed since the last check: on a still player the tick costs one call
--- and one comparison. Fires onScaleOn/onScaleOff once per transition.
+-- Presence detection, one state slot per local player (splitscreen, task
+-- 2026-09-18 point A): is that player standing on a medical scale tile. The
+-- tile is walkable (verified in game), so only the square under the player
+-- is ever looked at, and only when that square changed since the last check
+-- for THAT player: a still player still costs one call and one comparison
+-- per player per throttled tick, nothing more. Fires onScaleOn(n, square)/
+-- onScaleOff(n) once per transition, n being the player index.
 -- See docs/API-COMPAT.md for which calls are proven on which build.
 WeightScale = WeightScale or {}
 WeightScale.Detect = WeightScale.Detect or {}
@@ -14,11 +16,24 @@ Detect.spriteNames = {
 }
 
 Detect.tickEvery = 6          -- every few ticks, not every frame
-Detect._tick = 0
-Detect._onScale = false
-Detect._lastSquare = false    -- false, not nil: a nil square is a real state
-Detect.onScaleOn = nil        -- set by WeightScaleMain: function(square)
-Detect.onScaleOff = nil       -- function()
+Detect.players = Detect.players or {}  -- [n] = {tick, onScale, lastSquare}
+Detect.onScaleOn = nil        -- set by WeightScaleMain: function(n, square)
+Detect.onScaleOff = nil       -- function(n)
+
+local function stateFor(n)
+    local s = Detect.players[n]
+    if not s then
+        s = { tick = 0, onScale = false, lastSquare = false }
+        Detect.players[n] = s
+    end
+    return s
+end
+
+-- Drops a player's detection state, e.g. once its HUD element is removed
+-- (disconnect/death/nil slot): no stale state may keep a slot alive.
+function Detect.clear(n)
+    Detect.players[n] = nil
+end
 
 local function hasScaleSprite(square)
     if not square or not square.getObjects then return false end
@@ -47,24 +62,24 @@ local function playerSquare(playerObj)
     return nil
 end
 
-function Detect.update()
-    Detect._tick = Detect._tick + 1
-    if Detect._tick % Detect.tickEvery ~= 0 then return end
-
-    local playerObj = getSpecificPlayer and getSpecificPlayer(0) or (getPlayer and getPlayer())
+-- n is the player index (0-based, as getSpecificPlayer/getPlayerNum use it).
+function Detect.update(n, playerObj)
+    local s = stateFor(n)
+    s.tick = s.tick + 1
+    if s.tick % Detect.tickEvery ~= 0 then return end
     if not playerObj then return end
 
     local square = playerSquare(playerObj)
-    if square == Detect._lastSquare then return end
-    Detect._lastSquare = square
+    if square == s.lastSquare then return end
+    s.lastSquare = square
 
     local onNow = square ~= nil and hasScaleSprite(square)
 
-    if onNow and not Detect._onScale then
-        Detect._onScale = true
-        if Detect.onScaleOn then Detect.onScaleOn(square) end
-    elseif not onNow and Detect._onScale then
-        Detect._onScale = false
-        if Detect.onScaleOff then Detect.onScaleOff() end
+    if onNow and not s.onScale then
+        s.onScale = true
+        if Detect.onScaleOn then Detect.onScaleOn(n, square) end
+    elseif not onNow and s.onScale then
+        s.onScale = false
+        if Detect.onScaleOff then Detect.onScaleOff(n) end
     end
 end
