@@ -315,5 +315,74 @@ check(registered(hud1) == 0, "a disconnected player's element is removed from th
 check(Main.huds[1] == nil, "a disconnected player's HUD reference is dropped")
 check(Detect.players[1] == nil, "a disconnected player's Detect state is cleared")
 
+-- 10. containment (task 2026-09-18, screenshot bug: the native panel's
+--     background covered only the left part of the text). Every draw call
+--     of a style must land fully inside that style's own contract
+--     rectangle, for the widest strings the game can show in each unit.
+--     getTexture is stubbed non-nil so drawGlyphs takes its real
+--     drawSubTexture path instead of skipping for lack of a texture (the
+--     mod draws no vanilla text at all, see WeightScaleHUD.lua's header).
+function getTexture(path) return { path = path } end
+local DRAWS
+local function resetDraws() DRAWS = {} end
+function ISUIElement:drawTexture(tex, x, y, a, r, g, b) end
+function ISUIElement:drawRect(x, y, w, h, a, r, g, b)
+    table.insert(DRAWS, { kind = "rect", x = x, y = y, w = w, h = h })
+end
+function ISUIElement:drawRectBorder(x, y, w, h, a, r, g, b)
+    table.insert(DRAWS, { kind = "border", x = x, y = y, w = w, h = h })
+end
+function ISUIElement:drawSubTexture(tex, sx, sy, sw, sh, x, y, w, h, a, r, g, b)
+    table.insert(DRAWS, { kind = "glyph", x = x, y = y, w = w, h = h })
+end
+
+local function allInside(rx, ry, rw, rh)
+    for i = 1, #DRAWS do
+        local d = DRAWS[i]
+        if d.x < rx or d.y < ry or d.x + d.w > rx + rw or d.y + d.h > ry + rh then
+            return false, d
+        end
+    end
+    return true
+end
+
+local hudR = WeightScale.HUD:new(9)
+
+resetDraws()
+hudR:drawPanel(0, 0, { alpha = 1, dy = 0, reading = Geo.weight.max }, "kg")
+local ok, bad = allInside(0, 0, Geo.panel.w, Geo.panel.h)
+check(ok, "native panel (kg, widest value) must draw entirely inside the contract's " ..
+    Geo.panel.w .. "x" .. Geo.panel.h .. " rectangle" ..
+    (bad and (", offending " .. bad.kind .. " at x=" .. bad.x .. " w=" .. bad.w) or ""))
+
+resetDraws()
+hudR:drawPanel(0, 0, { alpha = 1, dy = 0, reading = Geo.weight.max }, "lb")
+ok, bad = allInside(0, 0, Geo.panel.w, Geo.panel.h)
+check(ok, "native panel (lb, widest value) must draw entirely inside the contract's " ..
+    Geo.panel.w .. "x" .. Geo.panel.h .. " rectangle" ..
+    (bad and (", offending " .. bad.kind .. " at x=" .. bad.x .. " w=" .. bad.w) or ""))
+
+resetDraws()
+hudR:drawBeam(0, 0, { alpha = 1, dy = 0, angle = 0, reading = Geo.weight.max }, "kg")
+ok = allInside(0, 0, Geo.readout.w, Geo.readout.h)
+check(ok, "beam head (kg, widest value) must draw entirely inside the readout rectangle")
+
+resetDraws()
+hudR:drawBeam(0, 0, { alpha = 1, dy = 0, angle = 0, reading = Geo.weight.max }, "lb")
+ok = allInside(0, 0, Geo.readout.w, Geo.readout.h)
+check(ok, "beam head (lb, widest value) must draw entirely inside the readout rectangle")
+
+-- 11. toggling style while visible resizes and re-anchors at once, for
+--     every local player (already exercised structurally in step 3; this
+--     is the direct applyBounds() re-check for the instance used above).
+Prefs.style = "panel"
+hudR:applyBounds()
+check(hudR.width == Geo.panel.w and hudR.height == Geo.panel.h,
+    "toggling to panel while visible resizes the element to the panel rectangle")
+Prefs.style = "beam"
+hudR:applyBounds()
+check(hudR.width == Geo.readout.w and hudR.height == Geo.readout.h,
+    "toggling back to beam while visible resizes the element to the readout rectangle")
+
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

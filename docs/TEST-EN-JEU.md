@@ -31,7 +31,10 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
    pour verifier que la nouvelle unite est utilisee.
 5. **Clic droit sur le releve.** Bascule entre le style "tete a fleau" et le
    style "panneau natif". Remonter sur la balance pour verifier le nouveau
-   style.
+   style. Sur le panneau natif, le fond sombre doit couvrir TOUT le nombre
+   et l'unite (pas juste la partie gauche), en kg et en lb (corrige le
+   2026-09-18, bug ou le fond ne couvrait qu'un bout du texte). Reclic droit
+   pour revenir a la tete a fleau.
 6. **Clic ailleurs a l'ecran.** Un clic hors du rectangle du releve (par
    exemple sur le monde ou un autre element d'UI) doit se comporter
    normalement, comme si le HUD n'etait pas la.

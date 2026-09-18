@@ -98,13 +98,23 @@ function HUD:drawGlyphs(set, text, x, y, rgb, alpha)
     end
 end
 
-function HUD:drawNumeral(baseX, baseY, w, unit, alpha)
-    local s = Geo.slab
+-- boxW is the width to centre the text within, measured from baseX (NOT
+-- always Geo.slab.w: the beam head centres within the slab, the panel
+-- centres within its own, narrower, box -- see the maquette's numeral() vs
+-- nativePanel() in docs/maquettes/v2/js/draw-readout.js). baseYOffset is
+-- likewise per style: the slab uses +32 off its own y, the panel draws at a
+-- fixed 38 off its own top (nativePanel() again). Passing the wrong box
+-- here is exactly the 2026-09-18 bug: the panel's background stayed at the
+-- contract's 152x52 while the text centred on the beam's 288-wide slab and
+-- spilled out the right edge.
+function HUD:drawNumeral(baseX, baseY, w, unit, alpha, boxW, baseYOffset)
+    boxW = boxW or Geo.slab.w
+    baseYOffset = baseYOffset or 32
     local val = Core.format(w, unit)
     local nw = glyphMeasure(GLYPH_NUM, val)
     local uw = glyphMeasure(GLYPH_UNIT, unit)
-    local x = math.floor(baseX + (s.w - (nw + 9 + uw)) / 2 + 0.5)
-    local base = baseY + 32
+    local x = math.floor(baseX + (boxW - (nw + 9 + uw)) / 2 + 0.5)
+    local base = baseY + baseYOffset
     self:drawGlyphs(GLYPH_NUM, val, x, base, CREAM, alpha)
     self:drawGlyphs(GLYPH_UNIT, unit, x + nw + 9, base, DIM, alpha)
 end
@@ -182,7 +192,7 @@ function HUD:drawBeam(ax, ay, st, unit)
     if tex.slab then self:drawTexture(tex.slab, ax + s.x, dy + s.y, alpha, 1, 1, 1) end
     local band = Core.bandOf(st.reading)
     self:drawRect(ax + s.x, dy + s.y, s.w, 2, alpha, band.colour[1] / 255, band.colour[2] / 255, band.colour[3] / 255)
-    self:drawNumeral(ax + s.x, dy + s.y, st.reading, unit, alpha)
+    self:drawNumeral(ax + s.x, dy + s.y, st.reading, unit, alpha, s.w, 32)
 end
 
 -- Direction 2: the native panel fallback style.
@@ -197,7 +207,7 @@ function HUD:drawPanel(ax, ay, st, unit)
         self:drawRectBorderFallback(ax, dy, p.w, p.h, st.alpha * 0.34, 1, 1, 1)
     end
     self:drawRect(ax, dy, 3, p.h, st.alpha, band.colour[1] / 255, band.colour[2] / 255, band.colour[3] / 255)
-    self:drawNumeral(ax + 3, dy, st.reading, unit, st.alpha)
+    self:drawNumeral(ax + 3, dy, st.reading, unit, st.alpha, p.w - 3, 38)
 end
 
 -- B42 PROVEN: ISUIElement:drawRectBorder exists (ISUIElement.lua) and draws
