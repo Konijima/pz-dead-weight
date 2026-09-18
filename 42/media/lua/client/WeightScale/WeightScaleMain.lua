@@ -22,8 +22,10 @@ end
 function Main.onGameStart()
     WeightScale.Prefs.load()
     if not Main.hud then
+        -- Built but deliberately NOT added to the UI manager: the HUD only
+        -- registers itself while the readout is on screen, so an idle mod
+        -- owns no pixel and consumes no mouse event anywhere.
         Main.hud = WeightScale.HUD:new()
-        Main.hud:addToUIManager()
     end
 
     WeightScale.Detect.onScaleOn = function()
@@ -40,6 +42,7 @@ function Main.onPlayerUpdate(playerObj)
     if not Main.hud then return end
     if playerObj ~= getSpecificPlayer(0) then return end
     WeightScale.Detect.update()
+    Main.hud:tick()
 end
 
 function Main.onResolutionChange(oldW, oldH, newW, newH)
@@ -48,10 +51,12 @@ function Main.onResolutionChange(oldW, oldH, newW, newH)
     end
 end
 
--- B41 UNPROVEN: OnPlayerUpdate (no legacy evidence either way). Falls back to
--- the always-present OnTick, at the cost of Detect throttling its own work.
+-- B41 UNPROVEN: OnPlayerUpdate (no evidence either way in the 2022 release,
+-- kept in git history at 6631165). Falls back to the always-present OnTick,
+-- at the cost of Detect throttling its own work.
 function Main.onTick()
     WeightScale.Detect.update()
+    if Main.hud then Main.hud:tick() end
 end
 
 Events.OnGameStart.Add(Main.onGameStart)

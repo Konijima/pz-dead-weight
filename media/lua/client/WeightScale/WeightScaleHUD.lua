@@ -1,7 +1,14 @@
--- Full-screen ISUIElement, always on top of the world, drawing the readout
--- with texture blits and rectangles only (no drawText, so the player's font
--- size option can never change the look). Positions per docs/maquettes/v2/js
--- app.js anchor(): screen centre + the maquette offsets.
+-- ISUIElement sized to the readout rectangle and registered with the UI
+-- manager only while the readout is on screen, drawing with texture blits and
+-- rectangles only (no drawText, so the player's font size option can never
+-- change the look). The element sits at screen centre + the maquette offsets
+-- (docs/maquettes/v2/js app.js anchor()) and everything inside is drawn in
+-- element local coordinates, 0,0 being its top left.
+-- A full screen element used to swallow every mouse release in the game:
+-- UIManager.updateMouseButtons asks each element under the cursor to consume
+-- the event, and zombie.ui.UIElement.onRightMouseUp answers "consumed" when
+-- the Lua handler returns nothing, which ISUIElement:onRightMouseUp does.
+-- The world context menu only fires on the ungated path, so it never opened.
 -- See docs/API-COMPAT.md for the proof behind every call here.
 require "WeightScale/WeightScaleGeo"
 require "WeightScale/WeightScaleCore"
@@ -222,28 +229,61 @@ function HUD:readoutRect()
     return ax, ay, Geo.panel.w, Geo.panel.h
 end
 
+-- Moves and resizes the element onto the current style's readout rectangle.
+-- Called whenever the readout appears, the style changes or the resolution
+-- changes; the drawing below never has to know where the element ended up.
+function HUD:applyBounds()
+    local x, y, w, h = self:readoutRect()
+    self:setX(x)
+    self:setY(y)
+    self:setWidth(w)
+    self:setHeight(h)
+end
+
+function HUD:show()
+    self:applyBounds()
+    if self.shown then return end
+    self:addToUIManager()
+    self.shown = true
+end
+
+function HUD:hide()
+    if not self.shown then return end
+    self:removeFromUIManager()
+    self.shown = false
+end
+
 function HUD:render()
     if self.mode == "idle" then return end
     local t = getTimestampMs() - self.t0
     local st = Core.sample(self.mode, t, self.target)
-    if not st.visible then
-        self.mode = "idle"
-        return
-    end
+    if not st.visible then return end
     local unit = WeightScale.Prefs and WeightScale.Prefs.unit or "kg"
     local style = WeightScale.Prefs and WeightScale.Prefs.style or "beam"
-    local ax, ay = self:anchor(style)
     if style == "beam" then
-        self:drawBeam(ax, ay, st, unit)
+        self:drawBeam(0, 0, st, unit)
     else
-        self:drawPanel(ax, ay, st, unit)
+        self:drawPanel(0, 0, st, unit)
     end
+end
+
+-- Lifecycle, driven once per player tick by WeightScaleMain: nothing is
+-- registered with the UI manager once the leaving animation has run out, so
+-- the mod owns no screen space at all while the player is off the scale.
+-- No table is built here, unlike Core.sample, so the tick path stays free of
+-- allocations; T.offEnd is exactly sample()'s own visibility cutoff.
+function HUD:tick()
+    if self.mode ~= "off" then return end
+    if getTimestampMs() - self.t0 < Core.T.offEnd then return end
+    self.mode = "idle"
+    self:hide()
 end
 
 function HUD:startOn(targetKg)
     self.mode = "on"
     self.t0 = getTimestampMs()
     self.target = targetKg
+    self:show()
 end
 
 function HUD:startOff()
@@ -252,50 +292,55 @@ function HUD:startOff()
     self.t0 = getTimestampMs()
 end
 
--- Clicks: only the readout rectangle reacts, and only while something is
--- actually drawn there (Core.hitTest, pure), everything else passes through
--- so the world underneath keeps receiving input. B42 PROVEN: onMouseDown /
--- onRightMouseDown may return false to let the click fall through.
--- B41 UNPROVEN: if passthrough by return value is not honoured, worst case
--- is a swallowed click over the readout area only, never a crash.
+-- Clicks: the element IS the readout rectangle now, so the game never hands
+-- it a click from anywhere else. Core.hitTest still runs, in element local
+-- coordinates, because it also rules out the frames where the readout is
+-- there but invisible (idle, or faded out at the end of the leaving move).
+local HIT_RECT = { x = 0, y = 0, w = 0, h = 0 }
+
 function HUD:currentAlpha()
     if self.mode == "idle" then return 0 end
     local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target)
     return st.alpha
 end
 
+function HUD:hitLocal(x, y)
+    HIT_RECT.w = self.width
+    HIT_RECT.h = self.height
+    return Core.hitTest(self.mode, x, y, HIT_RECT, self:currentAlpha())
+end
+
 function HUD:onMouseDown(x, y)
-    local rx, ry, rw, rh = self:readoutRect()
-    local rect = { x = rx, y = ry, w = rw, h = rh }
-    if not Core.hitTest(self.mode, x, y, rect, self:currentAlpha()) then return false end
+    if not self:hitLocal(x, y) then return false end
     if WeightScale.Prefs then WeightScale.Prefs.toggleUnit() end
     return true
 end
 
 function HUD:onRightMouseDown(x, y)
-    local rx, ry, rw, rh = self:readoutRect()
-    local rect = { x = rx, y = ry, w = rw, h = rh }
-    if not Core.hitTest(self.mode, x, y, rect, self:currentAlpha()) then return false end
+    if not self:hitLocal(x, y) then return false end
     if WeightScale.Prefs then WeightScale.Prefs.toggleStyle() end
+    -- the two styles have their own size and offset, follow them.
+    self:applyBounds()
     return true
 end
 
 function HUD.new(cls)
-    local w = getCore():getScreenWidth()
-    local h = getCore():getScreenHeight()
-    local o = ISUIElement:new(0, 0, w, h)
+    local o = ISUIElement:new(0, 0, Geo.readout.w, Geo.readout.h)
     setmetatable(o, cls)
     cls.__index = cls
     o.mode = "idle"
     o.t0 = 0
     o.target = Geo.weight.start
-    o:setAlwaysOnTop(true)
+    o.shown = false
+    -- No setAlwaysOnTop: it is a no-op before the element is instantiated
+    -- (ISUIElement:setAlwaysOnTop guards on self.javaObject, which only
+    -- exists once addToUIManager has run), so the approved look never had
+    -- it. An element added last is drawn last anyway.
     -- plain ISUIElement paints no background/border unless told to; nothing
     -- to disable, unlike ISPanel-derived windows.
     return o
 end
 
 function HUD:onResolutionChange(oldW, oldH, newW, newH)
-    self:setWidth(newW)
-    self:setHeight(newH)
+    self:applyBounds()
 end
