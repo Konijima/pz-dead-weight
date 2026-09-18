@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Weight Scale, maquette v2</title>
+<link rel="stylesheet" href="v2/css/page.css">
+</head>
+<body data-zoom="fit">
+<div class="wrap">
+
+<header>
+  <h1><small>Project Zomboid, mod Weight Scale, B41 et B42</small>
+    Affichage du poids : maquette v2</h1>
+  <p class="lede">Le personnage monte sur la balance medicale, le releve apparait en haut
+  a droite du centre de l'ecran, il redescend et le releve s'en va. Aucune interaction
+  sauf un clic sur le releve, qui bascule entre kg et lb et s'en souvient. Deux
+  directions ci dessous : la tete a fleau, en gros plan sur l'objet lui meme, et un
+  repli en panneau natif. Les deux sont dessines avec les primitives de l'UI Lua de PZ :
+  textures, une texture pivotee, rectangles. Les chiffres sortent des pages de police
+  du jeu.</p>
+</header>
+
+<div class="toolbar">
+  <button id="zoom-toggle" class="primary">Passer a l'echelle reelle 1:1</button>
+  <span class="note" id="zoom-state">Affichage reduit a la largeur de la page.
+  Le cadre fait 1920 x 1080 px.</span>
+</div>
+
+<section id="dir1">
+  <h2>1. Tete a fleau<span class="tag">direction principale</span></h2>
+  <p class="lede">Gros plan sur la tete de fleau que le personnage a sous les yeux,
+  dans les couleurs du sprite : email creme, fleau noir, metal use. Le fleau bascule,
+  le curseur glisse jusqu'a la valeur, le fleau revient a l'horizontale avec une
+  oscillation amortie. Les zones de trait sont peintes sur la graduation, aux vrais
+  seuils, sur la meme fonction de projection que le curseur.</p>
+
+  <div class="frame"><canvas id="frame-beam" width="1920" height="1080"></canvas></div>
+  <div class="controls">
+    <button id="on-beam">Monter sur la balance</button>
+    <button id="off-beam">Descendre</button>
+    <label>Poids <input id="w-beam" type="range" min="35" max="130" step="0.1" value="80"></label>
+    <span class="val" id="wv-beam">80.0 kg</span>
+    <span class="note">Clic sur le releve : kg / lb</span>
+  </div>
+
+  <h3>Bande d'images, prise sur l'animation</h3>
+  <div class="strip" id="strip-beam"></div>
+
+  <h3>Specification</h3>
+  <div class="spec"><dl>
+    <dt>Taille du releve</dt><dd id="s-size"></dd>
+    <dt>Decalage depuis le centre</dt><dd id="s-off"></dd>
+    <dt>Texture plaque email</dt><dd id="s-plate"></dd>
+    <dt>Texture fleau (pivotee)</dt><dd id="s-beam"></dd>
+    <dt>Texture curseur</dt><dd id="s-poise"></dd>
+    <dt>Texture butees</dt><dd id="s-stops"></dd>
+    <dt>Texture plaque chiffres</dt><dd id="s-slab"></dd>
+    <dt>Axe de graduation</dt><dd id="s-track"></dd>
+    <dt>Police</dt><dd id="s-font"></dd>
+    <dt>Taille de glyphe</dt><dd id="s-fonth"></dd>
+    <dt>Montee : phases</dt><dd id="s-tim"></dd>
+    <dt>Descente</dt><dd id="s-off2"></dd>
+    <dt>Amortissement</dt><dd id="s-damp"></dd>
+    <dt>Courbes</dt><dd class="plain">apparition <code>1-(1-t)^3</code>,
+      bascule <code>1-(1-t)^2</code>, glissement
+      <code>t&lt;0.5 ? 4t^3 : 1-(-2t+2)^3/2</code>, disparition <code>t^2</code>.</dd>
+    <dt>Zones de trait</dt><dd class="plain">35 a 50 emacie, 50 a 65 tres maigre,
+      65 a 75 maigre, 75 a 85 normal, 85 a 100 surpoids, 100 a 130 obese.
+      Bande active a pleine opacite, les autres a 46 %.</dd>
+  </dl></div>
+</section>
+
+<section id="dir2">
+  <h2>2. Panneau natif<span class="tag alt">repli</span></h2>
+  <p class="lede">Panneau sombre translucide dans le vocabulaire de l'UI de PZ :
+  fond noir a 74 %, filet blanc a 13 %, un liseré de 3 px a la couleur de la bande.
+  Le chiffre et son unite, rien d'autre. Meme moteur d'animation : le panneau apparait,
+  le chiffre monte avec le curseur invisible, puis se fige.</p>
+
+  <div class="frame"><canvas id="frame-panel" width="1920" height="1080"></canvas></div>
+  <div class="controls">
+    <button id="on-panel">Monter sur la balance</button>
+    <button id="off-panel">Descendre</button>
+    <label>Poids <input id="w-panel" type="range" min="35" max="130" step="0.1" value="80"></label>
+    <span class="val" id="wv-panel">80.0 kg</span>
+    <span class="note">Clic sur le releve : kg / lb</span>
+  </div>
+
+  <h3>Bande d'images, prise sur l'animation</h3>
+  <div class="strip" id="strip-panel"></div>
+
+  <h3>Specification</h3>
+  <div class="spec"><dl>
+    <dt>Taille du panneau</dt><dd id="s-psize"></dd>
+    <dt>Decalage depuis le centre</dt><dd id="s-poff"></dd>
+    <dt>Textures</dt><dd class="plain">aucune. Trois rectangles : fond
+      <code>rgba(0,0,0,0.74)</code>, filet <code>rgba(255,255,255,0.13)</code>,
+      liseré de bande 3 x 52 px a gauche.</dd>
+    <dt>Police</dt><dd class="plain">la meme que la direction 1, meme atlas.</dd>
+    <dt>Montee</dt><dd class="plain">apparition et glissement identiques a la
+      direction 1; pas de fleau, donc pas de phase d'amortissement visible :
+      le chiffre se fige a 1060 ms.</dd>
+  </dl></div>
+</section>
+
+<section id="reco">
+  <h2>Recommandation</h2>
+  <div class="reco">
+    <p><b>Retenir la tete a fleau.</b> C'est la seule des deux qui repond a la
+    demande de depart : le joueur monte sur l'objet et lit l'objet, pas un widget
+    pose par dessus. Le fleau qui bascule puis se stabilise porte a lui seul
+    l'information "la mesure se fait, puis elle est faite", sans un mot de texte,
+    et la position du curseur donne la bande de trait au premier coup d'oeil,
+    avant meme que le chiffre soit lu.</p>
+    <p><b>Garder le panneau natif comme repli</b> pour le cas ou les textures ne
+    chargent pas, et comme option si le proprietaire trouve la tete a fleau trop
+    presente a l'ecran. Il coute trois rectangles et un dessin de chiffre.</p>
+    <p>Le poids bouge d'environ un dixieme de kilo en quelques heures de jeu : le
+    releve n'a donc rien a animer en continu. Il ne bouge qu'a la montee et a la
+    descente, ce que les deux directions respectent.</p>
+  </div>
+</section>
+
+<section id="ref">
+  <h2>L'objet dans le jeu</h2>
+  <div class="refshot">
+    <img src="reference/balance-en-jeu.png" alt="balance medicale a fleau dans PZ">
+    <p>Capture du proprietaire, agrandie. Colonne d'email creme, tete a fleau en haut,
+    plateau noir au sol, le personnage se tient dessus face a la tete. Aucun cadran sur
+    cet objet : la direction cadran de la v1 est abandonnee. Les couleurs de la maquette
+    sont prises la dessus : email <code>#e2dbc8</code> vers <code>#bcb4a0</code>,
+    fleau <code>#2c2c30</code> vers <code>#121214</code>, metal use
+    <code>#a6a08e</code>.</p>
+  </div>
+</section>
+
+</div>
+<script src="v2/js/geo.js"></script>
+<script src="v2/js/glyphs.js"></script>
+<script src="v2/js/anim.js"></script>
+<script src="v2/js/draw-readout.js"></script>
+<script src="v2/js/draw-scene.js"></script>
+<script src="v2/js/app.js"></script>
+<script src="v2/js/boot.js"></script>
+<script src="v2/js/page.js"></script>
+</body>
+</html>
