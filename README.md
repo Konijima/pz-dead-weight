@@ -14,14 +14,21 @@ copied into the new layout so the rework has somewhere to start from.
 
 ## Layout
 
+The repository root is the mod folder itself, laid out so both builds can
+load from the same copy:
+
+- Root `mod.info`, `poster.png` and `media/` -- the Build 41 side. Build 41
+  reads these straight from the mod folder root, copied as-is from the B41
+  source.
 - `42/` -- the Build 42 mod folder: `mod.info`, `poster.png`, and
   `media/lua/client/WeightScale` and `media/lua/shared/Translate` copied
-  as-is from the B41 source. This is what the game loads once the mod is
+  as-is from the B41 source. This is what Build 42 loads once the mod is
   enabled.
 - `common/` -- shared media (models, scripts, sound, textures) if a rework
   ever needs assets shared between builds. Empty for now.
-- `legacy/b41/` -- the original downloaded B41 mod, untouched, kept as the
-  reference for the rework.
+- `legacy/b41/` -- the original downloaded 2022 B41 release, frozen and
+  untouched, kept as the reference for the rework. Both `42/` and the root
+  are meant to receive the same rework over time.
 - `docs/` -- rework notes and design docs. Empty for now.
 - `workshop/` -- Steam Workshop material: `workshop.txt` (item id
   `2833096579` and the original description) and the original poster image.
