@@ -1,9 +1,44 @@
 #!/usr/bin/env python3
 """Guard on the two mod.info files: same id/name, every poster=/icon= file
-exists next to its mod.info, and no U+2014 (em dash) anywhere tracked."""
+exists next to its mod.info, no U+2014 (em dash) anywhere tracked, and every
+rich text tag in description= lines is space delimited so the game's parser
+(ISRichTextPanel.lua) never swallows a word glued to a tag."""
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+TAG_RE = re.compile(r"<[^<>]*>")
+
+
+def description_lines(path):
+    lines = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        if k.strip() == "description":
+            lines.append(v)
+    return lines
+
+
+def check_description_spacing(path):
+    problems = []
+    lines = description_lines(path)
+    for i, v in enumerate(lines):
+        for m in TAG_RE.finditer(v):
+            before = v[m.start() - 1] if m.start() > 0 else " "
+            after = v[m.end()] if m.end() < len(v) else " "
+            if before != " " or after != " ":
+                problems.append(f"{path}: description line {i}: tag {m.group()!r} not space delimited")
+    for i in range(len(lines) - 1):
+        end = lines[i][-1:] if lines[i] else ""
+        start = lines[i + 1][:1] if lines[i + 1] else ""
+        if end and start and end != " " and start != " ":
+            problems.append(
+                f"{path}: description lines {i}/{i + 1}: concatenation glues {end!r} to {start!r}"
+            )
+    return problems
 
 REPO = Path(__file__).resolve().parent.parent
 fail = False
@@ -43,6 +78,11 @@ for base, keys, posters in ((REPO, root_keys, root_posters), (REPO / "42", b42_k
     icon = keys.get("icon")
     if icon and not (base / icon).is_file():
         print(f"FAIL: missing icon file {base / icon}")
+        fail = True
+
+for base in (REPO / "mod.info", REPO / "42" / "mod.info"):
+    for problem in check_description_spacing(base):
+        print(f"FAIL: {problem}")
         fail = True
 
 tracked = subprocess.run(["git", "-C", str(REPO), "ls-files"], capture_output=True, text=True, check=True).stdout.splitlines()
