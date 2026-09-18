@@ -184,15 +184,22 @@ function HUD:drawPanel(ax, ay, st, unit)
     local dy = ay + st.dy
     local band = Core.bandOf(st.reading)
     self:drawRect(ax, dy, p.w, p.h, st.alpha * 0.74, 0, 0, 0)
-    self:drawRectBorder(ax, dy, p.w, p.h, st.alpha * 0.34, 1, 1, 1)
+    if type(self.drawRectBorder) == "function" then
+        self:drawRectBorder(ax, dy, p.w, p.h, st.alpha * 0.34, 1, 1, 1)
+    else
+        self:drawRectBorderFallback(ax, dy, p.w, p.h, st.alpha * 0.34, 1, 1, 1)
+    end
     self:drawRect(ax, dy, 3, p.h, st.alpha, band.colour[1] / 255, band.colour[2] / 255, band.colour[3] / 255)
     self:drawNumeral(ax + 3, dy, st.reading, unit, st.alpha)
 end
 
--- B42 PROVEN: ISUIElement:drawRect exists with an (x,y,w,h,a,r,g,b) border
--- helper (drawRectBorderStatic). No plain instance drawRectBorder, so build
--- the 1px frame from four rects, always available.
-function HUD:drawRectBorder(x, y, w, h, a, r, g, b)
+-- B42 PROVEN: ISUIElement:drawRectBorder exists (ISUIElement.lua) and draws
+-- the same 1px inset border this fallback builds from four rects, so it is
+-- used directly via inheritance (self:drawRectBorder resolves to it as long
+-- as HUD does not define its own method of that name, see below). Kept for
+-- B41, where the method is UNPROVEN, under a different name so it never
+-- shadows the native one.
+function HUD:drawRectBorderFallback(x, y, w, h, a, r, g, b)
     self:drawRect(x, y, w, 1, a, r, g, b)
     self:drawRect(x, y + h - 1, w, 1, a, r, g, b)
     self:drawRect(x, y, 1, h, a, r, g, b)
@@ -245,27 +252,32 @@ function HUD:startOff()
     self.t0 = getTimestampMs()
 end
 
--- Clicks: only the readout rectangle reacts, everything else passes through
+-- Clicks: only the readout rectangle reacts, and only while something is
+-- actually drawn there (Core.hitTest, pure), everything else passes through
 -- so the world underneath keeps receiving input. B42 PROVEN: onMouseDown /
 -- onRightMouseDown may return false to let the click fall through.
 -- B41 UNPROVEN: if passthrough by return value is not honoured, worst case
 -- is a swallowed click over the readout area only, never a crash.
+function HUD:currentAlpha()
+    if self.mode == "idle" then return 0 end
+    local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target)
+    return st.alpha
+end
+
 function HUD:onMouseDown(x, y)
     local rx, ry, rw, rh = self:readoutRect()
-    if x >= rx and x < rx + rw and y >= ry and y < ry + rh then
-        if WeightScale.Prefs then WeightScale.Prefs.toggleUnit() end
-        return true
-    end
-    return false
+    local rect = { x = rx, y = ry, w = rw, h = rh }
+    if not Core.hitTest(self.mode, x, y, rect, self:currentAlpha()) then return false end
+    if WeightScale.Prefs then WeightScale.Prefs.toggleUnit() end
+    return true
 end
 
 function HUD:onRightMouseDown(x, y)
     local rx, ry, rw, rh = self:readoutRect()
-    if x >= rx and x < rx + rw and y >= ry and y < ry + rh then
-        if WeightScale.Prefs then WeightScale.Prefs.toggleStyle() end
-        return true
-    end
-    return false
+    local rect = { x = rx, y = ry, w = rw, h = rh }
+    if not Core.hitTest(self.mode, x, y, rect, self:currentAlpha()) then return false end
+    if WeightScale.Prefs then WeightScale.Prefs.toggleStyle() end
+    return true
 end
 
 function HUD.new(cls)

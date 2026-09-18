@@ -54,6 +54,22 @@ for i = 1, #fmtCases do
     check(decimals == 1, "format(" .. kg .. "," .. unit .. ") has " .. decimals .. " decimals: " .. got)
 end
 
+-- hitTest: idle is a dead readout (no dead zone over the map), a visible HUD
+-- reacts inside its rect and passes through outside it, edges are inclusive
+-- top/left and exclusive bottom/right, and a fully faded-out leaving frame
+-- (alpha <= 0) is not clickable even though sample() still calls it visible.
+local hrect = { x = 100, y = 100, w = 50, h = 20 }
+check(Core.hitTest("idle", 110, 110, hrect) == false, "hitTest idle inside rect should be false")
+check(Core.hitTest("on", 110, 110, hrect) == true, "hitTest visible inside rect should be true")
+check(Core.hitTest("on", 90, 90, hrect) == false, "hitTest visible outside rect should be false")
+check(Core.hitTest("on", hrect.x, hrect.y, hrect) == true, "hitTest top-left corner inclusive")
+check(Core.hitTest("on", hrect.x + hrect.w - 1, hrect.y + hrect.h - 1, hrect) == true,
+    "hitTest bottom-right last inside pixel should be true")
+check(Core.hitTest("on", hrect.x + hrect.w, hrect.y + hrect.h, hrect) == false,
+    "hitTest bottom-right corner exclusive")
+check(Core.hitTest("off", 110, 110, hrect, 0) == false, "hitTest fully faded (alpha 0) should be false")
+check(Core.hitTest("off", 110, 110, hrect, 0.01) == true, "hitTest barely visible (alpha > 0) should be true")
+
 -- Prefs parser survives garbage / missing file: stub getFileReader.
 require("WeightScale/WeightScalePrefs")
 local Prefs = WeightScale.Prefs

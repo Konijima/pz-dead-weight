@@ -20,6 +20,13 @@ if [ ! -f "docs/maquettes/v2/js/anim.js" ]; then
     exit 1
 fi
 
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "FAIL: python3 is required for the geo check" >&2
+    exit 1
+fi
+echo "-- geo generator drift check --"
+python3 tools/gen-geo.py --check
+
 echo "-- lua core bench ($LUA) --"
 "$LUA" tests/core_spec.lua
 

@@ -43,7 +43,7 @@ function buildSpecs(){
   '<p><b>2. A - Cadran diegetique.</b> Le plus in-fiction (une vraie '+
   'balance a aiguille) et le plus lisible d\'un coup d\'oeil grace aux '+
   'bandes imprimees, mais coute trois textures et une rotation en '+
-  'continu ; a garder si Mathieu veut un objet plus « physique » que '+
+  'continu ; a garder si le proprietaire veut un objet plus « physique » que '+
   'HUD.</p>'+
   '<p><b>3. B - Fleau a curseur.</b> Le plus long a lire (il faut '+
   'suivre le curseur puis le chiffre) et le moins bon pour l\'indice de '+

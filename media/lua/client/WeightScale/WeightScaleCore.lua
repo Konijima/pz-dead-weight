@@ -88,6 +88,19 @@ T.offEnd = T.offFall + T.offFade
 WeightScaleCore.T = T
 WeightScaleCore.clamp01 = clamp01
 
+-- Pure hit test for the readout rectangle: no hit while idle (nothing drawn,
+-- so no dead zone over the map), no hit once the leaving animation has fully
+-- faded (alpha <= 0, still "visible" for a frame or two under sample()'s
+-- offEnd cutoff but nothing on screen to click on). rect is {x, y, w, h};
+-- alpha is optional, treated as fully opaque when omitted.
+function WeightScaleCore.hitTest(mode, x, y, rect, alpha)
+    if mode == "idle" then return false end
+    if alpha ~= nil and alpha <= 0 then return false end
+    if x < rect.x or x >= rect.x + rect.w then return false end
+    if y < rect.y or y >= rect.y + rect.h then return false end
+    return true
+end
+
 -- mode "on" | "off"; t in ms from the start of that move; target in kg.
 -- Returns { alpha, dy, angle, reading, visible }, same fields as anim.js sample().
 function WeightScaleCore.sample(mode, t, target)
