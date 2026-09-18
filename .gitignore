@@ -1,0 +1,3 @@
+*.wav
+tools/out/
+__pycache__/

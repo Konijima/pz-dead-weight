@@ -1,0 +1,17 @@
+IG_UI_EN = {
+
+    IGUI_Weight_stable = "Stable",
+    IGUI_Losing_weight = "Losing weight",
+    IGUI_Gaining_weight = "Gaining weight",
+    IGUI_Gaining_weight_fast = "Gaining weight fast",
+    IGUI_Losing_weight_fast = "Losing weight fast",
+
+    IGUI_WeightScale_NameLabel = "Name",
+    IGUI_WeightScale_WeightLabel = "Weight",
+    IGUI_WeightScale_WeightChangeLabel = "Weight Change",
+    IGUI_WeightScale_CaloriesLabel = "Calories",
+    IGUI_WeightScale_CarbohydratesLabel = "Carbohydrates",
+    IGUI_WeightScale_LipidsLabel = "Lipids",
+    IGUI_WeightScale_ProteinsLabel = "Proteins",
+
+}
