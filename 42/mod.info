@@ -1,4 +1,7 @@
-name=Weight Scale
-id=WeightScale
-description=Stand on a working medical scale to see your body weight.
+name=Dead Weight
+id=DeadWeight
+description=Step on the clinic scale to read your exact weight; the character screen only tells you the category.
 poster=poster.png
+icon=icon.png
+modversion=1.0.0
+versionMin=42.20.0

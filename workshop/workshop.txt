@@ -1,10 +1,63 @@
-# The Steam Workshop item, as downloaded from the original B41 upload.
-# id and description are copied from the subscribed item and from the
-# 2022 release's mod.info (git history, commit 6631165). Not resubmitted
-# yet: this is
-# placement only, kept here for when the B42 rework goes back up.
+# The Steam Workshop item, as the game's own submit screen reads it.
+#
+# Format proven on this machine from an existing item's own workshop.txt
+# (~/Zomboid/Workshop/CeroSec/workshop.txt): every line is trimmed; a blank
+# one, or one starting with "#" or "//", is skipped, which is why these
+# comments are legal. The keys it knows are id=, title=, description=,
+# tags=, visibility= and version= (read and ignored). "description=" may
+# repeat: each line is appended to the one before with a single newline
+# between them, so a blank line in the description is a bare "description="
+# here. "tags=" is split on ";" and the legal set is the game's own
+# media/WorkshopTags.txt. "visibility=" is one of public, friendsOnly,
+# private, unlisted.
+#
+# This is a NEW item: no "id=" line. Steam writes one in after the first
+# upload (the submit screen calls writeWorkshopTxt when you leave its
+# second page) -- copy it back here and onto the "Weight Scale - mod
+# Project Zomboid (reprise B42)" vault page once it exists, see
+# tools/pack-workshop.sh and docs/RELEASE checklist notes in README.md.
+#
+# visibility=private on purpose: flip to public from the item's own Steam
+# page once the owner has walked docs/TEST-EN-JEU.md and is ready.
 version=1
-id=2833096579
-title=Weight Scale
-description=Use the weight scale to check your nutrition values.
-visibility=public
+title=Dead Weight
+description=[h1]Dead Weight[/h1]
+description=[i]Step on the scale. Face the truth.[/i]
+description=
+description=The clinic's scale still works. Stand on it and it tells you exactly what the apocalypse did to you, to one decimal. Not kindly.
+description=
+description=[h2]How it works[/h2]
+description=Walk onto the beam scale's plate. The beam head reads your weight (about 2.5 seconds to settle, like the real thing). Walk off and the number goes with you. No item, no menu, nothing to craft.
+description=
+description=[h2]Features[/h2]
+description=[list]
+description=[*]A brass and cream beam head readout, poise sliding toward your weight and settling instead of snapping, because a real scale wobbles.
+description=[*]One decimal of precision.
+description=[*]Click the readout to switch kg and lb.
+description=[*]Click again to switch between the beam head look and a plain native panel.
+description=[*]Your unit and style choices are remembered, per player.
+description=[*]The character screen's Info tab now shows only your weight category in words (Emaciated to Very High Weight) with its trend arrow. The exact number stays on the scale.
+description=[*]Your survivor turns once to face the scale's column on stopping, because reading a number sideways is undignified.
+description=[*]Two short sounds: stepping on, stepping off.
+description=[*]A "Step on Scale" option at the top of the scale's right click menu, with its own small hand icon, walks you there.
+description=[*]Every local splitscreen player gets their own readout.
+description=[*]No per frame scanning: the reading only exists while you are actually standing there.
+description=[*]28 languages, one Italian correction included (it is a bilancia, not a scala, which is a staircase).
+description=[/list]
+description=
+description=[h2]Options[/h2]
+description=Click the readout for kg/lb. Click again for beam head or native panel. Both remembered automatically.
+description=
+description=[h2]Compatibility[/h2]
+description=Built for Build 42, keeps Build 41 support. Singleplayer and multiplayer (client side), splitscreen aware, safe to add or remove mid save. If another mod replaces the character screen, this fails safe: you keep the scale, lose the trend arrow.
+description=
+description=[h2]About the old Weight Scale[/h2]
+description=Replaces the original item based "Weight Scale" and its full nutrition stats panel, now retired. Disable the old mod first; the two should not run together.
+description=
+description=[h2]Translations[/h2]
+description=28 languages included. Native speaker corrections welcome in the comments.
+description=
+description=Workshop ID: [i]set after upload[/i]
+description=Mod ID: DeadWeight
+tags=Build 41;Build 42;Interface;Language/Translation;QoL;Silly/Fun
+visibility=private

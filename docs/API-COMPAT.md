@@ -355,19 +355,37 @@ UTF-8 (`json.loads` on the raw bytes succeeds and round trips), same flat
 format proven above (`"%s/media/lua/shared/Translate/%s/%s.json"`) is
 charset-blind by folder, not by content -- one JSON parser, UTF-8 always.
 
-**B41 encoding: UNPROVEN, no B41 install on this machine** (same posture as
-every other B41-UNPROVEN row in this file). `tools/gen-translate.py`
-(`LANG_CHARSET`) assigns each language a legacy Windows code page from
-documented PZ B41 modding knowledge, never from a file this machine can
-read: `cp1252` for EN/FR/DE/ES/ES_CL/ES_MX/AR/CA/IT/PT/PTBR/NL/DA/NO/FI/ID,
-`cp1250` for PL/CS/HU/RO, `cp1251` for RU/UA, `cp1254` for TR. The one
-exception with real evidence is **TH, PROVEN**: the B42 client still ships
-`Translate/TH/language.txt` (every other language dropped that file) with
-`charset = UTF-8,` inside it -- the only per-language charset declaration
-found anywhere in the install. CH/CN/JP/KO have no single-byte code page
-that can hold their scripts and no B41 evidence either way, so they get
-`utf-8` too: a deliberate fallback that can never lose data, not a guessed
-legacy page (documented in `tools/gen-translate.py`'s module docstring).
+**B41 encoding: PROVEN BY WORKSHOP SAMPLES for JP, CH, CN, RU, PL, TR and
+KO** (2026-09-18), still guessed from documented modding knowledge for the
+rest. `tools/gen-translate.py` (`LANG_CHARSET`) assigns each language a
+legacy Windows code page: `cp1252` for
+EN/FR/DE/ES/ES_CL/ES_MX/AR/CA/IT/PT/PTBR/NL/DA/NO/FI/ID (still UNPROVEN),
+`cp1250` for PL/CS/HU/RO, `cp1251` for RU/UA, `cp1254` for TR. The evidence:
+every root `media/lua/shared/Translate/<LANG>/*.txt` under installed
+B41-era Workshop items on this machine (`~/.local/share/Steam/steamapps/
+workshop/content/108600/`), excluding anything under `42/` or `common/`
+(B42-side even when it reuses the legacy `.txt` shape), was byte-inspected.
+JP (3/3 files), CH (5/5) and CN (12/12) decode cleanly and legibly as UTF-8
+with no BOM. RU (10/10) and PL (10/10) decode cleanly only as CP1251/CP1250
+respectively (UTF-8 only "succeeds" on their all-ASCII files, and produces
+garbled text under the other's code page). TR (4/5, the fifth file is
+all-ASCII) decodes cleanly only as CP1254. **KO was corrected by this same
+pass**: it was assumed `utf-8` (no single-byte page can hold Hangul) but
+8 of 10 sampled `Translate/KO/*.txt` files start with the UTF-16LE BOM
+(`FF FE`) and decode cleanly as Korean text under `utf-16-le`; the other 2
+are ASCII-only and consistent either way. `LANG_CHARSET["KO"]` is now
+`"utf-16"` (Python's codec writes the same little-endian bytes with a
+leading BOM on encode). **PL/CS/HU/RO's CP1250 is proven only for PL**;
+CS/HU/RO share the family by documented convention but have no sampled
+Workshop item of their own on this machine, so they stay UNPROVEN. The one
+exception with real evidence beyond a sample is **TH, PROVEN**: the B42
+client still ships `Translate/TH/language.txt` (every other language
+dropped that file) with `charset = UTF-8,` inside it -- the only
+per-language charset declaration found anywhere in the install. CH/CN/JP
+have no single-byte code page that can hold their scripts, so `utf-8` here
+is both the proven answer and the safe fallback: a deliberate choice that
+can never lose data, not a guessed legacy page (documented in
+`tools/gen-translate.py`'s module docstring).
 The generator encodes each B41 `.txt` strictly in its assigned charset and
 raises (`sys.exit`, loud, not a silent replace) if any string cannot fit.
 

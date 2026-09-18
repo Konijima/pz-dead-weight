@@ -3,6 +3,12 @@
 Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 `_9`, en general dans un hopital ou une clinique.
 
+0. **Activer le bon mod.** L'id du mod a change (`WeightScale` ->
+   `DeadWeight`), donc une sauvegarde qui avait l'ancien "Weight Scale"
+   d'active doit avoir le nouveau "Dead Weight" active a la place: menu des
+   mods, decocher "Weight Scale", cocher "Dead Weight". Les deux ne doivent
+   jamais tourner ensemble (le vieux mod a base d'objet et son panneau de
+   stats complet est retire).
 1. **Monter sur la balance.** Se tenir sur la case de la balance, qui est
    praticable (verifie en jeu, 2026-09-18 : la detection ne regarde plus que
    cette case-la). Le releve doit apparaitre en haut a droite du centre de
