@@ -252,3 +252,76 @@ the rule above):
   these the running build loaded. `getText` is used with a plain string
   fallback (`WeightScaleMenu.lua`) in case a runtime is missing it, matching
   every other B41-UNPROVEN guard in this file.
+
+## 2026-09-18, Info tab shows the weight category in words
+
+Owner's request (task 2026-09-18): the Info tab's "Weight 80" line must show
+the weight CATEGORY in vanilla's own words, not the number, so a player needs
+a scale to know the number.
+
+- `ISCharacterScreen.render` -- PROVEN (client install,
+  `media/lua/client/XpSystem/ISUI/ISCharacterScreen.lua:74`). Lines 116-130
+  draw the label (`drawTextRight`), the number (`drawText`), then any of
+  three trend textures (`drawTexture`) computed from `weightStr`'s measured
+  width, a local inside `render()` out of reach from outside.
+- `self:drawTextRight(text,x,y,r,g,b,a,font)` / `self:drawText(...)` -- PROVEN,
+  same file, same lines; these are the panel's OWN methods (inherited via
+  `ISPanel`/`ISUIElement`), reassignable per-instance like any Lua table
+  field -- the same "shadow it on the instance" shape already used
+  nowhere else in this mod but common PZ mod practice (e.g. UI element method
+  overrides throughout vanilla's own `ISUIElement` subclasses).
+- `self:drawTexture(tex,x,y,a,r,g,b)` -- already PROVEN above (HUD table).
+- `getText("IGUI_char_Weight")` -- PROVEN, resolves via the client's own
+  `Translate/EN/IG_UI.json` (label used unmodified, only as a match key).
+- The five word keys, PROVEN in the client install's
+  `media/lua/shared/Translate/EN/UI.json`:
+  `UI_trait_emaciated` = "Emaciated", `UI_trait_veryunderweight` = "Very Low
+  Weight", `UI_trait_underweight` = "Low Weight", `UI_trait_overweight` =
+  "High Weight", `UI_trait_obese` = "Very High Weight" (lines 383-423). These
+  are vanilla's own five weight-trait names, so every game language gets a
+  correct word for free through `getText`.
+- Normal band: no vanilla weight-specific term exists (checked `UI.json`,
+  `IG_UI.json`, `Tooltip.json`, `Moodles.json`: only unrelated "Normal"
+  strings for temperature, fish abundance, chum, item type, starter
+  condition, option screens). Added this mod's own key
+  `IGUI_WeightScale_Normal` (EN/FR "Normal") to `src/translate/strings.json`.
+
+**Technique, and why it is safe.** `ISCharacterScreen.render` is one long
+vanilla function drawing several other labelled numbers with the same font
+and colour (Zombies Killed, Survived For, ...), so matching the patch by
+string or by numeric value is wrong -- a Zombies Killed count equal to the
+weight number must not be swapped. `WeightScaleCharScreen.lua` instead wraps
+`ISCharacterScreen.render` once at load and, only for the duration of that
+one call, shadows the instance's own `drawTextRight`/`drawText`/`drawTexture`.
+It watches for the exact vanilla weight LABEL text; the very next `drawText`
+call after it is, by vanilla's own source order (proven above), always the
+weight value and nothing else -- so the discrimination is by draw ORDER, not
+by content. The trend texture's x is recomputed from the word's own cached
+measured width (`getTextManager():MeasureStringX`) instead of vanilla's
+number-based one, so a longer word never collides with the arrow. The three
+instance methods are restored via `pcall`/re-raise even if vanilla's own
+`render()` throws. The word (and its measured width) is cached per
+`ISCharacterScreen` instance and recomputed only when `WeightScale.Core
+.bandOf` returns a different band id, so a player standing still in one band
+costs zero extra table/closure allocation per frame; the three trap
+functions themselves are created once at module load, not per render call.
+
+**Fail-safe (task point 5).** `WeightScale.CharScreen.install()` checks, in
+order: `ISCharacterScreen` is a table, `ISCharacterScreen.render` is a
+function, `getText`/`getTextManager` are functions, and
+`getText("IGUI_char_Weight")` resolves to a non-empty string. If any check
+fails (another build, or another mod replacing the Info tab), `install()`
+returns `false` and does nothing further: vanilla stays completely untouched.
+
+**B41 status: UNPROVEN, no B41 install on this machine.** Everything this
+patch touches -- `ISCharacterScreen`, its `render()`, `drawTextRight`/
+`drawText`/`drawTexture`, `getText`, `getTextManager` -- is client-only UI
+plumbing with no equivalent check possible here (same posture as every other
+B41-UNPROVEN row above). The fail-safe guard is exactly what covers this: on
+a B41 client where any of these differs or is missing, `install()` returns
+`false` and the Info tab renders exactly as vanilla ships it, number and all.
+
+Bench: `tests/charscreen_spec.lua`, stubs built strictly from the proven
+lines above (same method names, same call signatures, same field names,
+same draw order and the same Zombies-Killed-equals-weight hazard a
+value-based patch would get wrong).

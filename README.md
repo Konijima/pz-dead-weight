@@ -10,7 +10,10 @@ Originally a Build 41 mod (Steam Workshop item `2833096579`) with a
 context-menu action and a nutrition-values window. Reworked from the
 approved v2 maquette (`docs/maquettes/hud-poids-v2.html`) into a weight-only
 HUD, drawn entirely with textures, a rotated texture and rectangles, no
-`drawText`, so the player's font-size option cannot change the look.
+`drawText`, so the player's font-size option cannot change the look. The
+character Info tab's own "Weight" line shows the weight CATEGORY in words
+instead of the number (vanilla's own trait terms), so a scale is the only
+way to learn the exact number.
 
 **Status: HUD rework implemented from a single source under `src/`, synced
 into both live trees.** The mod tracks every LOCAL splitscreen player (not
@@ -22,8 +25,9 @@ scale for mouse players; it adds no display code of its own, the existing
 detection/HUD/sound fire on arrival exactly as if the player had walked
 there themselves. Bench passes (`tests/run.sh`): mapX contact points, band
 inclusivity, one-decimal format, prefs parser robustness, the
-HUD/splitscreen/sound lifecycle bench, the context menu option bench, and a
-JS/Lua parity check against the maquette's own `anim.js` sampler. See
+HUD/splitscreen/sound lifecycle bench, the context menu option bench, the
+Info tab weight-word patch bench, and a JS/Lua parity check against the
+maquette's own `anim.js` sampler. See
 `docs/API-COMPAT.md` for every game API call and its B41/B42 evidence, and
 `docs/TEST-EN-JEU.md` for the in-game checklist still to run (this machine
 has no B41 install to verify against).

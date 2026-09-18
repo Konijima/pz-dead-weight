@@ -93,3 +93,33 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
     balance : chacun ne voit l'option que pour sa propre balance, et la
     selectionner fait marcher LE BON joueur vers SA propre case, jamais
     l'autre.
+
+## Ajout 2026-09-18, onglet Info : le poids en mots
+
+23. **Ouvrir l'onglet Info.** Touche par defaut, ou menu du personnage :
+    la ligne "Weight" ne doit plus montrer un nombre, mais un mot (par
+    exemple "Emaciated", "Low Weight", "Normal", "High Weight", "Very High
+    Weight" selon le poids actuel).
+24. **Mot correct apres un changement de poids.** Utiliser le debug (ou
+    manger/jeuner en jeu) pour faire passer le personnage d'une bande de
+    poids a une autre, rouvrir l'onglet Info : le mot doit correspondre a la
+    nouvelle bande, pas a l'ancienne.
+25. **Fleche de tendance bien placee.** Quand le poids monte ou descend
+    recemment (fleche affichee a cote du mot), la fleche ne doit jamais
+    chevaucher le mot, meme pour les mots les plus longs ("Very High
+    Weight").
+26. **Les autres nombres intacts.** Sur le meme onglet Info, "Zombies
+    Killed", "Survived For" et tout autre nombre doivent continuer a
+    s'afficher normalement, y compris si leur valeur est egale au nombre de
+    poids qu'on aurait vu avant ce changement.
+27. **La balance montre toujours le nombre.** Monter sur une balance
+    medicale : le releve du HUD doit continuer a montrer le poids exact en
+    kg ou lb, inchange par ce point. Seul l'onglet Info montre desormais un
+    mot.
+28. **Splitscreen.** A deux joueurs locaux, chacun ouvre son propre onglet
+    Info : chacun voit le mot correspondant a SON propre poids, jamais celui
+    de l'autre joueur.
+29. **Lancer en Build 41.** Ouvrir l'onglet Info sur une installation B41 :
+    si l'ecran de personnage differe de celui du client verifie ici, le
+    garde-fou doit laisser l'affichage vanilla intact (le nombre reste
+    visible) plutot que de planter; noter ce qui a ete observe.

@@ -2,5 +2,9 @@
     "ContextMenu_WeightScale_StepOn": {
         "EN": "Step on Scale",
         "FR": "Monter sur la balance"
+    },
+    "IGUI_WeightScale_Normal": {
+        "EN": "Normal",
+        "FR": "Normal"
     }
 }
