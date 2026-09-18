@@ -61,17 +61,25 @@ end
 -- _9 = S), read live off the object with IsoObject:getFacing() (PROVEN
 -- client lua, ISAddTakeDispenserBottle.lua, comparable directly against the
 -- IsoDirections.N/S/E/W globals) -- no hardcoded per-sprite table needed,
--- every scale answers for itself. The player must face the SAME direction
--- the scale faces: that is exactly how vanilla's own "Front" sit position
--- works (client/shared/TimedActions/ISRestAction.lua: dir == facing when
--- sideStr is nil), and the scale's front is the side that carries the
--- column/beam head, the side one reads it from. [doute] 2026-09-18: only
--- an in-game look confirms the column visually sits on the `Facing` side
--- for both placed sprites; see docs/TEST-EN-JEU.md.
+-- every scale answers for itself. [vu] 2026-09-18: in-game test showed the
+-- opposite of the earlier deduction -- the column sits on the side OPPOSITE
+-- the sprite's `Facing`, so the player must face away from `Facing`, not
+-- toward it (confirmed for one of the two placed scales; see
+-- docs/TEST-EN-JEU.md for the other orientation still to check).
+local OPPOSITE_FACING = {}
+if IsoDirections then
+    OPPOSITE_FACING[IsoDirections.N] = IsoDirections.S
+    OPPOSITE_FACING[IsoDirections.S] = IsoDirections.N
+    OPPOSITE_FACING[IsoDirections.E] = IsoDirections.W
+    OPPOSITE_FACING[IsoDirections.W] = IsoDirections.E
+end
+
 function Detect.facingFor(square)
     local obj = scaleObjectOn(square)
     if not obj or type(obj.getFacing) ~= "function" then return nil end
-    return obj:getFacing()
+    local facing = obj:getFacing()
+    if facing == nil then return nil end
+    return OPPOSITE_FACING[facing] or facing
 end
 
 local function playerSquare(playerObj)

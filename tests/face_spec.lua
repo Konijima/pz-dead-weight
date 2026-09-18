@@ -17,9 +17,13 @@ local function check(cond, msg)
     end
 end
 
--- IsoDirections stand-ins: opaque, distinct tokens (the module never does
--- more than pass one of these through to faceDirection).
-local DIR_E, DIR_S = { name = "E" }, { name = "S" }
+-- IsoDirections stand-in: opaque, distinct tokens, wired as the module's
+-- OPPOSITE_FACING table expects (N<->S, E<->W) so the inversion (2026-09-18:
+-- confirmed in game, the column is opposite the sprite's Facing) can be
+-- exercised without the real client global.
+IsoDirections = { N = { name = "N" }, S = { name = "S" }, E = { name = "E" }, W = { name = "W" } }
+local DIR_E, DIR_S = IsoDirections.E, IsoDirections.S
+local DIR_W, DIR_N = IsoDirections.W, IsoDirections.N
 
 local function scaleObj(dir)
     return {
@@ -53,9 +57,9 @@ require "WeightScale/WeightScaleDetect"
 local Detect = WeightScale.Detect
 Detect.tickEvery = 1
 
--- 1/2: stepping on and stopping turns the player once, facing the scale's
--- own `Facing` direction (Detect.facingFor reads it straight off the
--- object, no per-sprite table).
+-- 1/2: stepping on and stopping turns the player once, facing OPPOSITE the
+-- scale's own `Facing` direction (2026-09-18: confirmed in game, the column
+-- sits opposite the sprite's Facing, so Detect.facingFor inverts it).
 local square = scaleSquare(true, DIR_E)
 local p = makePlayer({ moving = true })
 p.getCurrentSquare = function() return square end
@@ -65,19 +69,20 @@ Detect.updateFacing(0, p)
 check(#p.turns == 0, "no turn while still moving")
 p.moving = false
 Detect.updateFacing(0, p)
-check(#p.turns == 1 and p.turns[1] == DIR_E, "turns once, toward the scale's own Facing direction")
+check(#p.turns == 1 and p.turns[1] == DIR_W, "turns once, toward the OPPOSITE of the scale's own Facing direction")
 Detect.updateFacing(0, p)
 Detect.updateFacing(0, p)
 check(#p.turns == 1, "never turns a second time while still standing on the scale")
 
--- 3: a different placed scale (Facing = S) turns the player south, proving
--- the direction is read per object, not a hardcoded constant.
+-- 3: a different placed scale (Facing = S) turns the player north (the
+-- opposite), proving the direction is read per object, not a hardcoded
+-- constant.
 local squareS = scaleSquare(true, DIR_S)
 local pS = makePlayer()
 pS.getCurrentSquare = function() return squareS end
 Detect.update(1, pS)
 Detect.updateFacing(1, pS)
-check(#pS.turns == 1 and pS.turns[1] == DIR_S, "a Facing=S scale turns the player south")
+check(#pS.turns == 1 and pS.turns[1] == DIR_N, "a Facing=S scale turns the player north (opposite)")
 
 -- 4: walking across without ever stopping never turns (leaving clears the
 -- queued turn set by Detect.update's onScaleOn transition).
@@ -182,8 +187,8 @@ Detect.update(11, pB)
 Detect.updateFacing(10, pA)
 check(#pA.turns == 1 and #pB.turns == 0, "player 10 turns without touching player 11's state")
 Detect.updateFacing(11, pB)
-check(#pA.turns == 1 and #pB.turns == 1 and pB.turns[1] == DIR_S,
-    "player 11 turns independently, toward its own scale's Facing")
+check(#pA.turns == 1 and #pB.turns == 1 and pB.turns[1] == DIR_N,
+    "player 11 turns independently, toward the opposite of its own scale's Facing")
 
 Detect.tickEvery = 6
 

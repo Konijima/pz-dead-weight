@@ -126,12 +126,13 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 
 ## Ajout 2026-09-18, faire face a la colonne en montant sur la balance
 
-[doute] Le sens exact (quel cote de la balance porte la colonne/tete de
-mesure) est deduit de la propriete `Facing` de chaque sprite place
-(prouve dans media/newtiledefinitions.tiles.txt) et de la regle de
-vanilla pour la position "Front" en s'assoyant (ISRestAction.lua) : le
-personnage fait face a la MEME direction que `Facing`. Seul un coup d'oeil
-en jeu confirme que la colonne est bien de ce cote-la pour chaque sprite.
+[vu] 2026-09-18, test en jeu (proprietaire) : le personnage se tenait sur
+la balance dos a la colonne quand il faisait face a `Facing` lui-meme. Le
+sens correct est donc l'OPPOSE de `Facing` (N<->S, E<->W), corrige dans
+`Detect.facingFor` par une table explicite; ceci corrige et remplace la
+deduction precedente ("MEME direction que Facing"), qui est maintenant
+fausse. [doute] confirme pour une seule des deux balances placees; l'autre
+orientation reste a verifier en jeu.
 
 30. **Marcher dessus et s'arreter, par chaque cote.** Approcher une balance
     par le nord, s'arreter dessus : le personnage doit tourner une seule

@@ -26,8 +26,9 @@ menu option (top of the list, with its own icon) walks the player onto the
 scale for mouse players; it adds no display code of its own, the existing
 detection/HUD/sound/facing fire on arrival exactly as if the player had
 walked there themselves. Stepping on and coming to a stop (on foot or via
-the menu) turns the player once toward the scale's own `Facing` sprite
-property, the side that carries the column/beam head; walking across
+the menu) turns the player once toward the OPPOSITE of the scale's own
+`Facing` sprite property, the side that carries the column/beam head
+(confirmed in game 2026-09-18); walking across
 without stopping never turns anyone, and the turn never re-fires until the
 player leaves the square and steps back on. Bench passes (`tests/run.sh`):
 mapX contact points, band inclusivity, one-decimal format, prefs parser
