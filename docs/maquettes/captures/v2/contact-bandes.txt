@@ -1,0 +1,18 @@
+zones peintes (bornes en px locaux, via mapX)
+  emaciated    x 30 -> 64
+  tresMaigre   x 64 -> 99
+  maigre       x 99 -> 122
+  normal       x 122 -> 145
+  surpoids     x 145 -> 179
+  obese        x 179 -> 248
+
+kg     poise x (arrondi)   poise x (brut)   borne de zone a ce x   bande
+35     30                  30               emaciated              emaciated
+50     64                  64.4211          emaciated,tresMaigre   emaciated
+65     99                  98.8421          tresMaigre,maigre      tresMaigre
+75     122                 121.7895         maigre,normal          normal
+85     145                 144.7368         normal,surpoids        surpoids
+100    179                 179.1579         surpoids,obese         obese
+130    248                 248              obese                  obese
+
+OK: chaque seuil tombe exactement sur une borne de zone, au pixel.

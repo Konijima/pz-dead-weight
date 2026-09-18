@@ -53,7 +53,7 @@
     <dt>Texture plaque email</dt><dd id="s-plate"></dd>
     <dt>Texture fleau (pivotee)</dt><dd id="s-beam"></dd>
     <dt>Texture curseur</dt><dd id="s-poise"></dd>
-    <dt>Texture butees</dt><dd id="s-stops"></dd>
+    <dt>Butees (rectangles)</dt><dd id="s-stops"></dd>
     <dt>Texture plaque chiffres</dt><dd id="s-slab"></dd>
     <dt>Axe de graduation</dt><dd id="s-track"></dd>
     <dt>Police</dt><dd id="s-font"></dd>
@@ -64,16 +64,19 @@
     <dt>Courbes</dt><dd class="plain">apparition <code>1-(1-t)^3</code>,
       bascule <code>1-(1-t)^2</code>, glissement
       <code>t&lt;0.5 ? 4t^3 : 1-(-2t+2)^3/2</code>, disparition <code>t^2</code>.</dd>
-    <dt>Zones de trait</dt><dd class="plain">35 a 50 emacie, 50 a 65 tres maigre,
-      65 a 75 maigre, 75 a 85 normal, 85 a 100 surpoids, 100 a 130 obese.
-      Bande active a pleine opacite, les autres a 46 %.</dd>
+    <dt>Zones de trait</dt><dd class="plain">w &le; 50 emacie, 50 &lt; w &le; 65 tres
+      maigre, 65 &lt; w &lt; 75 maigre, 75 &le; w &lt; 85 normal,
+      85 &le; w &lt; 100 surpoids, w &ge; 100 obese. Les bornes des zones peintes et la
+      position du curseur sortent de la meme fonction
+      <code>x = 30 + (w - 35) / 95 * 218</code>; la planche de controle le verifie au
+      pixel. Bande active a pleine opacite et 4 px plus haute, les autres a 40 %.</dd>
   </dl></div>
 </section>
 
 <section id="dir2">
   <h2>2. Panneau natif<span class="tag alt">repli</span></h2>
   <p class="lede">Panneau sombre translucide dans le vocabulaire de l'UI de PZ :
-  fond noir a 74 %, filet blanc a 13 %, un liseré de 3 px a la couleur de la bande.
+  fond noir a 74 %, filet blanc a 34 %, un liseré de 3 px a la couleur de la bande.
   Le chiffre et son unite, rien d'autre. Meme moteur d'animation : le panneau apparait,
   le chiffre monte avec le curseur invisible, puis se fige.</p>
 
@@ -94,7 +97,7 @@
     <dt>Taille du panneau</dt><dd id="s-psize"></dd>
     <dt>Decalage depuis le centre</dt><dd id="s-poff"></dd>
     <dt>Textures</dt><dd class="plain">aucune. Trois rectangles : fond
-      <code>rgba(0,0,0,0.74)</code>, filet <code>rgba(255,255,255,0.13)</code>,
+      <code>rgba(0,0,0,0.74)</code>, filet <code>rgba(255,255,255,0.34)</code>,
       liseré de bande 3 x 52 px a gauche.</dd>
     <dt>Police</dt><dd class="plain">la meme que la direction 1, meme atlas.</dd>
     <dt>Montee</dt><dd class="plain">apparition et glissement identiques a la

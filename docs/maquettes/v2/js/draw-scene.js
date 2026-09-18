@@ -6,7 +6,7 @@
 
   function floorGrid(c) {
     c.save();
-    c.strokeStyle = 'rgba(190,210,200,0.045)';
+    c.strokeStyle = 'rgba(190,210,200,0.075)';
     c.lineWidth = 1;
     for (var i = -12; i <= 24; i++) {
       c.beginPath();
@@ -18,6 +18,10 @@
   }
 
   function scaleObject(c) {
+    for (var s = 0; s < 6; s++) {                  // contact shadow on the floor
+      c.fillStyle = 'rgba(0,0,0,' + (0.22 - s * 0.034).toFixed(3) + ')';
+      c.fillRect(880 - s * 17, 718 + s * 9, 152 + s * 34, 9);
+    }
     c.fillStyle = '#121312';                       // platform
     c.fillRect(888, 698, 136, 20);
     c.fillStyle = 'rgba(255,255,255,0.07)';
@@ -53,6 +57,8 @@
     c.fillStyle = 'rgba(0,0,0,0.22)';
     c.fillRect(1520, 318, 130, 172);
     c.fillRect(1520, 512, 130, 178);
+    c.fillStyle = 'rgba(190,210,200,0.022)';       // light spilling on the floor
+    c.fillRect(1496, 726, 178, 58);
   }
 
   function character(c) {

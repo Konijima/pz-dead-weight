@@ -84,7 +84,7 @@
     c.translate(0, st.dy);
     c.fillStyle = 'rgba(0,0,0,0.74)';
     c.fillRect(0, 0, p.w, p.h);
-    c.strokeStyle = 'rgba(255,255,255,0.13)';
+    c.strokeStyle = 'rgba(255,255,255,0.34)';
     c.lineWidth = 1;
     c.strokeRect(0.5, 0.5, p.w - 1, p.h - 1);
     c.fillStyle = 'rgb(' + band.colour.join(',') + ')';

@@ -15,7 +15,8 @@
     put('s-beam', b.len + ' x ' + b.h + ', pivot local ' + b.pivotX + ' / ' + b.pivotY +
       ', rotation max ' + b.maxDeg + ' deg');
     put('s-poise', G.poise.w + ' x ' + G.poise.h);
-    put('s-stops', G.stops.w + ' x ' + G.stops.h);
+    put('s-stops', 'deux barres de ' + G.stops.w + ' x 2 px a x = ' + G.stops.x +
+      ', ecartees de ' + (G.stops.gap * 2) + ' px autour du pivot');
     put('s-slab', G.slab.w + ' x ' + G.slab.h);
     put('s-track', 'x0 = ' + G.track.x0 + ', largeur = ' + G.track.w +
       ' px pour ' + G.weight.min + ' a ' + G.weight.max + ' kg');
