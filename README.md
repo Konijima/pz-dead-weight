@@ -29,6 +29,8 @@ goes with you; nowhere else in the game can you read it that precisely.
   the scale.
 - 28 languages, every one the game ships.
 
+![The beam readout and the Info tab weight category](workshop/art/deadweight-banner-2.png)
+
 ## Controls
 
 - Left click the readout: switch between kg and lb.
@@ -80,9 +82,9 @@ Build 42 can load from the same copy.
   remove it). Rerun it after any change before testing in game: once a
   staged copy and the repo copy share the same mod id, the game loads the
   staged copy, not the repo.
-- `workshop/art/deadweight-banner.png` is the Workshop page banner (also
-  the README hero image above); it is not shipped to players, see the
-  `pack-workshop.sh` bullet above.
+- `workshop/art/deadweight-banner.png` and `workshop/art/deadweight-banner-2.png`
+  are the Workshop page banners (also the README images above); neither is
+  shipped to players, see the `pack-workshop.sh` bullet above.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
   lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
