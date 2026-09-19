@@ -481,3 +481,52 @@ veryunderweight` -> "Very Low Weight", `UI_trait_underweight` -> "Low
 Weight", `UI_trait_overweight` -> "High Weight", `UI_trait_obese` -> "Very
 High Weight" -- all five exist verbatim, matching the owner's own in game
 report that only the Normal band was broken.
+
+## 2026-09-18, own realistic weight words replace the vanilla trait keys
+
+Owner, after seeing the Info tab in game: "why we use Very High Weight,
+instead of obese. and word more realistic?" Build 42 renamed the vanilla
+trait keys used above to soft terms (`UI_trait_obese` -> "Very High
+Weight", `UI_trait_overweight` -> "High Weight", `UI_trait_underweight` ->
+"Low Weight", `UI_trait_veryunderweight` -> "Very Low Weight",
+`UI_trait_emaciated` unchanged at "Emaciated" -- reconfirmed against the
+client install the same day). Riding vanilla's keys means riding vanilla's
+wording, which just changed once already. **Chosen:** the mod's own key per
+band, all six now `IGUI_WeightScale_*` (Emaciated, VeryUnderweight,
+Underweight, Normal, Overweight, Obese), realistic medical terms, immune to
+any future vanilla rename.
+
+**Translation sources, per word, checked in this order:**
+1. Game's own translation: any vanilla key whose EN value is exactly the
+   word. Found only for **Emaciated** -- `UI_trait_emaciated` matches
+   verbatim in the client install's EN `UI.json`, so its per-language value
+   is reused for all 28 languages (e.g. FR "Émacié", DE "Abgemagert", RU
+   "Крайне недостаточный вес", JP "やせ衰え").
+2. B41-era Workshop translation: searched every installed Workshop item on
+   this machine (`~/Zomboid/Workshop`, `~/.local/share/Steam/steamapps/
+   workshop`) for the four `UI_trait_*` keys; only this mod's own staged
+   copy of `WeightScaleCharScreen.lua` matched (source code, not a
+   translation file) -- no B41-era translation sample found for "Very
+   Underweight", "Underweight", "Overweight" or "Obese" in any language.
+3. Own translation: used for **Very Underweight, Underweight, Overweight,
+   Obese** in all 28 languages -- medically plain terms, a doctor's chart
+   phrasing, capitalised per language the way its own vanilla trait names
+   are (first letter only, matching `UI_trait_emaciated`'s per-language
+   capitalisation). AR is Spanish (Argentina), not Arabic, per the language
+   list proven above; ES/ES_CL/ES_MX/AR share the same Spanish wording,
+   like several existing own-translations above. FR reuses the mod's own
+   internal band-id words already used as Lua table keys (`tresMaigre`,
+   `maigre`, `surpoids`, `obese`).
+   Flagged here for a native speaker to review, same posture as any
+   own-translation above: AR, CA, CH, CN, CS, DA, DE, ES, ES_CL, ES_MX, FI,
+   FR, HU, ID, IT, JP, KO, NL, NO, PL, PT, PTBR, RO, RU, TH, TR, UA -- every
+   language, for these four words only (Emaciated is vanilla-sourced, no
+   review needed there).
+
+Bench: `tests/charscreen_spec.lua`'s `WORD_KEY`/`TEXT`/`CASES` moved to the
+six `IGUI_WeightScale_*` keys and their English words; a new case (12)
+proves that when `getText` returns the raw key (broken/missing translation
+file on some install) the word falls back to the hardcoded English word,
+never the key itself. `tests/translate_spec.py` is unchanged in logic (it
+loops `source.keys()`, not a hardcoded count) and now covers 7 keys instead
+of 2.

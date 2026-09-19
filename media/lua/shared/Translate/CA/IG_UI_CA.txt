@@ -1,5 +1,15 @@
 IGUI_CA = {
 
+    IGUI_WeightScale_Emaciated = "Xuclat",
+
+    IGUI_WeightScale_VeryUnderweight = "Molt prim",
+
+    IGUI_WeightScale_Underweight = "Prim",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Sobrepès",
+
+    IGUI_WeightScale_Obese = "Obès",
 
 }

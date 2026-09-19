@@ -1,5 +1,15 @@
 IGUI_NL = {
 
+    IGUI_WeightScale_Emaciated = "Mager",
+
+    IGUI_WeightScale_VeryUnderweight = "Sterk ondergewicht",
+
+    IGUI_WeightScale_Underweight = "Ondergewicht",
+
     IGUI_WeightScale_Normal = "Normaal",
+
+    IGUI_WeightScale_Overweight = "Overgewicht",
+
+    IGUI_WeightScale_Obese = "Obesitas",
 
 }

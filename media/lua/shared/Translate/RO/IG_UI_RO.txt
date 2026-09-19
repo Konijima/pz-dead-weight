@@ -1,5 +1,15 @@
 IGUI_RO = {
 
+    IGUI_WeightScale_Emaciated = "Slãbit",
+
+    IGUI_WeightScale_VeryUnderweight = "Subponderal sever",
+
+    IGUI_WeightScale_Underweight = "Subponderal",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Supraponderal",
+
+    IGUI_WeightScale_Obese = "Obez",
 
 }

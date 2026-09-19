@@ -1,5 +1,15 @@
 IGUI_EN = {
 
+    IGUI_WeightScale_Emaciated = "Emaciated",
+
+    IGUI_WeightScale_VeryUnderweight = "Very Underweight",
+
+    IGUI_WeightScale_Underweight = "Underweight",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Overweight",
+
+    IGUI_WeightScale_Obese = "Obese",
 
 }

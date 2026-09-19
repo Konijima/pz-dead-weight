@@ -1,5 +1,15 @@
 IGUI_ID = {
 
+    IGUI_WeightScale_Emaciated = "Sangat Kurus",
+
+    IGUI_WeightScale_VeryUnderweight = "Berat Badan Sangat Kurang",
+
+    IGUI_WeightScale_Underweight = "Berat Badan Kurang",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Kelebihan Berat Badan",
+
+    IGUI_WeightScale_Obese = "Obesitas",
 
 }

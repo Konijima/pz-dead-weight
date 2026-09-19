@@ -1,5 +1,15 @@
 IGUI_RU = {
 
+    IGUI_WeightScale_Emaciated = "Крайне недостаточный вес",
+
+    IGUI_WeightScale_VeryUnderweight = "Очень низкий вес",
+
+    IGUI_WeightScale_Underweight = "Низкий вес",
+
     IGUI_WeightScale_Normal = "Норм.",
+
+    IGUI_WeightScale_Overweight = "Избыточный вес",
+
+    IGUI_WeightScale_Obese = "Ожирение",
 
 }

@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "Норма"
+    "IGUI_WeightScale_Emaciated": "Виснажений",
+    "IGUI_WeightScale_VeryUnderweight": "Дуже низька вага",
+    "IGUI_WeightScale_Underweight": "Низька вага",
+    "IGUI_WeightScale_Normal": "Норма",
+    "IGUI_WeightScale_Overweight": "Надлишкова вага",
+    "IGUI_WeightScale_Obese": "Ожиріння"
 }

@@ -22,19 +22,19 @@ end
 UIFont = { Small = "Small" }
 
 local WORD_KEYS = {
-    UI_trait_emaciated = true, UI_trait_veryunderweight = true,
-    UI_trait_underweight = true, IGUI_WeightScale_Normal = true,
-    UI_trait_overweight = true, UI_trait_obese = true,
+    IGUI_WeightScale_Emaciated = true, IGUI_WeightScale_VeryUnderweight = true,
+    IGUI_WeightScale_Underweight = true, IGUI_WeightScale_Normal = true,
+    IGUI_WeightScale_Overweight = true, IGUI_WeightScale_Obese = true,
 }
 local TEXT = {
     IGUI_char_Weight = "Weight",
     IGUI_char_Zombies_Killed = "Zombies Killed",
-    UI_trait_emaciated = "Emaciated",
-    UI_trait_veryunderweight = "Very Low Weight",
-    UI_trait_underweight = "Low Weight",
+    IGUI_WeightScale_Emaciated = "Emaciated",
+    IGUI_WeightScale_VeryUnderweight = "Very Underweight",
+    IGUI_WeightScale_Underweight = "Underweight",
     IGUI_WeightScale_Normal = "Normal",
-    UI_trait_overweight = "High Weight",
-    UI_trait_obese = "Very High Weight",
+    IGUI_WeightScale_Overweight = "Overweight",
+    IGUI_WeightScale_Obese = "Obese",
 }
 local wordGetTextCalls = 0
 function getText(key)
@@ -159,16 +159,16 @@ end
 -- 5: words at and around every threshold (Geo.bands: 50/65/75/85/100).
 local CASES = {
     { 50,    "Emaciated" },
-    { 50.01, "Very Low Weight" },
-    { 65,    "Very Low Weight" },
-    { 65.01, "Low Weight" },
+    { 50.01, "Very Underweight" },
+    { 65,    "Very Underweight" },
+    { 65.01, "Underweight" },
     { 75,    "Normal" },
     { 84.99, "Normal" },
-    { 85,    "High Weight" },
-    { 99.99, "High Weight" },
-    { 100,   "Very High Weight" },
-    { 130,   "Very High Weight" },
-    { 200,   "Very High Weight" },
+    { 85,    "Overweight" },
+    { 99.99, "Overweight" },
+    { 100,   "Obese" },
+    { 130,   "Obese" },
+    { 200,   "Obese" },
 }
 for _, c in ipairs(CASES) do
     local w, word = c[1], c[2]
@@ -194,7 +194,7 @@ local trendScreen = ISCharacterScreen.new(60, 1, { inc = true })
 trendScreen:render()
 local tex = findTexture(trendScreen._log, trendScreen.weightIncTexture)
 check(tex ~= nil, "trend texture still drawn")
-local expectedWidth = #"Very Low Weight" * 7
+local expectedWidth = #"Very Underweight" * 7
 check(tex.x == trendScreen.xOffset + expectedWidth + 13, "trend x uses the word's measured width")
 
 -- 8: override restored after a throwing render (the trap functions must be
@@ -216,11 +216,11 @@ check(type(ISCharacterScreen.render) == "function", "vanilla render() is callabl
 
 -- 10: two local players get their own word (splitscreen, task point 4).
 local p1 = ISCharacterScreen.new(50, 1, nil)   -- Emaciated
-local p2 = ISCharacterScreen.new(130, 1, nil)  -- Very High Weight
+local p2 = ISCharacterScreen.new(130, 1, nil)  -- Obese
 p1:render()
 p2:render()
 check(findText(p1._log, "Emaciated") ~= nil, "player 1 sees their own band word")
-check(findText(p2._log, "Very High Weight") ~= nil, "player 2 sees their own band word")
+check(findText(p2._log, "Obese") ~= nil, "player 2 sees their own band word")
 check(p1._wsLastBandId == "emaciated", "player 1's cached band id is independent")
 check(p2._wsLastBandId == "obese", "player 2's cached band id is independent")
 
@@ -236,6 +236,15 @@ stillScreen.char:getNutrition().w = 100 -- obese: band changes
 stillScreen:render()
 check(measureCalls > callsAfterFirst, "re-measures once the band changes")
 check(wordGetTextCalls > wordsAfterFirst, "re-looks-up the word once the band changes")
+
+-- 12: getText returning the raw key (broken/missing translation file on
+-- some install) falls back to the English word, never shows the key.
+TEXT.IGUI_WeightScale_Obese = nil -- getText(key) now returns key itself
+local fallbackScreen = ISCharacterScreen.new(100, 1, nil) -- obese band
+fallbackScreen:render()
+check(findText(fallbackScreen._log, "Obese") ~= nil, "raw-key getText falls back to the English word")
+check(findText(fallbackScreen._log, "IGUI_WeightScale_Obese") == nil, "the raw key itself is never shown")
+TEXT.IGUI_WeightScale_Obese = "Obese"
 
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

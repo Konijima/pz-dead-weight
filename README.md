@@ -16,8 +16,8 @@ goes with you; nowhere else in the game can you read it that precisely.
 - One decimal of precision.
 - Your unit and display style are remembered between sessions.
 - The character screen's Info tab shows only your weight category in words
-  (Emaciated to Very High Weight) with its trend arrow; the exact number
-  stays on the scale.
+  (Emaciated to Obese) with its trend arrow; the exact number stays on the
+  scale.
 - Your survivor turns once to face the scale's column on stopping.
 - Two short sounds: stepping on, stepping off.
 - A "Step on Scale" option at the top of the scale's right click menu, with

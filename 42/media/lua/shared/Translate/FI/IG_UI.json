@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "Normaali"
+    "IGUI_WeightScale_Emaciated": "Lapsunut",
+    "IGUI_WeightScale_VeryUnderweight": "Erittäin alipainoinen",
+    "IGUI_WeightScale_Underweight": "Alipainoinen",
+    "IGUI_WeightScale_Normal": "Normaali",
+    "IGUI_WeightScale_Overweight": "Ylipainoinen",
+    "IGUI_WeightScale_Obese": "Lihava"
 }

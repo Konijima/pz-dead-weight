@@ -17,19 +17,31 @@ WeightScale = WeightScale or {}
 WeightScale.CharScreen = WeightScale.CharScreen or {}
 local CharScreen = WeightScale.CharScreen
 
--- One vanilla trait-label key per band id, PROVEN in the client install's
--- media/lua/shared/Translate/EN/UI.json (docs/API-COMPAT.md "Info tab weight
--- words"): the game's own five weight-trait names, so every game language
--- gets a correct word for free through getText. "normal" has no fitting
--- vanilla weight-specific term (only unrelated "Normal" strings in other
--- domains: temperature, fish, chum...), so it uses this mod's own key.
+-- One key of our OWN per band id (task 2026-09-18, owner: "why we use Very
+-- High Weight, instead of obese. and word more realistic?"). Build 42 renamed
+-- the vanilla trait keys to soft terms (Very High Weight, High Weight, Low
+-- Weight, Very Low Weight; docs/API-COMPAT.md "Info tab weight words"), so
+-- riding those keys now shows the wrong wording. Own keys give the mod its
+-- realistic terms (Emaciated..Obese) in all 28 languages and protect the
+-- wording from any future vanilla rename.
 CharScreen.WORD_KEY = {
-    emaciated  = "UI_trait_emaciated",
-    tresMaigre = "UI_trait_veryunderweight",
-    maigre     = "UI_trait_underweight",
+    emaciated  = "IGUI_WeightScale_Emaciated",
+    tresMaigre = "IGUI_WeightScale_VeryUnderweight",
+    maigre     = "IGUI_WeightScale_Underweight",
     normal     = "IGUI_WeightScale_Normal",
-    surpoids   = "UI_trait_overweight",
-    obese      = "UI_trait_obese",
+    surpoids   = "IGUI_WeightScale_Overweight",
+    obese      = "IGUI_WeightScale_Obese",
+}
+
+-- English fallback if getText ever returns the raw key (translation file
+-- missing/broken on some install): show the word, never the key.
+CharScreen.WORD_FALLBACK = {
+    emaciated  = "Emaciated",
+    tresMaigre = "Very Underweight",
+    maigre     = "Underweight",
+    normal     = "Normal",
+    surpoids   = "Overweight",
+    obese      = "Obese",
 }
 
 -- Recomputes the word (and its measured width, for the trend arrow) only
@@ -43,6 +55,9 @@ function CharScreen.wordFor(screenSelf, weightKg)
         screenSelf._wsLastBandId = band.id
         local key = CharScreen.WORD_KEY[band.id] or CharScreen.WORD_KEY.normal
         local word = getText(key)
+        if word == key then
+            word = CharScreen.WORD_FALLBACK[band.id] or CharScreen.WORD_FALLBACK.normal
+        end
         screenSelf._wsLastWord = word
         screenSelf._wsLastWordWidth = getTextManager():MeasureStringX(UIFont.Small, word)
     end

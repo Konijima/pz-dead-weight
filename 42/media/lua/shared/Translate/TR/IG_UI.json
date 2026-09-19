@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "Normal"
+    "IGUI_WeightScale_Emaciated": "Sıska",
+    "IGUI_WeightScale_VeryUnderweight": "Çok Zayıf",
+    "IGUI_WeightScale_Underweight": "Zayıf",
+    "IGUI_WeightScale_Normal": "Normal",
+    "IGUI_WeightScale_Overweight": "Fazla Kilolu",
+    "IGUI_WeightScale_Obese": "Obez"
 }

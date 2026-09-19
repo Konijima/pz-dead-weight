@@ -1,5 +1,15 @@
 IGUI_ES = {
 
+    IGUI_WeightScale_Emaciated = "Demacrado",
+
+    IGUI_WeightScale_VeryUnderweight = "Muy bajo peso",
+
+    IGUI_WeightScale_Underweight = "Bajo peso",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Sobrepeso",
+
+    IGUI_WeightScale_Obese = "Obeso",
 
 }

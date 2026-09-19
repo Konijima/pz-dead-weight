@@ -1,5 +1,15 @@
 IGUI_CH = {
 
+    IGUI_WeightScale_Emaciated = "骨瘦如柴",
+
+    IGUI_WeightScale_VeryUnderweight = "重度體重過輕",
+
+    IGUI_WeightScale_Underweight = "體重過輕",
+
     IGUI_WeightScale_Normal = "一般",
+
+    IGUI_WeightScale_Overweight = "過重",
+
+    IGUI_WeightScale_Obese = "肥胖",
 
 }

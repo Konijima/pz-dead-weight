@@ -1,5 +1,15 @@
 IGUI_DA = {
 
+    IGUI_WeightScale_Emaciated = "Udmagret",
+
+    IGUI_WeightScale_VeryUnderweight = "Svært undervægtig",
+
+    IGUI_WeightScale_Underweight = "Undervægtig",
+
     IGUI_WeightScale_Normal = "Normal",
+
+    IGUI_WeightScale_Overweight = "Overvægtig",
+
+    IGUI_WeightScale_Obese = "Fedme",
 
 }

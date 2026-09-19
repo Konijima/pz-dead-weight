@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "적당함"
+    "IGUI_WeightScale_Emaciated": "수척한",
+    "IGUI_WeightScale_VeryUnderweight": "심각한 저체중",
+    "IGUI_WeightScale_Underweight": "저체중",
+    "IGUI_WeightScale_Normal": "적당함",
+    "IGUI_WeightScale_Overweight": "과체중",
+    "IGUI_WeightScale_Obese": "비만"
 }

@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "Normale"
+    "IGUI_WeightScale_Emaciated": "Emaciato",
+    "IGUI_WeightScale_VeryUnderweight": "Molto sottopeso",
+    "IGUI_WeightScale_Underweight": "Sottopeso",
+    "IGUI_WeightScale_Normal": "Normale",
+    "IGUI_WeightScale_Overweight": "Sovrappeso",
+    "IGUI_WeightScale_Obese": "Obeso"
 }

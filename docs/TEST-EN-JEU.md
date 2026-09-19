@@ -115,11 +115,11 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 
 23. **Ouvrir l'onglet Info.** Touche par defaut, ou menu du personnage :
     la ligne "Weight" ne doit plus montrer un nombre, mais un mot (par
-    exemple "Emaciated", "Low Weight", "Normal", "High Weight", "Very High
-    Weight" selon le poids actuel). Le mot ne doit JAMAIS etre une cle brute
-    du genre "IGUI_..." ou "UI_trait_..." (bug du 2026-09-18 : "Normal"
-    s'affichait comme "IGUI_WeightScale_Normal" quand la traduction
-    n'atterrissait pas dans le bon fichier).
+    exemple "Emaciated", "Underweight", "Normal", "Overweight", "Obese"
+    selon le poids actuel). Le mot ne doit JAMAIS etre une cle brute du
+    genre "IGUI_..." (bug du 2026-09-18 : "Normal" s'affichait comme
+    "IGUI_WeightScale_Normal" quand la traduction n'atterrissait pas dans le
+    bon fichier).
 24. **Mot correct apres un changement de poids.** Utiliser le debug (ou
     manger/jeuner en jeu) pour faire passer le personnage d'une bande de
     poids a une autre, rouvrir l'onglet Info : le mot doit correspondre a la

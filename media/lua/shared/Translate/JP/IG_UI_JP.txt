@@ -1,5 +1,15 @@
 IGUI_JP = {
 
+    IGUI_WeightScale_Emaciated = "やせ衰え",
+
+    IGUI_WeightScale_VeryUnderweight = "重度の低体重",
+
+    IGUI_WeightScale_Underweight = "低体重",
+
     IGUI_WeightScale_Normal = "通常",
+
+    IGUI_WeightScale_Overweight = "太り気味",
+
+    IGUI_WeightScale_Obese = "肥満",
 
 }

@@ -1,5 +1,15 @@
 IGUI_HU = {
 
+    IGUI_WeightScale_Emaciated = "Csont sovány",
+
+    IGUI_WeightScale_VeryUnderweight = "Nagyon sovány",
+
+    IGUI_WeightScale_Underweight = "Sovány",
+
     IGUI_WeightScale_Normal = "Normál",
+
+    IGUI_WeightScale_Overweight = "Túlsúlyos",
+
+    IGUI_WeightScale_Obese = "Elhízott",
 
 }

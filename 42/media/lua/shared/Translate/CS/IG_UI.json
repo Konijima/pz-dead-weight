@@ -1,3 +1,8 @@
 {
-    "IGUI_WeightScale_Normal": "Normální"
+    "IGUI_WeightScale_Emaciated": "Vyhublý",
+    "IGUI_WeightScale_VeryUnderweight": "Silná podváha",
+    "IGUI_WeightScale_Underweight": "Podváha",
+    "IGUI_WeightScale_Normal": "Normální",
+    "IGUI_WeightScale_Overweight": "Nadváha",
+    "IGUI_WeightScale_Obese": "Obézní"
 }
