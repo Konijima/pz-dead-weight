@@ -1,5 +1,7 @@
 # Dead Weight
 
+![Dead Weight: step on the scale, face the truth](workshop/art/deadweight-banner.png)
+
 ![Dead Weight in action](workshop/art/deadweight-animation.gif)
 
 *Step on the scale. Face the truth.*
@@ -78,6 +80,9 @@ Build 42 can load from the same copy.
   remove it). Rerun it after any change before testing in game: once a
   staged copy and the repo copy share the same mod id, the game loads the
   staged copy, not the repo.
+- `workshop/art/deadweight-banner.png` is the Workshop page banner (also
+  the README hero image above); it is not shipped to players, see the
+  `pack-workshop.sh` bullet above.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
   lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
