@@ -19,6 +19,7 @@
 # visibility=private on purpose: flip to public from the item's own Steam
 # page once the owner has walked docs/TEST-EN-JEU.md and is ready.
 version=1
+id=3804074600
 title=Dead Weight
 description=[h1]Dead Weight[/h1]
 description=[i]Step on the scale. Face the truth.[/i]
@@ -61,7 +62,7 @@ description=
 description=[h2]Source[/h2]
 description=[url=https://github.com/Konijima/pz-dead-weight]Source code on GitHub[/url]. Bug reports and translation fixes welcome there.
 description=
-description=Workshop ID: [i]set after upload[/i]
+description=Workshop ID: 3804074600
 description=Mod ID: DeadWeight
 tags=Build 41;Build 42;Interface;Language/Translation;QoL;Silly/Fun
 visibility=private

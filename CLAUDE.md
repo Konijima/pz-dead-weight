@@ -97,6 +97,12 @@ After uploading, run `tools/set-workshop-id.sh` (no argument: reads the id
 Steam wrote into the staged copy) to record it and refresh the
 description's "Workshop ID:" line.
 
+The uploader reads `visibility=` from the staged `workshop.txt` on every
+submit and writes it straight back (`SteamWorkshopItem.java`,
+`readWorkshopTxt`/`writeWorkshopTxt`), so when the item goes public on
+Steam, set `visibility=public` in `workshop/workshop.txt` too, or the next
+upload silently turns it private again.
+
 ## Hard won rules
 
 - Prove client APIs against the client install, not a dedicated server

@@ -44,7 +44,7 @@ the two should not run together.
 
 ## Install
 
-**From the Steam Workshop.** <!-- workshop-link:start -->Coming soon (not yet uploaded).<!-- workshop-link:end -->
+**From the Steam Workshop.** <!-- workshop-link:start -->[Dead Weight on the Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3804074600).<!-- workshop-link:end -->
 
 **Manual install.** Copy the `42/` folder's contents into a new folder under
 `~/Zomboid/mods/DeadWeight/` (create `mod.info`, `poster.png` and `media/`
@@ -120,6 +120,14 @@ words. To cut a release:
    immediately submits the same update). No BBCode is parsed on this path
    and no client side length limit was found, so the note is plain text.
 7. Commit and push.
+
+**Making the item public.** The uploader reads `visibility=` from the
+staged `workshop.txt` on every submit and writes it straight back
+(**proven**, `SteamWorkshopItem.java`: `readWorkshopTxt` loads it,
+`writeWorkshopTxt` saves it, both run on every Submit item pass). So
+flipping the item to public from its own Steam page is not enough on its
+own: set `visibility=public` in `workshop/workshop.txt` here too, or the
+next upload resubmits `visibility=private` and flips it back.
 
 ## Credits
 
