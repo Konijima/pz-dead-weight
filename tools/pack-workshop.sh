@@ -10,7 +10,7 @@
 # (the merged repo, mod.info id=DeadWeight after this rework) and
 # ~/Zomboid/Workshop/DeadWeight/Contents/mods/DeadWeight both declare the
 # same id. PROVEN on this machine 2026-09-18 (mod info screen's Path row
-# read /home/mathieu/Zomboid/Workshop/DeadWeight/Contents/mods/DeadWeight,
+# read ~/Zomboid/Workshop/DeadWeight/Contents/mods/DeadWeight,
 # Source "Workshop"): when both copies carry the same id, the game shows
 # and LOADS the STAGED copy, not the repo copy. So after ANY change to the
 # repo, rerun this script (or run it with --clean while developing straight

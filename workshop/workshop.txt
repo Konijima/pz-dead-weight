@@ -13,9 +13,8 @@
 #
 # This is a NEW item: no "id=" line. Steam writes one in after the first
 # upload (the submit screen calls writeWorkshopTxt when you leave its
-# second page) -- copy it back here and onto the "Weight Scale - mod
-# Project Zomboid (reprise B42)" vault page once it exists, see
-# tools/pack-workshop.sh and docs/RELEASE checklist notes in README.md.
+# second page) -- copy it back here once it exists, see
+# tools/pack-workshop.sh.
 #
 # visibility=private on purpose: flip to public from the item's own Steam
 # page once the owner has walked docs/TEST-EN-JEU.md and is ready.

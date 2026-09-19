@@ -143,13 +143,13 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 
 ## Ajout 2026-09-18, faire face a la colonne en montant sur la balance
 
-[vu] 2026-09-18, test en jeu (proprietaire) : le personnage se tenait sur
-la balance dos a la colonne quand il faisait face a `Facing` lui-meme. Le
-sens correct est donc l'OPPOSE de `Facing` (N<->S, E<->W), corrige dans
-`Detect.facingFor` par une table explicite; ceci corrige et remplace la
-deduction precedente ("MEME direction que Facing"), qui est maintenant
-fausse. [doute] confirme pour une seule des deux balances placees; l'autre
-orientation reste a verifier en jeu.
+Confirme en jeu, 2026-09-18 : le personnage se tenait sur la balance dos a
+la colonne quand il faisait face a `Facing` lui-meme. Le sens correct est
+donc l'OPPOSE de `Facing` (N<->S, E<->W), corrige dans `Detect.facingFor`
+par une table explicite; ceci corrige et remplace la deduction precedente
+("MEME direction que Facing"), qui est maintenant fausse. A verifier :
+confirme pour une seule des deux balances placees; l'autre orientation
+reste a verifier en jeu.
 
 30. **Marcher dessus et s'arreter, par chaque cote.** Approcher une balance
     par le nord, s'arreter dessus : le personnage doit tourner une seule

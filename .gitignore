@@ -1,3 +1,8 @@
 *.wav
 tools/out/
 __pycache__/
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

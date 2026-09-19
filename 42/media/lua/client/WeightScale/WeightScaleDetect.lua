@@ -61,10 +61,9 @@ end
 -- _9 = S), read live off the object with IsoObject:getFacing() (PROVEN
 -- client lua, ISAddTakeDispenserBottle.lua, comparable directly against the
 -- IsoDirections.N/S/E/W globals) -- no hardcoded per-sprite table needed,
--- every scale answers for itself. [vu] 2026-09-18: in-game test showed the
--- opposite of the earlier deduction -- the column sits on the side OPPOSITE
--- the sprite's `Facing`, so the player must face away from `Facing`, not
--- toward it (confirmed for one of the two placed scales; see
+-- every scale answers for itself. Confirmed in game: the column sits on the
+-- side OPPOSITE the sprite's `Facing`, so the player must face away from
+-- `Facing`, not toward it (confirmed for one of the two placed scales; see
 -- docs/TEST-EN-JEU.md for the other orientation still to check).
 local OPPOSITE_FACING = {}
 if IsoDirections then
