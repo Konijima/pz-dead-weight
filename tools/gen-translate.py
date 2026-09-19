@@ -73,16 +73,50 @@ LANG_CHARSET["KO"] = "utf-16"
 
 LANGS = tuple(sorted(LANG_CHARSET))
 
+# Prefix -> file the game loads for it (proven against the installed B42
+# client's vanilla EN folder and against B41-era Workshop mods on this
+# machine, see docs/API-COMPAT.md "Translations"):
+#   - ContextMenu_* keys load from ContextMenu.json (B42) /
+#     ContextMenu_<LANG>.txt, Lua table ContextMenu_<LANG> (B41).
+#   - IGUI_* keys load from IG_UI.json (B42) -- NOT "IGUI.json" -- /
+#     IG_UI_<LANG>.txt, Lua table IGUI_<LANG> (B41).
+# A key whose prefix (its first "_"-separated segment) is not listed here
+# fails the generator instead of silently landing in the wrong file.
+PREFIX_TO_FILE = {
+    "ContextMenu": {"b41_stem": "ContextMenu", "b41_table": "ContextMenu", "b42_stem": "ContextMenu"},
+    "IGUI": {"b41_stem": "IG_UI", "b41_table": "IGUI", "b42_stem": "IG_UI"},
+}
+
 
 def load_strings():
     with open(SRC, encoding="utf-8") as f:
         return json.load(f)
 
 
-def gen_b41_txt(strings, lang, out_dir):
-    out_dir.mkdir(parents=True, exist_ok=True)
-    lines = ["ContextMenu_%s = {" % lang, ""]
+def key_prefix(key):
+    prefix = key.split("_", 1)[0]
+    if prefix not in PREFIX_TO_FILE:
+        sys.exit(
+            "gen-translate: key %r has prefix %r, not in PREFIX_TO_FILE -- "
+            "add it there once you have proven which file the game loads "
+            "for it" % (key, prefix)
+        )
+    return prefix
+
+
+def group_by_prefix(strings):
+    groups = {}
     for key, values in strings.items():
+        groups.setdefault(key_prefix(key), {})[key] = values
+    return groups
+
+
+def gen_b41_txt(group_strings, lang, prefix, out_dir):
+    out_dir.mkdir(parents=True, exist_ok=True)
+    mapping = PREFIX_TO_FILE[prefix]
+    table = mapping["b41_table"]
+    lines = ["%s_%s = {" % (table, lang), ""]
+    for key, values in group_strings.items():
         lines.append('    %s = "%s",' % (key, values[lang]))
         lines.append("")
     lines.append("}")
@@ -95,23 +129,32 @@ def gen_b41_txt(strings, lang, out_dir):
             "gen-translate: %s cannot be encoded as %s for language %s: %s"
             % (SRC, codec, lang, exc)
         )
-    out_path = out_dir / ("ContextMenu_%s.txt" % lang)
+    out_path = out_dir / ("%s_%s.txt" % (mapping["b41_stem"], lang))
     out_path.write_bytes(encoded)
 
 
-def gen_b42_json(strings, lang, out_dir):
+def gen_b42_json(group_strings, lang, prefix, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
-    data = {key: values[lang] for key, values in strings.items()}
+    mapping = PREFIX_TO_FILE[prefix]
+    data = {key: values[lang] for key, values in group_strings.items()}
     text = json.dumps(data, indent=4, ensure_ascii=False) + "\n"
-    out_path = out_dir / "ContextMenu.json"
+    out_path = out_dir / ("%s.json" % mapping["b42_stem"])
     out_path.write_text(text, encoding="utf-8")
 
 
 def generate(base_dir):
     strings = load_strings()
+    groups = group_by_prefix(strings)
     for lang in LANGS:
-        gen_b41_txt(strings, lang, base_dir / "media/lua/shared/Translate" / lang)
-        gen_b42_json(strings, lang, base_dir / "42/media/lua/shared/Translate" / lang)
+        for prefix, group_strings in groups.items():
+            gen_b41_txt(
+                group_strings, lang, prefix,
+                base_dir / "media/lua/shared/Translate" / lang,
+            )
+            gen_b42_json(
+                group_strings, lang, prefix,
+                base_dir / "42/media/lua/shared/Translate" / lang,
+            )
 
 
 if __name__ == "__main__":

@@ -2,6 +2,4 @@ ContextMenu_CN = {
 
     ContextMenu_WeightScale_StepOn = "站上体重秤",
 
-    IGUI_WeightScale_Normal = "一般",
-
 }

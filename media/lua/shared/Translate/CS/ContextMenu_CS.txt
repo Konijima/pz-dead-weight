@@ -2,6 +2,4 @@ ContextMenu_CS = {
 
     ContextMenu_WeightScale_StepOn = "Stoupnout na váhu",
 
-    IGUI_WeightScale_Normal = "Normální",
-
 }

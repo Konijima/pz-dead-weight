@@ -422,3 +422,62 @@ Bench: `tests/translate_spec.py`, extended to loop every language in
 duplicated): every key in every language, B41 decodes and round trips in
 its assigned charset with the vanilla `ContextMenu_<LANG> = {` header, B42
 JSON has no BOM and matches source, EN/FR unchanged.
+
+## 2026-09-18, PREFIX_TO_FILE: one key family, one file (Info tab word bug)
+
+Owner's report, in game on B42, screenshot of the Info tab: the Weight row
+showed the raw key `IGUI_WeightScale_Normal` instead of "Normal" -- the
+five vanilla `UI_trait_*` bands rendered fine, only this mod's own word did
+not, so the fault was in how OUR key was shipped, not in `bandOf` or the
+patch mechanism.
+
+**Root cause, PROVEN against the client install:** `tools/gen-translate.py`
+put every key from `strings.json` into `ContextMenu.json` /
+`ContextMenu_<LANG>.txt` regardless of its prefix, i.e. one file for both
+key families. `zombie.core.Translator` loads a fixed file per key prefix,
+not one file per mod: the installed B42 client's vanilla EN folder
+(`~/.local/share/Steam/steamapps/common/ProjectZomboid/projectzomboid/
+media/lua/shared/Translate/EN/`) has `ContextMenu.json` holding
+`ContextMenu_*` keys and a SEPARATE `IG_UI.json` holding `IGUI_*` keys
+(NOT `IGUI.json`) -- so `getText("IGUI_WeightScale_Normal")` looked in
+`IG_UI.json`, where the key never existed, and returned the raw key.
+B41-era Workshop mods on this machine confirm the same split for the
+legacy format: `IG_UI_EN.txt` (Lua table `IGUI_EN`), distinct from
+`ContextMenu_EN.txt` (Lua table `ContextMenu_EN`) -- e.g.
+`~/.local/share/Steam/steamapps/workshop/content/108600/3290232938/mods/
+SmarterStorage/media/lua/shared/Translate/EN/IG_UI_EN.txt`.
+
+**Fix:** `tools/gen-translate.py` now derives each key's prefix (its first
+`_`-separated segment) and looks it up in one explicit table,
+`PREFIX_TO_FILE`, which fails the generator loud (`sys.exit`) on a prefix
+it does not know, instead of silently defaulting somewhere:
+- `ContextMenu` -> `ContextMenu.json` (B42) / `ContextMenu_<LANG>.txt`,
+  table `ContextMenu_<LANG>` (B41).
+- `IGUI` -> `IG_UI.json` (B42) / `IG_UI_<LANG>.txt`, table `IGUI_<LANG>`
+  (B41).
+
+The generator now emits one file per prefix per language per build
+(`gen_b41_txt`/`gen_b42_json` take a `prefix` and look up both the file
+stem and, for B41, the Lua table name in `PREFIX_TO_FILE`). The stray
+files the old code shipped under the wrong name (`IGUI_WeightScale_Normal`
+inside `ContextMenu.json`/`.txt`) are gone; `IG_UI.json` /
+`IG_UI_<LANG>.txt` are now generated and committed for all 28 languages.
+
+**Bench, checked against the game, not against ourselves:**
+`tests/translate_spec.py` now asserts `PREFIX_TO_FILE` against the CLIENT
+INSTALL's own EN folder (each prefix's file exists there and holds at
+least one key of that prefix; a visible `NOTICE` on stderr and the checks
+skipped when the install is absent), asserts every literal
+`getText("...")` key found in `src/lua` -- ours or a reused vanilla one
+(`UI_trait_*`, `IGUI_char_Weight`) -- exists verbatim in the file its own
+prefix maps to, and asserts no generated translation file exists outside
+`PREFIX_TO_FILE`'s names. It was RED against the pre-fix generator
+(`AttributeError`/missing `IG_UI.json` before `PREFIX_TO_FILE` existed)
+and is GREEN after.
+
+**The five other vanilla bands, confirmed against the client's own
+`UI.json`:** `UI_trait_emaciated` -> "Emaciated", `UI_trait_
+veryunderweight` -> "Very Low Weight", `UI_trait_underweight` -> "Low
+Weight", `UI_trait_overweight` -> "High Weight", `UI_trait_obese` -> "Very
+High Weight" -- all five exist verbatim, matching the owner's own in game
+report that only the Normal band was broken.

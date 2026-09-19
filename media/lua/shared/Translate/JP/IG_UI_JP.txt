@@ -1,0 +1,5 @@
+IGUI_JP = {
+
+    IGUI_WeightScale_Normal = "通常",
+
+}

@@ -1,0 +1,5 @@
+IGUI_CS = {
+
+    IGUI_WeightScale_Normal = "Normální",
+
+}

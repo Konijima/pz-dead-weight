@@ -2,6 +2,4 @@ ContextMenu_RO = {
 
     ContextMenu_WeightScale_StepOn = "Urcã pe cântar",
 
-    IGUI_WeightScale_Normal = "Normal",
-
 }

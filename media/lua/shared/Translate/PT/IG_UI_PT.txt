@@ -1,0 +1,5 @@
+IGUI_PT = {
+
+    IGUI_WeightScale_Normal = "Normal",
+
+}

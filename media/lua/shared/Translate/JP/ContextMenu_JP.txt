@@ -2,6 +2,4 @@ ContextMenu_JP = {
 
     ContextMenu_WeightScale_StepOn = "体重計に乗る",
 
-    IGUI_WeightScale_Normal = "通常",
-
 }

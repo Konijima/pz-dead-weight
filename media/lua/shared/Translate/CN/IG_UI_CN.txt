@@ -1,0 +1,5 @@
+IGUI_CN = {
+
+    IGUI_WeightScale_Normal = "一般",
+
+}

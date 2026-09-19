@@ -2,6 +2,4 @@ ContextMenu_DE = {
 
     ContextMenu_WeightScale_StepOn = "Auf die Waage steigen",
 
-    IGUI_WeightScale_Normal = "Normal",
-
 }
