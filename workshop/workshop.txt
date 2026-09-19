@@ -57,6 +57,9 @@ description=
 description=[h2]Translations[/h2]
 description=28 languages included. Native speaker corrections welcome in the comments.
 description=
+description=[h2]Source[/h2]
+description=[url=https://github.com/Konijima/pz-dead-weight]Source code on GitHub[/url]. Bug reports and translation fixes welcome there.
+description=
 description=Workshop ID: [i]set after upload[/i]
 description=Mod ID: DeadWeight
 tags=Build 41;Build 42;Interface;Language/Translation;QoL;Silly/Fun

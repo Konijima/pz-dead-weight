@@ -44,7 +44,7 @@ the two should not run together.
 
 ## Install
 
-**From the Steam Workshop.** Coming soon (not yet uploaded).
+**From the Steam Workshop.** <!-- workshop-link:start -->Coming soon (not yet uploaded).<!-- workshop-link:end -->
 
 **Manual install.** Copy the `42/` folder's contents into a new folder under
 `~/Zomboid/mods/DeadWeight/` (create `mod.info`, `poster.png` and `media/`
@@ -85,6 +85,15 @@ Build 42 can load from the same copy.
   known (the raw URL once this repository is public, or the URL Steam
   gives the gif once it is added to the Workshop item's own image
   gallery); an empty file emits no `[img]` tag rather than a broken one.
+  The description's own [Source](https://github.com/Konijima/pz-dead-weight)
+  link points bug reports and translation fixes back here.
+
+**After the Workshop upload.** Run `tools/set-workshop-id.sh` (no argument:
+it reads the id Steam wrote into the staged copy). It records the id in
+`workshop/workshop_id.txt`, fills the description's "Workshop ID:" line
+and the README link above. Then drop the presentation gif's Steam URL
+into `workshop/gif_url.txt`, rerun `tools/pack-workshop.sh`, and commit and
+push.
 
 ## Credits
 

@@ -25,8 +25,28 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO="$(pwd)"
-WS="$HOME/Zomboid/Workshop/DeadWeight"
+WS="${DEADWEIGHT_STAGE:-$HOME/Zomboid/Workshop/DeadWeight}"
 DEST="$WS/Contents/mods/DeadWeight"
+
+# SAFETY: once an item is uploaded, Steam writes id=<digits> into the
+# staged workshop.txt. If the repo does not know that id yet
+# (workshop/workshop_id.txt empty or different, see
+# tools/set-workshop-id.sh), overwriting or removing the staged copy would
+# lose it, and the next upload would create a SECOND Workshop item.
+guard_known_id() {
+  local staged_id repo_id
+  staged_id="$(grep -h '^id=' "$WS/workshop.txt" 2>/dev/null | head -1 | cut -d= -f2 || true)"
+  [ -n "$staged_id" ] || return 0
+  # Checked against the repo's own workshop.txt, the file about to
+  # overwrite the staged one -- workshop_id.txt is only the source that
+  # feeds it, so this is the actual guarantee that matters.
+  repo_id="$(grep -h '^id=' "$REPO/workshop/workshop.txt" 2>/dev/null | head -1 | cut -d= -f2 || true)"
+  if [ "$staged_id" != "$repo_id" ]; then
+    echo "REFUSING: staged workshop.txt already has id=$staged_id, the repo's workshop.txt does not (${repo_id:-<none>})." >&2
+    echo "Run tools/set-workshop-id.sh first, or this would orphan that Workshop item." >&2
+    exit 1
+  fi
+}
 
 # Only what the game needs to load the mod. No .git, src, tests, docs, tools.
 SHIP=(mod.info poster.png poster2.png media 42 common)
@@ -35,6 +55,7 @@ usage() { echo "usage: $0 [--check|--clean]" >&2; exit 2; }
 
 case "${1:-}" in
   --clean)
+    guard_known_id
     rm -rf "$DEST"
     echo "removed $DEST"
     exit 0
@@ -66,6 +87,7 @@ if [ "$CHECK" -eq 1 ]; then
   exit 0
 fi
 
+guard_known_id
 python3 "$REPO/tools/gen-workshop-txt.py"
 
 mkdir -p "$DEST"
@@ -74,16 +96,11 @@ for f in "${SHIP[@]}"; do
   cp -r "$REPO/$f" "$DEST/$f"
 done
 
-# Steam writes its item id into the Workshop-side workshop.txt after the
-# first upload; keep that line when the repo copy has none yet (this is a
-# new item, so the repo's workshop.txt never carries one on purpose).
-ID=$(grep -h '^id=' "$WS/workshop.txt" 2>/dev/null | head -1 || true)
+# Safe to overwrite: guard_known_id above already made sure the staged
+# workshop.txt carries no id, or the same one workshop/workshop_id.txt
+# does (tools/set-workshop-id.sh keeps the repo's copy in sync).
 cp "$REPO/workshop/workshop.txt" "$WS/workshop.txt"
 cp "$REPO/workshop/preview.png" "$WS/preview.png"
-if [ -n "$ID" ] && ! grep -q '^id=' "$WS/workshop.txt"; then
-  printf '%s\n' "$ID" >> "$WS/workshop.txt"
-  echo "kept Steam's $ID (copy it into $REPO/workshop/workshop.txt and commit)"
-fi
 
 echo "staged: $DEST"
 echo "upload from the game (main menu, Workshop, Submit item), then:"
