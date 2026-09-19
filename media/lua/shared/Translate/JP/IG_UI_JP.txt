@@ -8,7 +8,7 @@ IGUI_JP = {
 
     IGUI_WeightScale_Normal = "通常",
 
-    IGUI_WeightScale_Overweight = "太り気味",
+    IGUI_WeightScale_Overweight = "過体重",
 
     IGUI_WeightScale_Obese = "肥満",
 

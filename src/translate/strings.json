@@ -151,7 +151,7 @@
     },
     "IGUI_WeightScale_Overweight": {
         "EN": "Overweight",
-        "FR": "Surpoids",
+        "FR": "En surpoids",
         "AR": "Sobrepeso",
         "CA": "Sobrepès",
         "CH": "過重",
@@ -166,7 +166,7 @@
         "HU": "Túlsúlyos",
         "ID": "Kelebihan Berat Badan",
         "IT": "Sovrappeso",
-        "JP": "太り気味",
+        "JP": "過体重",
         "KO": "과체중",
         "NL": "Overgewicht",
         "NO": "Overvektig",

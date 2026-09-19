@@ -8,7 +8,7 @@ IGUI_FR = {
 
     IGUI_WeightScale_Normal = "Normal",
 
-    IGUI_WeightScale_Overweight = "Surpoids",
+    IGUI_WeightScale_Overweight = "En surpoids",
 
     IGUI_WeightScale_Obese = "Obèse",
 
