@@ -60,8 +60,13 @@ def _fresh_tmp_repo(tmp):
     pack-workshop.sh ships (their content does not matter, only that they
     exist)."""
     (tmp / "tools").mkdir()
-    for name in ("gen-workshop-txt.py", "pack-workshop.sh", "set-workshop-id.sh", "fill-readme-link.py"):
+    for name in ("gen-workshop-txt.py", "pack-workshop.sh", "set-workshop-id.sh",
+                 "fill-readme-link.py", "changelog-steam.py"):
         shutil.copy(TOOLS / name, tmp / "tools" / name)
+    (tmp / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## Unreleased\n\n## 1.0.0 - 2026-09-18\n\n- A line.\n",
+        encoding="utf-8",
+    )
     (tmp / "workshop").mkdir()
     (tmp / "workshop" / "description.bbcode").write_text(
         f"[h1]T[/h1]\nWorkshop ID: {WORKSHOP_ID_TOKEN}\n", encoding="utf-8"

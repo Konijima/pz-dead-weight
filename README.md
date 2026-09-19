@@ -97,6 +97,30 @@ and the README link above. `workshop/gif_url.txt` needs no change at that
 point (it already carries the repo's raw gif URL); rerun
 `tools/pack-workshop.sh`, and commit and push.
 
+**Releasing (change notes).** Every player visible change gets a line
+under `CHANGELOG.md`'s `Unreleased` heading as it lands, in plain player
+words. To cut a release:
+
+1. Move the `Unreleased` lines under a new `## <version> - <date>` heading.
+2. Bump `modversion=` in `42/mod.info` (and the root `mod.info`) to match.
+3. `bash tests/run.sh` (the changelog bench checks the two agree).
+4. `python3 tools/changelog-steam.py` prints the new section as a Steam
+   change note and writes it to `workshop/changenote.txt`.
+5. `bash tools/pack-workshop.sh` stages the upload and, at the end, prints
+   the path to `workshop/changenote.txt` again.
+6. Upload from the game (main menu, Workshop, Submit item), and on the
+   changelog page of that screen, paste the contents of
+   `workshop/changenote.txt` into the text box. **Proven** (client
+   install's `WorkshopSubmitScreen.lua`, `SteamWorkshopItem.java`): the
+   change note is a plain string typed or pasted into a multi-line
+   `ISTextEntryBox` (it takes paste, and up to 512 lines); it is sent
+   straight to Steam by `item:submitUpdate()`, never read from
+   `workshop.txt` or any other staged file, and the game takes one even on
+   the very first upload of a brand new item (it creates the item, then
+   immediately submits the same update). No BBCode is parsed on this path
+   and no client side length limit was found, so the note is plain text.
+7. Commit and push.
+
 ## Credits
 
 Made by Konijima. Art (the beam head textures, poster and icon) generated

@@ -1,5 +1,6 @@
 *.wav
 tools/out/
+workshop/changenote.txt
 __pycache__/
 .DS_Store
 Thumbs.db

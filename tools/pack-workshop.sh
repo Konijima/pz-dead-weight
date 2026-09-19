@@ -105,3 +105,10 @@ cp "$REPO/workshop/preview.png" "$WS/preview.png"
 echo "staged: $DEST"
 echo "upload from the game (main menu, Workshop, Submit item), then:"
 echo "  bash tools/pack-workshop.sh --clean"
+
+# The change note is typed or pasted straight into the submit screen's
+# changelog page (a multi-line ISTextEntryBox), never read from a staged
+# file -- see tools/changelog-steam.py's docstring for the proof. So this
+# only refreshes and points at the text to paste, it does not stage it.
+python3 "$REPO/tools/changelog-steam.py" >/dev/null
+echo "change note to paste on the Workshop submit screen: $REPO/workshop/changenote.txt"

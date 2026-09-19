@@ -169,3 +169,5 @@ description's "Workshop ID:" line.
 - Design changes (HUD layout, weight range, band thresholds/colours) start
   in `docs/maquettes/v2/assets/geometry.json` and its maquette, never in
   Lua; `tools/gen-geo.py` is the only writer of `WeightScaleGeo.lua`.
+- Every player visible change gets a line under `Unreleased` in
+  `CHANGELOG.md` as it lands.

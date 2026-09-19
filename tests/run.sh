@@ -39,6 +39,9 @@ python3 tests/translate_spec.py
 echo "-- workshop.txt generator drift check --"
 python3 tests/workshop_gen_spec.py
 
+echo "-- changelog bench (version match, Unreleased exists, Steam note) --"
+python3 tests/changelog_spec.py
+
 echo "-- lua core bench ($LUA) --"
 "$LUA" tests/core_spec.lua
 
