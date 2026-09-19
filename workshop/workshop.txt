@@ -16,8 +16,11 @@
 # second page) -- copy it back here once it exists, see
 # tools/pack-workshop.sh.
 #
-# visibility=private on purpose: flip to public from the item's own Steam
-# page once the owner has walked docs/TEST-EN-JEU.md and is ready.
+# visibility=public: the owner released the item on Steam and made this
+# repo public on 2026-09-18. Every future upload re-sends this value from
+# this file (proven in the game's own SteamWorkshopItem.java /
+# WorkshopSubmitScreen.lua), so it must never drift back to private by
+# accident.
 version=1
 id=3804074600
 title=Dead Weight
@@ -65,4 +68,4 @@ description=
 description=Workshop ID: 3804074600
 description=Mod ID: DeadWeight
 tags=Build 41;Build 42;Interface;Language/Translation;QoL;Silly/Fun
-visibility=private
+visibility=public
