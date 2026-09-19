@@ -80,20 +80,22 @@ Build 42 can load from the same copy.
   staged copy, not the repo.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
-  lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`.
-  Paste the presentation gif's public URL into `gif_url.txt` once it is
-  known (the raw URL once this repository is public, or the URL Steam
-  gives the gif once it is added to the Workshop item's own image
-  gallery); an empty file emits no `[img]` tag rather than a broken one.
-  The description's own [Source](https://github.com/Konijima/pz-dead-weight)
-  link points bug reports and translation fixes back here.
+  lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
+  which already holds the gif's raw GitHub URL
+  (`https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/deadweight-animation.gif`);
+  an empty file emits no `[img]` tag rather than a broken one. That URL
+  only resolves once this repository is public, so **at release, make the
+  repository public before making the Workshop item public**, or Steam
+  shows, and may cache, a broken image. The description's own
+  [Source](https://github.com/Konijima/pz-dead-weight) link points bug
+  reports and translation fixes back here.
 
 **After the Workshop upload.** Run `tools/set-workshop-id.sh` (no argument:
 it reads the id Steam wrote into the staged copy). It records the id in
 `workshop/workshop_id.txt`, fills the description's "Workshop ID:" line
-and the README link above. Then drop the presentation gif's Steam URL
-into `workshop/gif_url.txt`, rerun `tools/pack-workshop.sh`, and commit and
-push.
+and the README link above. `workshop/gif_url.txt` needs no change at that
+point (it already carries the repo's raw gif URL); rerun
+`tools/pack-workshop.sh`, and commit and push.
 
 ## Credits
 

@@ -23,6 +23,7 @@ title=Dead Weight
 description=[h1]Dead Weight[/h1]
 description=[i]Step on the scale. Face the truth.[/i]
 description=
+description=[img]https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/deadweight-animation.gif[/img]
 description=
 description=The clinic's scale still works. Stand on it and it tells you exactly what the apocalypse did to you, to one decimal. Not kindly.
 description=
