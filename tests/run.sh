@@ -36,6 +36,9 @@ python3 tests/modinfo_spec.py
 echo "-- translation bench (both builds, both langs) --"
 python3 tests/translate_spec.py
 
+echo "-- workshop.txt generator drift check --"
+python3 tests/workshop_gen_spec.py
+
 echo "-- lua core bench ($LUA) --"
 "$LUA" tests/core_spec.lua
 

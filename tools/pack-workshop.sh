@@ -66,6 +66,8 @@ if [ "$CHECK" -eq 1 ]; then
   exit 0
 fi
 
+python3 "$REPO/tools/gen-workshop-txt.py"
+
 mkdir -p "$DEST"
 rm -rf "${SHIP[@]/#/$DEST/}"
 for f in "${SHIP[@]}"; do
