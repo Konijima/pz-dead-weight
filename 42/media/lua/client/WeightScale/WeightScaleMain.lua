@@ -1,5 +1,5 @@
 -- Wires the modules to game events. It computes nothing itself; it only
--- starts/stops the HUDs, feeds them each player's weight, and calls into
+-- starts/stops the HUDs, feeds them the total on the scale, and calls into
 -- Detect every tick (Detect.update for presence, Detect.updateFacing for
 -- the queued once-per-step-on turn toward the scale's column, point B
 -- 2026-09-18).
@@ -22,15 +22,6 @@ local Main = WeightScale.Main
 Main.huds = Main.huds or {}   -- [n] = WeightScale.HUD instance
 Main.MAX_PLAYERS = 4          -- PZ's own splitscreen ceiling
 Main._lastCount = Main._lastCount or 0
-
-local function currentWeightKg(n)
-    local playerObj = getSpecificPlayer and getSpecificPlayer(n)
-    if not playerObj then return WeightScale.Geo.weight.start end
-    local nutrition = playerObj.getNutrition and playerObj:getNutrition()
-    local w = nutrition and nutrition.getWeight and nutrition:getWeight()
-    if type(w) ~= "number" then return WeightScale.Geo.weight.start end
-    return w
-end
 
 local function activeCount()
     return (getNumActivePlayers and getNumActivePlayers()) or 1
@@ -86,15 +77,22 @@ function Main.onGameStart()
     WeightScale.Prefs.load()
     Main._lastCount = activeCount()
 
-    WeightScale.Detect.onScaleOn = function(n)
-        local hud = Main.hudFor(n)
-        hud:startOn(currentWeightKg(n))
-        WeightScale.Sound.playOn(getSpecificPlayer and getSpecificPlayer(n))
-    end
-    WeightScale.Detect.onScaleOff = function(n)
-        local hud = Main.huds[n]
-        if hud then hud:startOff() end
-        WeightScale.Sound.playOff(getSpecificPlayer and getSpecificPlayer(n))
+    -- Occupancy drives the HUD (task 2026-09-20). Sound rule: a cue only for
+    -- the local player ON the tile, and only for the first person: on when it
+    -- goes empty -> occupied with this player on it, off when it goes occupied
+    -- -> empty and this player had been on it. A second or later occupant, or
+    -- a pure observer, changes the reading in silence.
+    WeightScale.Detect.onOccupancy = function(n, kg, selfOn, wasEmpty, wasSelf)
+        local playerObj = getSpecificPlayer and getSpecificPlayer(n)
+        if kg then
+            local hud = Main.hudFor(n)
+            if wasEmpty then hud:startOn(kg) else hud:retarget(kg) end
+            if wasEmpty and selfOn then WeightScale.Sound.playOn(playerObj) end
+        else
+            local hud = Main.huds[n]
+            if hud then hud:startOff() end
+            if wasSelf then WeightScale.Sound.playOff(playerObj) end
+        end
     end
 end
 

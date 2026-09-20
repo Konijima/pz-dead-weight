@@ -25,9 +25,27 @@ goes with you; nowhere else in the game can you read it that precisely.
 - A "Step on Scale" option at the top of the scale's right click menu, with
   its own icon, walks you there.
 - Every local splitscreen player gets their own readout.
-- No per frame scanning: the reading only exists while you are standing on
-  the scale.
+- The scale reads everyone on it: survivors, animals and zombies, added up.
+  Stand one square away and you read them too, like a doctor weighing a
+  patient.
+- No per frame scanning: the reading only exists while someone is on the
+  scale and you are next to it.
 - 28 languages, every one the game ships.
+
+## Weigh others, and anything else
+
+Whatever stands on the scale is weighed, and anyone standing on it or one
+square away in the same room reads the same number. Two survivors together
+read their true combined weight: the beam rests at its end and the number
+stays honest. A light animal reads under 35 kg, a heavy pair over 130 kg.
+
+![An animal on the scale, read from the next tile](workshop/art/deadweight-animal.gif)
+
+A zombie has no weight in the game, so each one gets a believable invented
+weight, the same every time you see it. Only the first person to step on or
+off hears the sound.
+
+![A zombie on the scale, read from the next tile](workshop/art/deadweight-zombie.gif)
 
 ![The beam readout and the Info tab weight category](workshop/art/deadweight-banner-2.png)
 

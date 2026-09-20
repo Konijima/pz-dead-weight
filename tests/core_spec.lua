@@ -102,5 +102,54 @@ _G.getFileReader = function() error("boom") end
 local ok = pcall(Prefs.load)
 check(ok, "Prefs.load() must not throw when getFileReader errors")
 
+-- sumWeights: every occupant added, clamped to the scale range, nil when empty.
+check(Core.sumWeights({}) == nil, "sumWeights of an empty tile is nil")
+check(Core.sumWeights({72.5}) == 72.5, "one occupant reads its own weight")
+check(math.abs(Core.sumWeights({60, 70}) - 130) < 1e-9, "two occupants add up")
+check(Core.sumWeights({80, 80}) == 160, "two occupants over the range read their true sum")
+check(Core.sumWeights({80, 80, 80}) == 240, "three occupants read their true sum, no cap")
+check(Core.sumWeights({3}) == 3, "a very light occupant (a chicken) is not clamped up to the scale min")
+check(Core.sumWeights({0.5, 2.5}) == 3, "light occupants add up below the scale min")
+check(Core.sumWeights({-5}) == 0, "a negative sum floors at zero")
+do
+    local mid = Core.sample("on", Core.T.slideStart + Core.T.slide / 2, 3)
+    check(mid.reading < 35 and mid.reading > 3, "sub-min target: numeral counts down in kg, got " .. mid.reading)
+    check(Core.sample("on", Core.T.settleStart, 3).reading == 3, "sub-min target settles on its true value")
+    check(Core.mapX(3) == Core.mapX(35), "the beam rests at the low end for a sub-min reading")
+    local hi = Core.sample("on", Core.T.slideStart + Core.T.slide / 2, 240)
+    check(hi.reading > 35 and hi.reading < 240, "over-max target: numeral counts up in kg, got " .. hi.reading)
+    check(Core.sample("on", Core.T.settleStart, 240).reading == 240, "over-max target settles on its true value")
+    check(Core.mapX(240) == Core.mapX(130), "the beam rests at the high end for an over-max reading")
+end
+check(Core.sumWeights({"x", false}) == nil, "non numbers are ignored")
+
+-- zombieWeight: deterministic, 60.0 to 90.0, one decimal, spread over ids.
+local seen, distinct, lo, hi = {}, 0, math.huge, -math.huge
+for id = 0, 999 do
+    local w = Core.zombieWeight(id)
+    check(w == Core.zombieWeight(id), "zombieWeight is deterministic for id " .. id)
+    check(w >= 60 and w <= 90, "zombieWeight in 60..90, id " .. id .. " gave " .. w)
+    check(math.abs(w * 10 - math.floor(w * 10 + 0.5)) < 1e-6, "zombieWeight has one decimal, id " .. id)
+    if not seen[w] then seen[w] = true; distinct = distinct + 1 end
+    lo, hi = math.min(lo, w), math.max(hi, w)
+end
+check(distinct >= 250, "zombieWeight spreads over ids, distinct values: " .. distinct)
+check(lo < 62 and hi > 88, "zombieWeight covers the range, got " .. lo .. ".." .. hi)
+local same = 0
+for id = 1, 999 do if Core.zombieWeight(id) == Core.zombieWeight(id - 1) then same = same + 1 end end
+check(same < 10, "neighbouring ids rarely share a weight, got " .. same)
+check(Core.zombieWeight(nil) == Core.zombieWeight(0), "a missing id falls back to id 0")
+
+-- sample with `from`: default path unchanged, slide starts at `from`.
+local T = Core.T
+local a = Core.sample("on", T.slideStart, 100)
+local b = Core.sample("on", T.slideStart, 100, nil)
+check(a.reading == b.reading and a.reading == 35, "no from: the slide starts at the scale minimum")
+check(math.abs(Core.sample("on", T.slideStart, 100, 90).reading - 90) < 1e-6, "from: the slide starts at from")
+check(math.abs(Core.sample("on", T.settleStart - 0.001, 100, 90).reading - 100) < 0.05, "from: the slide still ends at the target")
+check(Core.sample("on", T.settleStart + 10, 100, 90).reading == 100, "from: settled reading is the target")
+local down = Core.sample("on", T.slideStart + T.slide / 2, 60, 120).reading
+check(down < 120 and down > 60, "from above the target slides downward, got " .. down)
+
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

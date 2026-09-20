@@ -8,6 +8,20 @@ note box.
 
 ## Unreleased
 
+## 1.1.0 - 2026-09-20
+
+The scale now weighs whoever stands on it, not only you.
+
+- Whatever stands on the scale is weighed: survivors, animals and zombies,
+  added up. Zombies have no weight in the game, so each one gets a
+  believable invented weight, the same every time you see it.
+- Stand on the scale or one square away in the same room and you read the
+  same number, so a doctor can weigh a patient.
+- The number is always the true total: a light animal reads under 35 kg,
+  two survivors together read over 130 kg. The beam simply rests at its low
+  or high end.
+- Only the first person to step on or off hears the sound.
+
 ## 1.0.0 - 2026-09-18
 
 First release of Dead Weight, the successor of the old "Weight Scale" mod,
