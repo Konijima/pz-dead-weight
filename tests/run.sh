@@ -54,6 +54,9 @@ echo "-- lua context menu bench ($LUA) --"
 echo "-- lua face-the-scale bench ($LUA) --"
 "$LUA" tests/face_spec.lua
 
+echo "-- lua occupancy bench ($LUA) --"
+"$LUA" tests/occupancy_spec.lua
+
 echo "-- lua char screen bench ($LUA) --"
 "$LUA" tests/charscreen_spec.lua
 

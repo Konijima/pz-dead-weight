@@ -8,6 +8,13 @@ note box.
 
 ## Unreleased
 
+- The scale now reads everyone standing on it: the readout adds up the
+  weight of every survivor, animal and zombie on the tile (zombies get an
+  invented weight), and two people together simply pin the beam at the top.
+  A doctor standing within two squares in the same room reads it too, so
+  you can weigh a patient. Only the first person stepping on or off makes
+  the sound.
+
 ## 1.0.0 - 2026-09-18
 
 First release of Dead Weight, the successor of the old "Weight Scale" mod,

@@ -118,6 +118,12 @@ require("WeightScale/WeightScaleMain")
 local Geo, Core = WeightScale.Geo, WeightScale.Core
 local Detect, Prefs, Main = WeightScale.Detect, WeightScale.Prefs, WeightScale.Main
 
+-- Occupancy callbacks as Detect would fire them for the viewer alone on the
+-- tile (Main wires Detect.onOccupancy; the sound/HUD wiring is what is under
+-- test here, the detection itself is tests/occupancy_spec.lua).
+local function occOn(n) Detect.onOccupancy(n, 80, true, true, false) end
+local function occOff(n) Detect.onOccupancy(n, nil, false, false, true) end
+
 -- 1. mod loaded, player idle: nothing at all in the UI manager.
 check(#UIManager.ui == 0, "loading the mod must not register anything")
 fire("OnGameStart")
@@ -128,7 +134,7 @@ check(#SOUND_LOG == 0, "no sound while idle")
 
 -- 2. stepping on player 0's scale builds and registers its HUD, at the
 --    readout size, at the SAME anchor as before splitscreen existed.
-Detect.onScaleOn(0)
+occOn(0)
 local hud = Main.huds[0]
 check(hud ~= nil, "stepping on builds player 0's HUD")
 check(registered(hud) == 1, "stepping on registers the HUD once, got " .. registered(hud))
@@ -165,7 +171,7 @@ check(hud.width == Geo.readout.w, "resolution change keeps the readout width")
 SCREEN.w, SCREEN.h = 1920, 1080
 
 -- 5. stepping off keeps it until the leaving animation is over, then drops it.
-Detect.onScaleOff(0)
+occOff(0)
 check(#SOUND_LOG == 2 and SOUND_LOG[2].name == "WeightScaleOff" and SOUND_LOG[2].n == 0,
     "stepping off plays WeightScaleOff once for player 0")
 NOW = NOW + Core.T.offEnd - 1
@@ -185,11 +191,11 @@ check(#SOUND_LOG == 2, "letting the leaving animation finish plays no extra soun
 --    called directly here (bypassing Detect.update's own transition guard,
 --    on purpose) to check HUD:show()/hide() are themselves idempotent.
 for i = 1, 4 do
-    Detect.onScaleOn(0)
+    occOn(0)
     check(registered(hud) == 1, "cycle " .. i .. " registers exactly one element")
-    Detect.onScaleOn(0)
+    occOn(0)
     check(registered(hud) == 1, "cycle " .. i .. " re-entry must not add a second element")
-    Detect.onScaleOff(0)
+    occOff(0)
     NOW = NOW + Core.T.offEnd
     fire("OnPlayerUpdate", PLAYERS[0])
     check(#UIManager.ui == 0, "cycle " .. i .. " leaves the UI manager empty")
@@ -242,8 +248,8 @@ ACTIVE = 2
 VIEWPORTS[0] = { left = 0, top = 0, w = 960, h = 1080 }
 VIEWPORTS[1] = { left = 960, top = 0, w = 960, h = 1080 }
 SOUND_LOG = {}
-Detect.onScaleOn(0)
-Detect.onScaleOn(1)
+occOn(0)
+occOn(1)
 local hud0, hud1 = Main.huds[0], Main.huds[1]
 check(hud0 ~= nil and hud1 ~= nil, "both players get their own HUD instance")
 check(hud0 ~= hud1, "the two players' HUDs are different objects")
@@ -253,13 +259,13 @@ check(hud1.x == math.floor(960 + 960 / 2 + Geo.offset.dx), "player 1 anchors to 
 check(#SOUND_LOG == 2, "two step-ons play two sounds, got " .. #SOUND_LOG)
 check(SOUND_LOG[1].n == 0 and SOUND_LOG[2].n == 1, "each on-sound went to its own player's emitter")
 
-Detect.onScaleOff(0)
+occOff(0)
 NOW = NOW + Core.T.offEnd + 1
 fire("OnPlayerUpdate", PLAYERS[0])
 check(registered(hud0) == 0, "player 0 leaving the scale removes only player 0's element")
 check(registered(hud1) == 1, "player 1's element never crosses to player 0's transition")
 check(SOUND_LOG[3].name == "WeightScaleOff" and SOUND_LOG[3].n == 0, "off-sound went to player 0 only")
-Detect.onScaleOff(1)
+occOff(1)
 NOW = NOW + Core.T.offEnd + 1
 fire("OnPlayerUpdate", PLAYERS[1])
 check(registered(hud1) == 0, "player 1's element is dropped on its own leaving transition")
@@ -305,7 +311,7 @@ ACTIVE = 2
 
 -- 9. a player slot going nil (disconnect) removes its element and clears
 --    its Detect state; nothing may leak (task point A3).
-Detect.onScaleOn(1)
+occOn(1)
 hud1 = Main.huds[1]
 check(registered(hud1) == 1, "player 1 is back on the scale before disconnecting")
 PLAYERS[1] = nil
@@ -383,6 +389,28 @@ Prefs.style = "beam"
 hudR:applyBounds()
 check(hudR.width == Geo.readout.w and hudR.height == Geo.readout.h,
     "toggling back to beam while visible resizes the element to the readout rectangle")
+
+-- 12. retarget (task 2026-09-20): the total changed while the readout is up.
+--     Stays registered exactly once, slides from what is on screen now, and
+--     a retarget on an idle or leaving HUD is a plain start.
+local hudT = WeightScale.HUD:new(8)
+hudT:retarget(70)
+check(hudT.mode == "on" and registered(hudT) == 1, "retarget on an idle HUD is a plain startOn")
+check(hudT.from == nil, "a plain start slides from the scale minimum")
+NOW = NOW + Core.T.onEnd + 10
+hudT:retarget(120)
+check(registered(hudT) == 1, "retarget keeps the element registered once")
+check(hudT.mode == "on" and hudT.target == 120, "retarget swaps the target")
+check(hudT.from == 70, "retarget slides from the reading on screen (70 settled), got " .. tostring(hudT.from))
+check(NOW - hudT.t0 == Core.T.slideStart, "retarget resumes at the slide, no restart of the appear fade")
+NOW = NOW + Core.T.slide / 2
+hudT:retarget(75)
+check(hudT.from > 70 and hudT.from < 120, "a retarget mid slide starts from the interpolated reading, got " .. hudT.from)
+check(registered(hudT) == 1, "a second retarget still leaves one element")
+hudT:startOff()
+hudT:retarget(90)
+check(hudT.mode == "on" and hudT.from == nil and registered(hudT) == 1, "retarget while leaving restarts cleanly")
+hudT:destroy()
 
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

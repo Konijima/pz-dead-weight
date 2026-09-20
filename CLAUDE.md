@@ -56,7 +56,10 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
 - `WeightScaleGeo.lua`: generated, see above. HUD geometry, weight range,
   band thresholds and colours.
 - `WeightScaleDetect.lua`: per local player presence detection (is this
-  player standing on a scale tile), splitscreen aware.
+  player standing on a scale tile, or within 2 squares of one in the same
+  room), occupancy polling with a debounce, splitscreen aware.
+- `WeightScaleOccupants.lua`: who stands on the scale tile and what each
+  weighs (player, animal, zombie); the game API for it lives here.
 - `WeightScaleHUD.lua`: the on screen readout, an `ISUIElement` sized to
   the readout, added to and removed from the UI manager as it appears.
 - `WeightScalePrefs.lua`: per user prefs (unit, beam/panel style), read and
@@ -81,8 +84,8 @@ and fails loud, not silently, if one is missing. It runs, in order: the
 geometry generator drift check, the `mod.info` guard (id/name match,
 poster/icon files exist, no U+2014 anywhere tracked, description tags
 space delimited), the translation bench, the `workshop.txt` generator
-drift check, five Lua unit suites (core math, HUD lifecycle, context menu,
-facing the scale, the Info tab patch), and a JS/Lua parity check of the
+drift check, six Lua unit suites (core math, HUD lifecycle, context menu,
+facing the scale, occupancy, the Info tab patch), and a JS/Lua parity check of the
 animation sampler against the maquette's own `anim.js`.
 
 Packing for the Workshop:

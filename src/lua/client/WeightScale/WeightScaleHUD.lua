@@ -279,7 +279,7 @@ end
 function HUD:render()
     if self.mode == "idle" then return end
     local t = getTimestampMs() - self.t0
-    local st = Core.sample(self.mode, t, self.target)
+    local st = Core.sample(self.mode, t, self.target, self.from)
     if not st.visible then return end
     local unit = WeightScale.Prefs and WeightScale.Prefs.unit or "kg"
     local style = WeightScale.Prefs and WeightScale.Prefs.style or "beam"
@@ -306,7 +306,20 @@ function HUD:startOn(targetKg)
     self.mode = "on"
     self.t0 = getTimestampMs()
     self.target = targetKg
+    self.from = nil
     self:show()
+end
+
+-- The total on the scale changed while the readout is up (a second occupant,
+-- one leaving): slide from what is on screen now to the new value, in the
+-- same beam tip, without restarting the appear fade or touching the UI
+-- manager (the element stays registered once). Off or idle: a plain startOn.
+function HUD:retarget(targetKg)
+    if self.mode ~= "on" then return self:startOn(targetKg) end
+    local now = getTimestampMs()
+    self.from = Core.sample("on", now - self.t0, self.target, self.from).reading
+    self.target = targetKg
+    self.t0 = now - Core.T.slideStart
 end
 
 function HUD:startOff()
@@ -323,7 +336,7 @@ local HIT_RECT = { x = 0, y = 0, w = 0, h = 0 }
 
 function HUD:currentAlpha()
     if self.mode == "idle" then return 0 end
-    local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target)
+    local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target, self.from)
     return st.alpha
 end
 
