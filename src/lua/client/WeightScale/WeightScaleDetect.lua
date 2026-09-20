@@ -8,7 +8,7 @@
 -- path keys off these).
 -- Occupancy (task 2026-09-20): the scale reads everyone on it and a viewer
 -- within Detect.radius squares, same z and same room, sees the same reading.
--- On viewer square change ONLY the 5x5 block is scanned for the nearest scale
+-- On viewer square change ONLY the 3x3 block is scanned for the nearest scale
 -- (cached as scaleSquare); while one is cached that ONE tile's occupants are
 -- read every throttled tick and onOccupancy(n, kg|nil, selfOn, wasEmpty,
 -- wasSelf) fires when the one decimal total changes. A change caused by
@@ -28,7 +28,7 @@ Detect.spriteNames = {
 }
 
 Detect.tickEvery = 6          -- every few ticks, not every frame
-Detect.radius = 2             -- squares a viewer may stand from the scale
+Detect.radius = 1             -- squares a viewer may stand from the scale
 Detect.debounce = 2           -- polls a non self change must hold
 Detect.players = Detect.players or {}  -- [n] = {tick, onScale, lastSquare, ...}
 Detect.onScaleOn = nil        -- function(n, square)

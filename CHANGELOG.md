@@ -8,12 +8,19 @@ note box.
 
 ## Unreleased
 
-- The scale now reads everyone standing on it: the readout adds up the
-  weight of every survivor, animal and zombie on the tile (zombies get an
-  invented weight), and two people together simply pin the beam at the top.
-  A doctor standing within two squares in the same room reads it too, so
-  you can weigh a patient. Only the first person stepping on or off makes
-  the sound.
+## 1.1.0 - 2026-09-20
+
+The scale now weighs whoever stands on it, not only you.
+
+- Whatever stands on the scale is weighed: survivors, animals and zombies,
+  added up. Zombies have no weight in the game, so each one gets a
+  believable invented weight, the same every time you see it.
+- Stand on the scale or one square away in the same room and you read the
+  same number, so a doctor can weigh a patient.
+- The number is always the true total: a light animal reads under 35 kg,
+  two survivors together read over 130 kg. The beam simply rests at its low
+  or high end.
+- Only the first person to step on or off hears the sound.
 
 ## 1.0.0 - 2026-09-18
 

@@ -100,8 +100,11 @@ function WeightScaleCore.hitTest(mode, x, y, rect, alpha)
     return true
 end
 
--- Total kg on the scale: every occupant's weight added, clamped to the scale's
--- own range so two people simply pin the beam at the top (task 2026-09-20).
+-- Total kg on the scale: every occupant's weight added, true value, never
+-- clamped to the scale's own range (task 2026-09-20): a chicken reads under 35
+-- kg and two people read their real sum above 130 kg. The beam alone stays
+-- inside the range (mapX clamps the position), so it rests at either end and
+-- the numeral tells the truth. Floors at 0 so a negative sum cannot happen.
 -- nil when nobody is on it; non numbers in the list are ignored.
 function WeightScaleCore.sumWeights(list)
     local sum, count = 0, 0
@@ -113,7 +116,8 @@ function WeightScaleCore.sumWeights(list)
         end
     end
     if count == 0 then return nil end
-    return clamp(sum, W.min, W.max)
+    if sum < 0 then sum = 0 end
+    return sum
 end
 
 -- A zombie has no weight in the game, so it gets a hallucinated one: a pure
@@ -157,8 +161,15 @@ function WeightScaleCore.sample(mode, t, target, from)
     elseif t < T.settleStart then
         local p = ease.inOutCubic(clamp01((t - T.slideStart) / T.slide))
         s.angle = -Geo.beam.maxDeg
-        local x0 = WeightScaleCore.mapX(from or W.min)
-        s.reading = WeightScaleCore.unmapX(x0 + (WeightScaleCore.mapX(target) - x0) * p)
+        local w0 = from or W.min
+        if target < W.min or target > W.max or w0 < W.min or w0 > W.max then
+            -- outside the scale range the beam is pinned at an end, so the
+            -- numeral counts in kg instead of through the (clamped) beam x.
+            s.reading = w0 + (target - w0) * p
+        else
+            local x0 = WeightScaleCore.mapX(w0)
+            s.reading = WeightScaleCore.unmapX(x0 + (WeightScaleCore.mapX(target) - x0) * p)
+        end
     else
         local u = (t - T.settleStart) / 1000
         s.angle = -Geo.beam.maxDeg * math.exp(-u * 1000 / T.tau) *

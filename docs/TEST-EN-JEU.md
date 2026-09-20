@@ -220,18 +220,20 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     comportement. Descendre : animation de sortie, son "off" une seule fois.
 44. **Un animal sur la balance.** Placer un animal (debug/spawn) sur la case :
     le releve s'affiche avec le poids de l'animal (pas celui d'un humain),
-    sans son si le joueur n'est pas sur la case.
+    sans son si le joueur n'est pas sur la case. Un petit animal (poule, lapin)
+    doit afficher son vrai poids meme sous 35 kg, poutre au bas de l'echelle.
 45. **Un zombie sur la balance.** Poser un zombie immobile sur la case : le
     releve affiche un poids plausible (environ 60 a 90 kg), le meme tant que
     ce zombie reste. Un autre zombie donne en general un autre poids.
-46. **Le docteur regarde.** Se tenir a 2 cases de la balance, dans la meme
+46. **Le docteur regarde.** Se tenir a 1 case de la balance, dans la meme
     piece, un patient (autre joueur, animal ou zombie) sur la balance : le
-    releve du patient s'affiche, sans aucun son. A 3 cases, ou de l'autre
+    releve du patient s'affiche, sans aucun son. A 2 cases, ou de l'autre
     cote d'une porte dans une autre piece : rien ne s'affiche.
 47. **Deux occupants.** Un deuxieme occupant monte sur la balance : la
     poutre glisse vers le nouveau total, sans rejouer l'animation d'entree,
-    et sans son. A deux (ou trois) le total est plafonne : poutre au maximum
-    et chiffre au maximum de l'echelle. Quand il descend, le releve revient
+    et sans son. A deux (ou trois) le total n'est pas plafonne : la poutre
+    reste au maximum de l'echelle mais le chiffre affiche la vraie somme
+    (par exemple 152.4 kg). Quand il descend, le releve revient
     au total restant.
 48. **Zombie qui traverse.** Un zombie qui ne fait que traverser la case
     (une fraction de seconde) ne doit pas faire clignoter ni sauter le
@@ -241,15 +243,15 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     balance deja occupee, quand un deuxieme occupant arrive ou repart, ni
     pour un simple observateur. Le son "off" ne joue que quand le joueur
     local, qui etait dessus, laisse la balance vide.
-50. **S'eloigner.** Le docteur qui s'eloigne a plus de 2 cases : le releve
+50. **S'eloigner.** Le docteur qui s'eloigne a plus de 1 case : le releve
     part tout de suite (animation de sortie, pas de son). Verifier qu'un clic
     droit dans le monde marche partout apres (l'element ne doit plus etre
     enregistre).
-51. **Splitscreen.** Joueur 1 sur la balance, joueur 2 a 2 cases : les deux
+51. **Splitscreen.** Joueur 1 sur la balance, joueur 2 a 1 case : les deux
     voient le meme releve dans leur propre moitie d'ecran, seul le joueur 1
     entend le son.
 52. **Multijoueur (deux clients).** Le patient monte sur la balance, le
-    docteur a 2 cases lit un poids. Si la valeur du patient semble figee ou
+    docteur a 1 case lit un poids. Si la valeur du patient semble figee ou
     fausse a distance, noter la valeur lue et celle affichee dans l'onglet
     Info du patient : dans ce cas seulement il faudra un relais
     `sendClientCommand`/`sendServerCommand` (fichier Lua serveur a ajouter).

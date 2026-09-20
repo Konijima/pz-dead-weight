@@ -1,4 +1,4 @@
--- Bench for the scale reading everyone on it, and a viewer within two squares
+-- Bench for the scale reading everyone on it, and a viewer within one square
 -- seeing the same reading (task 2026-09-20), run under lua5.1 (no PZ runtime).
 -- Stubs mirror the real game objects: square:getMovingObjects() is a Java
 -- ArrayList (size()/get(i), 0-based, out of range throws, NOT a Lua table),
@@ -219,8 +219,8 @@ hud(0):tick()
 check(mode(0) == "idle" and registered(hud(0)) == 0, "the leaving move ends idle and unregistered")
 SOUND = {}
 
--- 3. doctor at 2 squares, same room, sees the patient ------------------------
-local doctorSq = { 12, 10 }
+-- 3. doctor at 1 square, same room, sees the patient ------------------------
+local doctorSq = { 11, 10 }
 put(doc, doctorSq[1], doctorSq[2])
 put(pat, SX, SY)
 tick(0)
@@ -236,7 +236,7 @@ pat.kg = 72.41
 tick(0, 4)
 check(hud(0).t0 == t0 and near(hud(0).target, 72.4), "a sub decimal drift does not retarget")
 
--- 5. second occupant retargets (pinned), zombie crossing is debounced ----------
+-- 5. second occupant retargets (true sum, no cap), zombie crossing is debounced ----------
 local zom = makeZombie(555)
 put(zom, SX, SY)
 tick(0)
@@ -247,14 +247,14 @@ check(near(hud(0).target, 72.4) and hud(0).from == nil, "a zombie crossing for o
 NOW = NOW + Core.T.onEnd + 10   -- the readout has settled on the patient
 put(zom, SX, SY)
 tick(0, 2)
-check(near(hud(0).target, math.min(130, 72.41 + Core.zombieWeight(555))), "a held second occupant adds to the total, got " .. hud(0).target)
+check(near(hud(0).target, 72.41 + Core.zombieWeight(555)), "a held second occupant adds to the total, got " .. hud(0).target)
 check(near(hud(0).from, 72.4), "retarget slides from the reading on screen, got " .. tostring(hud(0).from))
 check(registered(hud(0)) == 1 and #UIManager.ui == 1, "retarget keeps one element registered")
 check(#SOUND == 0, "a second occupant is silent")
 local zom2 = makeZombie(556)
 put(zom2, SX, SY)
 tick(0, 3)
-check(near(hud(0).target, 130), "three occupants pin at the scale max")
+check(near(hud(0).target, 72.41 + Core.zombieWeight(555) + Core.zombieWeight(556)), "three occupants read their true sum, no cap")
 remove(zom2); remove(zom)
 tick(0, 2)
 check(near(hud(0).target, 72.41), "occupants leaving drops back to the patient, got " .. hud(0).target)
@@ -276,38 +276,38 @@ tick(0, 2)
 NOW = NOW + Core.T.offEnd + 1
 hud(0):tick()
 
--- 7. different room sees nothing, 3 squares away sees nothing -----------------
+-- 7. different room sees nothing, 2 squares away sees nothing -----------------
 put(pat, SX, SY)
 put(doc, 20, 20)
 tick(0)
-squareAt(12, 10).room = ROOM_B
-put(doc, 12, 10)
+squareAt(11, 10).room = ROOM_B
+put(doc, 11, 10)
 local before = movingCalls
 tick(0, 4)
 check(mode(0) == "idle" and Detect.players[0].scaleSquare == nil, "a viewer in another room sees nothing")
 check(movingCalls == before, "and the tile is not read for them")
-squareAt(12, 10).room = ROOM_A
-put(doc, 13, 10)
+squareAt(11, 10).room = ROOM_A
+put(doc, 12, 10)
 tick(0, 4)
-check(mode(0) == "idle" and Detect.players[0].scaleSquare == nil, "3 squares away sees nothing")
-put(doc, 12, 12)  -- dz 0, 2 squares diagonally
+check(mode(0) == "idle" and Detect.players[0].scaleSquare == nil, "2 squares away sees nothing")
+put(doc, 11, 11)  -- dz 0, 1 square diagonally
 tick(0, 2)
-check(mode(0) == "on" and near(hud(0).target, 72.41), "2 squares away on the diagonal counts")
+check(mode(0) == "on" and near(hud(0).target, 72.41), "1 square away on the diagonal counts")
 -- nil == nil counts as the same room (outdoors); nil vs a room does not.
-squareAt(12, 11).room = nil
+squareAt(11, 11).room = nil
 put(doc, 20, 20); tick(0)
-put(doc, 12, 11); tick(0)
+put(doc, 11, 11); tick(0)
 check(Detect.players[0].scaleSquare == nil, "an outdoor viewer does not see an indoor scale")
 squareAt(SX, SY).room = nil
 put(doc, 20, 20); tick(0)
-put(doc, 12, 11); tick(0)
+put(doc, 11, 11); tick(0)
 check(Detect.players[0].scaleSquare == squareAt(SX, SY), "no room on both sides counts as the same room")
 squareAt(SX, SY).room = ROOM_A
-squareAt(12, 11).room = ROOM_A
+squareAt(11, 11).room = ROOM_A
 put(doc, 20, 20); tick(0)
 
 -- 8. walking away clears the cache, drops the readout at once, stops reading ---
-put(doc, 12, 10)
+put(doc, 11, 10)
 tick(0, 3)
 check(mode(0) == "on", "back beside the scale the doctor sees the patient again")
 put(doc, 14, 10)
@@ -324,14 +324,14 @@ hud(0):tick()
 pat.kg = 72.4
 
 -- 9. viewer's own move is immediate even beside a debounced world -------------
-put(doc, 12, 10)
+put(doc, 11, 10)
 tick(0, 2)
 check(mode(0) == "on", "doctor watching the patient")
 SOUND = {}
 put(doc, SX, SY)          -- doctor steps on, now 152 kg
 tick(0)
-check(near(hud(0).target, 130) and #SOUND == 0, "stepping on a busy scale retargets at once and is silent")
-put(doc, 12, 10)
+check(near(hud(0).target, 152.4) and #SOUND == 0, "stepping on a busy scale retargets at once and is silent")
+put(doc, 11, 10)
 tick(0)
 check(near(hud(0).target, 72.4) and #SOUND == 0, "stepping off with a patient still on it retargets, no off cue")
 remove(pat)
@@ -347,7 +347,7 @@ tick(0)
 check(sounds() == "WeightScaleOn@0", "first person on an empty scale: on cue")
 put(pat, SX, SY)
 tick(0, 2)
-check(near(hud(0).target, 130) and sounds() == "WeightScaleOn@0", "second occupant: retarget, silent")
+check(near(hud(0).target, 152.4) and sounds() == "WeightScaleOn@0", "second occupant: retarget, silent")
 remove(pat)
 tick(0, 2)
 check(near(hud(0).target, 80) and sounds() == "WeightScaleOn@0", "second occupant leaving: retarget, silent")
@@ -360,7 +360,7 @@ hud(0):tick()
 -- 11. splitscreen: player 0 on the scale, player 1 beside it -------------------
 SOUND = {}
 put(doc, SX, SY)
-put(pat, 12, 10)               -- pat = local player 1, watching
+put(pat, 11, 10)               -- pat = local player 1, watching
 tick(0)
 tick(1, 2)
 check(mode(0) == "on" and mode(1) == "on", "both local players get a readout")
@@ -368,9 +368,9 @@ check(hud(0) ~= hud(1) and near(hud(0).target, 80) and near(hud(1).target, 80), 
 check(sounds() == "WeightScaleOn@0", "only the player on the scale hears the cue, got " .. sounds())
 put(pat, SX, SY)                -- player 1 steps on too
 tick(1)
-check(near(hud(1).target, 130), "player 1 stepping on sees the pinned total at once")
+check(near(hud(1).target, 152.4), "player 1 stepping on sees the true total at once")
 tick(0, 2)
-check(near(hud(0).target, 130) and sounds() == "WeightScaleOn@0", "player 0 sees the second occupant after the debounce, silent")
+check(near(hud(0).target, 152.4) and sounds() == "WeightScaleOn@0", "player 0 sees the second occupant after the debounce, silent")
 put(pat, 11, 10)
 tick(1)
 tick(0, 2)

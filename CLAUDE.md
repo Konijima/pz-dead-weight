@@ -56,7 +56,7 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
 - `WeightScaleGeo.lua`: generated, see above. HUD geometry, weight range,
   band thresholds and colours.
 - `WeightScaleDetect.lua`: per local player presence detection (is this
-  player standing on a scale tile, or within 2 squares of one in the same
+  player standing on a scale tile, or one square from one in the same
   room), occupancy polling with a debounce, splitscreen aware.
 - `WeightScaleOccupants.lua`: who stands on the scale tile and what each
   weighs (player, animal, zombie); the game API for it lives here.
