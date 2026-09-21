@@ -16,7 +16,11 @@ goes with you; nowhere else in the game can you read it that precisely.
 - A brass and cream beam head readout, the poise sliding to your weight and
   settling instead of snapping, because a real scale wobbles.
 - One decimal of precision.
-- Your unit and display style are remembered between sessions.
+- Your unit choice (kg or lb) is remembered between sessions. Each scale has
+  its own look: the clinic scale its beam head, the Digital Scale a plain
+  native panel.
+- New in 1.3.0, Build 42 only: the Digital Scale, a small home scale you can
+  place on the floor or on a counter, see below.
 - The character screen's Info tab shows only your weight category in words
   (Emaciated to Obese) with its trend arrow; the exact number stays on the
   scale.
@@ -34,6 +38,29 @@ goes with you; nowhere else in the game can you read it that precisely.
 - No per frame scanning: the reading only exists while someone is on the
   scale and you are next to it.
 - 28 languages, every one the game ships.
+
+## The Digital Scale (Build 42 only)
+
+A small bathroom scale, furniture you place, turn (four facings) and pick up
+again, on the floor or on a counter. It reads 0 to 130 kg on a plain native
+panel; the clinic scale keeps its beam head. On the floor it weighs people,
+animals and zombies standing on it, and items lying on it; on a counter it
+weighs the items you set on it (they are lifted onto its plate), and a
+survivor walking through a counter scale's square is not weighed, though
+climbing through a window over it reads. Stepping onto a Digital Scale turns
+you to look at its screen, and you only read a scale you are facing: turn
+away and the readout goes, turn back and it returns.
+
+It also turns up in the world, only in new loot and in areas of the map nobody
+has explored yet (a room you already visited never gets one), only in homes
+and motels, never in a public restroom, and never in front of a toilet, basin
+or other fixture:
+
+- inside bathroom counters (the cupboards under a basin), a counter never
+  holding two and a bathroom giving out at most one from its counters;
+- on the floor against a wall in a big enough bathroom.
+
+Build 41 has no Digital Scale, only the clinic scale.
 
 ## Weigh others, and anything else
 
@@ -64,16 +91,20 @@ Page "Dead Weight" in the sandbox options:
   square instead of only what is on the plate.
 - **Reading distance** (0 to 5, default 2): how many squares away you can
   stand and still read the scale.
+- **Digital Scale in bathroom counters** (0 to 20, default 3, Build 42 only):
+  the weight of the Digital Scale in bathroom counter loot; 0 is never.
+- **Digital Scale on bathroom floors** (percent, default 20, Build 42 only):
+  the chance that a big enough home or motel bathroom, in an area of the map
+  nobody has explored, gets a Digital Scale standing on its floor; 0 is
+  never.
 
 ## Controls
 
 - Left click the readout: switch between kg and lb.
-- Right click the readout: switch between the beam head look and a plain
-  native panel.
 
 ## Compatibility
 
-Built for Build 42, keeps Build 41 support. Singleplayer and multiplayer
+Built for Build 42, keeps Build 41 support (the Digital Scale is Build 42 only). Singleplayer and multiplayer
 (client side), splitscreen aware. If another mod replaces the character
 screen, this fails safe: the scale keeps working and the Info tab simply
 stays as that mod or vanilla draws it. Incompatible with the original

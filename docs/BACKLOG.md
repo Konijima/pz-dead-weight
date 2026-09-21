@@ -123,3 +123,40 @@ face), run by hand, not by sync. It uses no vanilla pixels, so there is no
 licensing question left; only the look is first pass and open to hand
 refinement (a hand edited PNG must not be regenerated over). Still to check in
 game: height on a floor versus a counter, and the LCD's legibility at 1x.
+
+## Digital Scale (1.3.0), known leftovers
+
+Low severity, none blocks the release. Each says only what the code shows.
+
+- Skipped facing turn after a drop: with two scales in reach, a straight
+  step onto another scale in the window right after a scale was dropped
+  skips the turn to face it (same item as "Cue and pick-up rough edges"
+  above; the cue half is fixed).
+- The player modData relay (`DeadWeightBody`, `DeadWeightCarried`) is
+  broadcast as the whole modData table (see "Multiplayer relay" above).
+- Items lifted onto a plate stay raised after pickup: `liftOntoPlate` in
+  `WeightScaleOccupants.lua` raises a dropped item's z onto the plate and
+  nothing lowers it again when it is taken off; not verified in game what a
+  moved item does.
+- The plate covers about 16% of the tile (`half = 0.2`, so 0.4 x 0.4 in
+  `WeightScaleScales.lua`). Consider `half = 0.25` (25%) if it feels too
+  hard to hit; the value is still an estimate.
+- The facing gate (`facing` in `WeightScaleDetect.lua`) also applies to the
+  medical scale: a clinic scale read from a square other than its own is
+  hidden while the player looks away from it. Intended for both, but it is a
+  change for the clinic scale, mention it if players report the readout
+  vanishing.
+- Floor spawn only works when the whole bathroom is inside the generating
+  chunk: `WeightScaleSpawn.lua` counts only loaded squares
+  (`Spawn.minSquares`, and its log line reports `unloaded neighbour`), so a
+  room crossing a chunk edge is examined partly loaded and may be rejected.
+- Build 41 has no Digital Scale: the item script, the server Lua and the tile
+  pack are B42 only (`tools/sync.sh`). The two `HomeScale*` sandbox options
+  are in the shared `sandbox-options.txt`, so they show up on B41 and do
+  nothing there.
+- Ghost objects if the mod is removed from a save that holds placed Digital
+  Scales: not tested. The sprites `deadweight_digital_01_*` would no longer
+  exist; expect the game to drop or blank them, see `docs/TEST-EN-JEU.md` 66l.
+- 1x texture: the four faces are the 2x frame only (128x256). The pack has
+  no 1x page (check `tools/gen-tiles.py`); look at the scale in game on the
+  1x texture setting before release claims it works.
