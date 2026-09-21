@@ -8,6 +8,8 @@ note box.
 
 ## Unreleased
 
+- "Weigh what you carry" is now on by default, and the default reading distance is 1 square (was 2). Worlds that already saved these settings keep their values.
+
 ## 1.3.0 - 2026-09-21
 
 The Digital Scale: a home scale you can place, and find in bathrooms. Build 42 only.

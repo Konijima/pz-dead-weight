@@ -12,7 +12,7 @@ Sandbox_JP = {
 
     Sandbox_DeadWeight_ViewDistance = "読み取り距離",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "体重計から同じ部屋の中で何升目離れても読み取れるか。患者の体重を量る医師のように。0: 体重計に乗っているプレイヤーだけが読み取れます。デフォルトは 2。",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "体重計から同じ部屋の中で何升目離れても読み取れるか。患者の体重を量る医師のように。0: 体重計に乗っているプレイヤーだけが読み取れます。デフォルトは 1。",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "浴室のカウンターにあるデジタル体重計",
 

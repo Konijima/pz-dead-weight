@@ -12,7 +12,7 @@ Sandbox_FR = {
 
     Sandbox_DeadWeight_ViewDistance = "Distance de lecture",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "À combien de cases de la balance, dans la même pièce, on peut se tenir et la lire quand même, comme un médecin qui pèse un patient. 0 : seul le joueur sur la balance la lit. Par défaut 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "À combien de cases de la balance, dans la même pièce, on peut se tenir et la lire quand même, comme un médecin qui pèse un patient. 0 : seul le joueur sur la balance la lit. Par défaut 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Balance numérique dans les plans de toilette",
 

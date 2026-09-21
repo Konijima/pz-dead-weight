@@ -12,7 +12,7 @@ Sandbox_CH = {
 
     Sandbox_DeadWeight_ViewDistance = "讀數距離",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "你可以站在離秤幾格遠的地方（同一房間內）仍然讀取讀數，就像醫生為病人稱重一樣。0：只有站在秤上的玩家能讀取。預設為 2。",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "你可以站在離秤幾格遠的地方（同一房間內）仍然讀取讀數，就像醫生為病人稱重一樣。0：只有站在秤上的玩家能讀取。預設為 1。",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "浴室檯面中的電子體重秤",
 

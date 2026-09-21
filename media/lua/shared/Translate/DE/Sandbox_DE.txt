@@ -12,7 +12,7 @@ Sandbox_DE = {
 
     Sandbox_DeadWeight_ViewDistance = "Ablesedistanz",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Digitale Waage in Badezimmer-Waschtischen",
 

@@ -18,7 +18,8 @@
 -- settings: world item getUnequippedWeight, a dropped bag includes its
 -- contents. A scale with something on it reads it for a viewer within reach,
 -- as if someone stood there (a dead body is a separate object and is not
--- weighed). Sandbox option DeadWeight.WeighCarried (default off) only decides
+-- weighed). Sandbox option DeadWeight.WeighCarried (default on in the sandbox file;
+-- a missing value reads as off) only decides
 -- whether each PLAYER occupant also adds what it carries
 -- (inventory:getContentsWeight(), worn items and bag contents at 100%, NOT
 -- getInventoryWeight which counts worn at 30% nor getCapacityWeight which is 0

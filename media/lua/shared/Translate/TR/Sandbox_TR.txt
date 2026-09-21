@@ -12,7 +12,7 @@ Sandbox_TR = {
 
     Sandbox_DeadWeight_ViewDistance = "Okuma mesafesi",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Ayný odada, tartýdan kaç kare uzakta durup yine de okuyabileceðiniz; hastayý tartan bir doktor gibi. 0: yalnýzca tartýnýn üzerindeki oyuncu okur. Varsayýlan 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Ayný odada, tartýdan kaç kare uzakta durup yine de okuyabileceðiniz; hastayý tartan bir doktor gibi. 0: yalnýzca tartýnýn üzerindeki oyuncu okur. Varsayýlan 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Banyo tezgâhlarýnda Dijital Tartý",
 

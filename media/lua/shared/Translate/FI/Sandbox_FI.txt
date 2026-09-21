@@ -12,7 +12,7 @@ Sandbox_FI = {
 
     Sandbox_DeadWeight_ViewDistance = "Lukuet‰isyys",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Kuinka monen ruudun p‰‰ss‰ vaa'asta samassa huoneessa voi seist‰ ja silti lukea sen, kuten l‰‰k‰ri, joka punnitsee potilasta. 0: vain vaa'alla oleva pelaaja lukee sen. Oletus 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Kuinka monen ruudun p‰‰ss‰ vaa'asta samassa huoneessa voi seist‰ ja silti lukea sen, kuten l‰‰k‰ri, joka punnitsee potilasta. 0: vain vaa'alla oleva pelaaja lukee sen. Oletus 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Digitaalinen vaaka kylpyhuoneen pˆyt‰tasoissa",
 

@@ -12,7 +12,7 @@ Sandbox_ID = {
 
     Sandbox_DeadWeight_ViewDistance = "Jarak baca",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Timbangan Digital di meja kamar mandi",
 

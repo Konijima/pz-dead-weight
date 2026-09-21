@@ -12,7 +12,7 @@ Sandbox_PL = {
 
     Sandbox_DeadWeight_ViewDistance = "Odleg³oœæ odczytu",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Ile pól od wagi, w tym samym pomieszczeniu, mo¿na staæ i nadal j¹ odczytaæ, jak lekarz wa¿¹cy pacjenta. 0: odczytuje j¹ tylko gracz stoj¹cy na wadze. Domyœlnie 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Ile pól od wagi, w tym samym pomieszczeniu, mo¿na staæ i nadal j¹ odczytaæ, jak lekarz wa¿¹cy pacjenta. 0: odczytuje j¹ tylko gracz stoj¹cy na wadze. Domyœlnie 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Waga cyfrowa w ³azienkowych blatach",
 

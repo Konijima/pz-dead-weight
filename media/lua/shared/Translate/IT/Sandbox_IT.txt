@@ -12,7 +12,7 @@ Sandbox_IT = {
 
     Sandbox_DeadWeight_ViewDistance = "Distanza di lettura",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "A quante caselle dalla bilancia, nella stessa stanza, ci si può trovare e leggerla comunque, come un medico che pesa un paziente. 0: solo il giocatore sulla bilancia la legge. Predefinito 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quante caselle dalla bilancia, nella stessa stanza, ci si può trovare e leggerla comunque, come un medico che pesa un paziente. 0: solo il giocatore sulla bilancia la legge. Predefinito 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Bilancia Digitale nei piani del bagno",
 

@@ -12,7 +12,7 @@ Sandbox_HU = {
 
     Sandbox_DeadWeight_ViewDistance = "Leolvasási távolság",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Hány mezõnyire állhatsz a mérlegtõl, ugyanabban a helyiségben, és még mindig leolvashatod, mint egy orvos, aki megméri a pácienst. 0: csak a mérlegen álló játékos olvassa le. Alapértelmezett: 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Hány mezõnyire állhatsz a mérlegtõl, ugyanabban a helyiségben, és még mindig leolvashatod, mint egy orvos, aki megméri a pácienst. 0: csak a mérlegen álló játékos olvassa le. Alapértelmezett: 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Digitális mérleg a fürdõszobai pultokban",
 

@@ -3,7 +3,7 @@ VERSION = 1,
 option DeadWeight.WeighCarried
 {
 	type = boolean,
-	default = false,
+	default = true,
 	page = DeadWeight,
 	translation = DeadWeight_WeighCarried,
 }
@@ -21,7 +21,7 @@ option DeadWeight.ViewDistance
 	type = integer,
 	min = 0,
 	max = 5,
-	default = 2,
+	default = 1,
 	page = DeadWeight,
 	translation = DeadWeight_ViewDistance,
 }

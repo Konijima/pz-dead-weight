@@ -12,7 +12,7 @@ Sandbox_RO = {
 
     Sandbox_DeadWeight_ViewDistance = "Distanþa de citire",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "La câte careuri de cântar, în aceeaºi camerã, poþi sta ºi tot îl poþi citi, ca un medic care cântãreºte un pacient. 0: doar jucãtorul aflat pe cântar îl citeºte. Implicit 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "La câte careuri de cântar, în aceeaºi camerã, poþi sta ºi tot îl poþi citi, ca un medic care cântãreºte un pacient. 0: doar jucãtorul aflat pe cântar îl citeºte. Implicit 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Cântar digital în blaturile din baie",
 

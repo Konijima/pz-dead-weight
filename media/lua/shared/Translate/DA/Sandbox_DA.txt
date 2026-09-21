@@ -12,7 +12,7 @@ Sandbox_DA = {
 
     Sandbox_DeadWeight_ViewDistance = "Aflæsningsafstand",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Hvor mange felter fra vægten, i samme rum, man kan stå og stadig aflæse den, som en læge, der vejer en patient. 0: kun spilleren på vægten aflæser den. Standard 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Hvor mange felter fra vægten, i samme rum, man kan stå og stadig aflæse den, som en læge, der vejer en patient. 0: kun spilleren på vægten aflæser den. Standard 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Digital vægt i badeværelsesbordplader",
 

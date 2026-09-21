@@ -32,7 +32,7 @@ goes with you; nowhere else in the game can you read it that precisely.
   weighed without you.
 - Every local splitscreen player gets their own readout.
 - The scale reads everyone on it: survivors, animals and zombies, added up.
-  Stand a couple of squares away (a sandbox option, 2 by default, blocked by
+  Stand next to it (a sandbox option, 1 by default, blocked by
   walls and shut doors) and you read them too, like a doctor weighing a
   patient.
 - No per frame scanning: the reading only exists while someone is on the
@@ -89,11 +89,11 @@ the sound when the scale goes from empty to occupied or back.
 
 Page "Dead Weight" in the sandbox options:
 
-- **Weigh what you carry** (off by default): adds worn items and bag contents
-  to each survivor's reading. Zombies and animals stay body weight only.
+- **Weigh what you carry** (on by default): adds worn items and bag contents
+  to each survivor's reading, so strip naked to read your true body weight. Zombies and animals stay body weight only.
 - **Weigh the whole square** (off by default): count anything in the scale's
   square instead of only what is on the plate.
-- **Reading distance** (0 to 5, default 2): how many squares away you can
+- **Reading distance** (0 to 5, default 1): how many squares away you can
   stand and still read the scale.
 - **Digital Scale in bathroom counters** (0 to 20, default 3, Build 42 only):
   the weight of the Digital Scale in bathroom counter loot; 0 is never.

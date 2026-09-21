@@ -5,7 +5,7 @@
     "Sandbox_DeadWeight_WholeSquare": "Das ganze Feld wiegen",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Aus (Standard): Nur Figuren und Gegenstände, die auf dem Bild der Waage selbst in der Mitte ihres Feldes stehen oder liegen, werden gewogen. An: Alles auf dem Feld der Waage zählt, auch neben dem Bild.",
     "Sandbox_DeadWeight_ViewDistance": "Ablesedistanz",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 2.",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 1.",
     "Sandbox_DeadWeight_HomeScaleSpawn": "Digitale Waage in Badezimmer-Waschtischen",
     "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Wie oft eine digitale Waage in Badezimmer-Waschtischen auftaucht, den Schränken unter einem Waschbecken. 0: nie. Standard 3. Nur Behälter, die ab jetzt befüllt werden, sind betroffen.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Digitale Waage auf Badezimmerböden",

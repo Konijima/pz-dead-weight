@@ -5,7 +5,7 @@
     "Sandbox_DeadWeight_WholeSquare": "Karenin tamamını tart",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Kapalı (varsayılan): yalnızca tartının görselinin kendisi üzerinde, karesinin ortasında duran ya da yatan karakterler ve eşyalar tartılır. Açık: tartının karesindeki her şey, görselin yanındakiler bile hesaba katılır.",
     "Sandbox_DeadWeight_ViewDistance": "Okuma mesafesi",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Aynı odada, tartıdan kaç kare uzakta durup yine de okuyabileceğiniz; hastayı tartan bir doktor gibi. 0: yalnızca tartının üzerindeki oyuncu okur. Varsayılan 2.",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Aynı odada, tartıdan kaç kare uzakta durup yine de okuyabileceğiniz; hastayı tartan bir doktor gibi. 0: yalnızca tartının üzerindeki oyuncu okur. Varsayılan 1.",
     "Sandbox_DeadWeight_HomeScaleSpawn": "Banyo tezgâhlarında Dijital Tartı",
     "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Banyo tezgâhlarında, yani lavabo altındaki dolaplarda Dijital Tartı bulunma sıklığı. 0: asla. Varsayılan 3. Yalnızca bundan sonra doldurulan kaplar etkilenir.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Banyo zeminlerinde Dijital Tartı",

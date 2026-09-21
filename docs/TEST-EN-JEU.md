@@ -225,9 +225,9 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 45. **Un zombie sur la balance.** Poser un zombie immobile sur la case : le
     releve affiche un poids plausible (environ 60 a 90 kg), le meme tant que
     ce zombie reste. Un autre zombie donne en general un autre poids.
-46. **Le docteur regarde.** Se tenir a 1 ou 2 cases de la balance (distance de lecture par defaut : 2), dans la meme
+46. **Le docteur regarde.** Se tenir a 1 case de la balance (distance de lecture par defaut : 1), dans la meme
     piece, un patient (autre joueur, animal ou zombie) sur la balance : le
-    releve du patient s'affiche, sans aucun son. A 2 cases, ou de l'autre
+    releve du patient s'affiche, sans aucun son. A 2 cases (distance par defaut), ou de l'autre
     cote d'une porte dans une autre piece : rien ne s'affiche.
 47. **Deux occupants.** Un deuxieme occupant monte sur la balance : la
     poutre glisse vers le nouveau total, sans rejouer l'animation d'entree,
@@ -245,7 +245,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     Aucun son quand un deuxieme occupant arrive ou repart. Le son "off" joue
     chez tout joueur qui voit le releve quand la balance redevient vide. En
     multijoueur, chaque client joue son propre son : rien n'est diffuse.
-50. **S'eloigner.** Le docteur qui s'eloigne a plus de 2 cases : le releve
+50. **S'eloigner.** Le docteur qui s'eloigne a plus de 1 case (distance par defaut) : le releve
     part tout de suite (animation de sortie, pas de son). Verifier qu'un clic
     droit dans le monde marche partout apres (l'element ne doit plus etre
     enregistre).
@@ -261,7 +261,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     Le patient ajoute ou lache un objet : le total des deux clients suit.
     Option desactivee : les deux lisent le poids du corps seul.
 52c. **Distance de lecture.** Options de partie, page DeadWeight, "Distance de
-    lecture" (0 a 5, defaut 2, quitter et recharger la partie si l'editeur de
+    lecture" (0 a 5, defaut 1, quitter et recharger la partie si l'editeur de
     debug ne l'applique pas). A 2 : le docteur lit a 2 cases, pas a 3. A 0 :
     seul celui qui est sur la balance la lit. A 4 : lecture a 4 cases.
 52d. **Balance ramassee puis reposee.** Le docteur reste immobile a portee, un
@@ -288,7 +288,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 ## Ajout 2026-09-20, option bac a sable "Weigh what you carry"
 
 Option `DeadWeight.WeighCarried` (page "Dead Weight" des options de bac a
-sable, desactivee par defaut) : elle ne concerne QUE ce que porte chaque
+sable, activee par defaut) : elle ne concerne QUE ce que porte chaque
 joueur. Les objets poses sur la plaque comptent et sont releves sur la
 plaque dans tous les cas, option activee ou non. A tester en solo d'abord : en multijoueur le
 sac des AUTRES joueurs n'est pas releve (relais a venir), seul leur corps.
@@ -391,7 +391,7 @@ visitees. Le journal de l'apparition au sol (`[DeadWeight] spawn: ...` dans
     personnage se tourne une fois pour regarder son ecran, dans les 4
     orientations (verifier que ce n'est pas dos a l'ecran). Il peut ensuite se
     retourner librement sans etre re-tourne.
-66e. **Ne lire que ce qu'on regarde.** Debout a une ou deux cases d'une balance
+66e. **Ne lire que ce qu'on regarde.** Debout a une case d'une balance
     occupee (au sol ou clinique), la regarder : le releve est la. Tourner le dos :
     il disparait. Se retourner vers elle : il revient. Debout SUR la balance :
     le releve reste quelle que soit la direction du regard. (Cette regle vaut

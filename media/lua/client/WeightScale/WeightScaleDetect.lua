@@ -25,7 +25,7 @@ WeightScale.Detect = WeightScale.Detect or {}
 local Detect = WeightScale.Detect
 
 Detect.tickEvery = 6          -- every few ticks, not every frame
-Detect.radius = 2             -- default squares a viewer may stand from the scale
+Detect.radius = 1             -- default squares a viewer may stand from the scale
 Detect.rescanEvery = 10       -- polls between scans for a scale put back after one was lost
 Detect.rescanFor = 600        -- polls the search lasts (about a minute), then it stops
 Detect.maxScales = 4          -- scales in reach that are ever considered, nearest first
@@ -174,7 +174,7 @@ local function lineOfSight(from, to)
 end
 
 -- Squares a viewer may stand from the scale: sandbox DeadWeight.ViewDistance
--- (integer, default 2), read where the scan runs (viewer square change only).
+-- (integer, default 1), read where the scan runs (viewer square change only).
 -- Missing, non numeric or out of range falls back to Detect.radius / clamps.
 function Detect.viewDistance()
     local sv = type(SandboxVars) == "table" and SandboxVars.DeadWeight

@@ -12,7 +12,7 @@ Sandbox_ES = {
 
     Sandbox_DeadWeight_ViewDistance = "Distancia de lectura",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "A cuántas casillas de la balanza, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la balanza la lee. Por defecto 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A cuántas casillas de la balanza, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la balanza la lee. Por defecto 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Báscula Digital en encimeras de baño",
 

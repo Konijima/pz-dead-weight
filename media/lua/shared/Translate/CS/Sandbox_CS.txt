@@ -12,7 +12,7 @@ Sandbox_CS = {
 
     Sandbox_DeadWeight_ViewDistance = "Vzdálenost ètení",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Kolik polí od váhy, ve stejné místnosti, mùžete stát a stále ji èíst, jako lékaø, který váží pacienta. 0: ète ji jen hráè stojící na váze. Výchozí 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Kolik polí od váhy, ve stejné místnosti, mùžete stát a stále ji èíst, jako lékaø, který váží pacienta. 0: ète ji jen hráè stojící na váze. Výchozí 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Digitální váha v koupelnových skøíòkách",
 

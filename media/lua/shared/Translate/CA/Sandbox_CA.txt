@@ -12,7 +12,7 @@ Sandbox_CA = {
 
     Sandbox_DeadWeight_ViewDistance = "Distància de lectura",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "A quantes caselles de la bàscula, a la mateixa sala, es pot estar i encara llegir-la, com un metge que pesa un pacient. 0: només el jugador que és a la bàscula la llegeix. Per defecte 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quantes caselles de la bàscula, a la mateixa sala, es pot estar i encara llegir-la, com un metge que pesa un pacient. 0: només el jugador que és a la bàscula la llegeix. Per defecte 1.",
 
     Sandbox_DeadWeight_HomeScaleSpawn = "Bàscula Digital als taulells del bany",
 
