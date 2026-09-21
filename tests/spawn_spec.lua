@@ -46,8 +46,10 @@ local grid, squares = {}, {}
 local FURN = {}                       -- "x,y" -> true for a square holding furniture
 local function key(x, y) return x .. "," .. y end
 local function inRoom(x, y) return x >= 0 and x <= 2 and y >= 0 and y <= 3 end
-local function propsOf(furn)
-    return { has = function(_, p) return furn and p == "IsMoveAble" end }
+local FACE = {}                       -- "x,y" -> the Facing tile property of the furniture there
+local function propsOf(furn, at)
+    return { has = function(_, p) return furn and p == "IsMoveAble" end,
+             Val = function(_, p) return p == "Facing" and furn and at and FACE[at] or nil end }
 end
 local function mk(x, y)
     local sq = { x = x, y = y, added = {} }
@@ -59,7 +61,7 @@ local function mk(x, y)
     function sq:getObjects()
         local objs = { floor }
         if FURN[key(x, y)] then
-            objs[2] = { getSprite = function() return { getName = function() return "fix" end, getProperties = function() return propsOf(true) end } end }
+            objs[2] = { getSprite = function() return { getName = function() return "fix" end, getProperties = function() return propsOf(true, key(x, y)) end } end }
         end
         for _, o in ipairs(self.added) do
             objs[#objs + 1] = { getSprite = function() return { getName = function() return o.spriteName end } end }
@@ -87,6 +89,7 @@ function ROOM:getSquares() return javaList(squares) end
 local function reset()
     for _, sq in pairs(grid) do sq.added = {} end
     FURN = {}
+    FACE = {}
 end
 
 require("WeightScale/WeightScaleDistributions")
@@ -196,6 +199,26 @@ local full = squares
 squares = { grid[key(0, 0)], grid[key(1, 0)], grid[key(0, 1)], grid[key(1, 1)] }   -- a 2 x 2 closet
 check(Spawn.tryRoom(grid[key(0, 0)], 0) == nil, "a small bathroom has no room for a scale")
 squares = full
+
+-- 5b. not in front of a fixture, a window wall counts as a wall ----------------------
+reset()
+local function spots(room)
+    local list = Spawn.candidates(room)
+    local at = {}
+    for _, c in ipairs(list) do at[key(c.sq.x, c.sq.y)] = c.side end
+    return at
+end
+FURN[key(0, 0)] = true
+check(spots(ROOM)[key(0, 1)] == "W", "beside a fixture with no Facing, a wall square is a spot")
+FACE[key(0, 0)] = "S"
+check(spots(ROOM)[key(0, 1)] == nil, "the square in front of a toilet (Facing S) is not a spot")
+check(spots(ROOM)[key(0, 2)] == "W", "further along the wall is still a spot")
+reset()
+grid[key(2, 1)].isWallTo = function() return false end
+grid[key(2, 1)].getWindowTo = function(_, n) return n.x == 3 and {} or nil end
+check(spots(ROOM)[key(2, 1)] == "E", "a window wall is a wall")
+grid[key(2, 1)].isWallTo = function(_, n) return inRoom(2, 1) ~= inRoom(n.x, n.y) end
+grid[key(2, 1)].getWindowTo = nil
 
 -- 6. process: one roll per room however many toilets it holds --------------------
 reset()

@@ -91,16 +91,39 @@ local function clear(sq)
     return not hasFurniture(sq)
 end
 
--- a door, doorway or window on any edge of this square
+-- a door or doorway on any edge of this square (a window is not one: a
+-- window wall is as good a wall as any, the scale just stands under it)
 local function hasOpening(sq)
     for _, name in ipairs(DIRS) do
         local n = neighbour(sq, name)
         if n then
             if (type(sq.getDoorTo) == "function" and sq:getDoorTo(n))
-                or (type(sq.getDoorFrameTo) == "function" and sq:getDoorFrameTo(n))
-                or (type(sq.getWindowTo) == "function" and sq:getWindowTo(n))
-                or (type(sq.getWindowFrameTo) == "function" and sq:getWindowFrameTo(n)) then
+                or (type(sq.getDoorFrameTo) == "function" and sq:getDoorFrameTo(n)) then
                 return true
+            end
+        end
+    end
+    return false
+end
+
+local OPPOSITE = { N = "S", S = "N", E = "W", W = "E" }
+
+-- Is this square the front of a piece of furniture next to it (the space in
+-- front of a toilet, a sink, a counter, a washing machine)? The tile's own
+-- Facing property says which side its front is on; a scale there would sit
+-- in the way of whoever uses it.
+local function inFrontOfFurniture(sq)
+    for _, name in ipairs(DIRS) do
+        local n = neighbour(sq, name)
+        if n and type(n.getObjects) == "function" then
+            local objs = n:getObjects()
+            for i = 0, objs:size() - 1 do
+                local o = objs:get(i)
+                local sprite = o and type(o.getSprite) == "function" and o:getSprite()
+                local props = sprite and type(sprite.getProperties) == "function" and sprite:getProperties()
+                if props and type(props.Val) == "function" and props:Val("Facing") == OPPOSITE[name] then
+                    return true
+                end
             end
         end
     end
@@ -113,7 +136,8 @@ end
 local function wallSide(sq, room)
     for _, name in ipairs(DIRS) do
         local n = neighbour(sq, name)
-        if n and n:getRoom() ~= room and type(sq.isWallTo) == "function" and sq:isWallTo(n) then
+        if n and n:getRoom() ~= room and ((type(sq.isWallTo) == "function" and sq:isWallTo(n))
+                or (type(sq.getWindowTo) == "function" and sq:getWindowTo(n))) then
             return name
         end
     end
@@ -121,14 +145,15 @@ local function wallSide(sq, room)
 end
 
 -- Where the scale may stand: a clear floor square of the room, against a
--- wall, on no doorway and not next to one (the way in stays open).
+-- wall or window wall, on no doorway, not next to one (the way in stays
+-- open) and not in front of a fixture or piece of furniture.
 function Spawn.candidates(room)
     local squares = room:getSquares()
     local out, free = {}, 0
     -- why clear squares were turned down, for the console line; edge and
     -- walled count every square of the room (clear or not) that touches the
     -- outside, and how many of those edges the game calls a wall
-    local why = { opening = 0, nowall = 0, neardoor = 0, nilnb = 0, notfree = 0, furn = 0, edge = 0, walled = 0 }
+    local why = { opening = 0, nowall = 0, neardoor = 0, nilnb = 0, front = 0, notfree = 0, furn = 0, edge = 0, walled = 0 }
     if not squares then return out, 0, why end
     for i = 0, squares:size() - 1 do
         local sq = squares:get(i)
@@ -158,6 +183,7 @@ function Spawn.candidates(room)
                         if n and n:getRoom() == room and hasOpening(n) then nearDoor = true break end
                     end
                     if nearDoor then why.neardoor = why.neardoor + 1
+                    elseif inFrontOfFurniture(sq) then why.front = why.front + 1
                     else out[#out + 1] = { sq = sq, side = side } end
                 end
             end
@@ -204,7 +230,7 @@ function Spawn.tryRoom(square, roll)
     local n = room:getSquares():size()
     if n < Spawn.minSquares or #list == 0 or free - 1 < Spawn.minFree then
         Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room (room edges " .. why.edge .. ", of which walls " .. why.walled .. "; opening "
-            .. why.opening .. ", no wall " .. why.nowall .. ", near a door " .. why.neardoor .. ", unloaded neighbour " .. why.nilnb
+            .. why.opening .. ", no wall " .. why.nowall .. ", near a door " .. why.neardoor .. ", in front of furniture " .. why.front .. ", unloaded neighbour " .. why.nilnb
             .. "; squares not free " .. why.notfree .. ", with furniture " .. why.furn .. ")")
         return nil
     end
