@@ -7,6 +7,7 @@ WeightScale.Geo = WeightScale.Geo or {}
 local WeightScaleGeo = WeightScale.Geo
 
 WeightScaleGeo.weight = { min = 35.0, max = 130.0, start = 80.0 }
+WeightScaleGeo.weightDigital = { min = 0.0, max = 130.0, start = 0.0 }
 
 WeightScaleGeo.bands = {
     { id = 'emaciated', upTo = 50.0, inc = true, colour = {138, 58, 52} },

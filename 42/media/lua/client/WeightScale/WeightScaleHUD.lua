@@ -195,11 +195,14 @@ function HUD:drawBeam(ax, ay, st, unit)
     self:drawNumeral(ax + s.x, dy + s.y, st.reading, unit, alpha, s.w, 32)
 end
 
--- Direction 2: the native panel fallback style.
+-- Direction 2: the native panel, the home scale's readout. Its 0 to 130 kg range
+-- holds items and animals, so its stripe is a neutral cream, not a health band.
+local NEUTRAL_BAND = { colour = { 214, 208, 188 } }
+
 function HUD:drawPanel(ax, ay, st, unit)
     local p = Geo.panel
     local dy = ay + st.dy
-    local band = Core.bandOf(st.reading)
+    local band = self.range == Geo.weightDigital and NEUTRAL_BAND or Core.bandOf(st.reading)
     self:drawRect(ax, dy, p.w, p.h, st.alpha * 0.74, 0, 0, 0)
     if type(self.drawRectBorder) == "function" then
         self:drawRectBorder(ax, dy, p.w, p.h, st.alpha * 0.34, 1, 1, 1)
@@ -244,7 +247,7 @@ function HUD:anchor(kind)
 end
 
 function HUD:readoutRect()
-    local style = WeightScale.Prefs and WeightScale.Prefs.style or "beam"
+    local style = self.style
     local ax, ay = self:anchor(style)
     if style == "beam" then
         return ax, ay, Geo.readout.w, Geo.readout.h
@@ -279,11 +282,10 @@ end
 function HUD:render()
     if self.mode == "idle" then return end
     local t = getTimestampMs() - self.t0
-    local st = Core.sample(self.mode, t, self.target, self.from)
+    local st = Core.sample(self.mode, t, self.target, self.from, self.range)
     if not st.visible then return end
     local unit = WeightScale.Prefs and WeightScale.Prefs.unit or "kg"
-    local style = WeightScale.Prefs and WeightScale.Prefs.style or "beam"
-    if style == "beam" then
+    if self.style == "beam" then
         self:drawBeam(0, 0, st, unit)
     else
         self:drawPanel(0, 0, st, unit)
@@ -302,7 +304,16 @@ function HUD:tick()
     self:hide()
 end
 
-function HUD:startOn(targetKg)
+-- The look and range follow the scale being read (its WeightScale.Scales entry):
+-- the clinic's beam head over 35 to 130 kg, the home scale's native panel over
+-- 0 to 130 kg. A nil entry keeps the beam head.
+function HUD:setScale(entry)
+    self.style = entry and entry.style == "panel" and "panel" or "beam"
+    self.range = Core.rangeFor(entry)
+end
+
+function HUD:startOn(targetKg, entry)
+    self:setScale(entry)
     self.mode = "on"
     self.t0 = getTimestampMs()
     self.target = targetKg
@@ -314,10 +325,13 @@ end
 -- one leaving): slide from what is on screen now to the new value, in the
 -- same beam tip, without restarting the appear fade or touching the UI
 -- manager (the element stays registered once). Off or idle: a plain startOn.
-function HUD:retarget(targetKg)
-    if self.mode ~= "on" then return self:startOn(targetKg) end
+function HUD:retarget(targetKg, entry)
+    if self.mode ~= "on" then return self:startOn(targetKg, entry) end
     local now = getTimestampMs()
-    self.from = Core.sample("on", now - self.t0, self.target, self.from).reading
+    self.from = Core.sample("on", now - self.t0, self.target, self.from, self.range).reading
+    local was = self.style
+    self:setScale(entry)
+    if self.style ~= was and self.shown then self:applyBounds() end
     self.target = targetKg
     self.t0 = now - Core.T.slideStart
 end
@@ -336,7 +350,7 @@ local HIT_RECT = { x = 0, y = 0, w = 0, h = 0 }
 
 function HUD:currentAlpha()
     if self.mode == "idle" then return 0 end
-    local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target, self.from)
+    local st = Core.sample(self.mode, getTimestampMs() - self.t0, self.target, self.from, self.range)
     return st.alpha
 end
 
@@ -352,24 +366,6 @@ function HUD:onMouseDown(x, y)
     return true
 end
 
-function HUD:onRightMouseDown(x, y)
-    if not self:hitLocal(x, y) then return false end
-    if WeightScale.Prefs then WeightScale.Prefs.toggleStyle() end
-    -- The style pref is shared (one file), so a toggle by whichever player's
-    -- readout was clicked must resize/reposition every OTHER player's
-    -- readout too, not just this one (task 2026-09-18, point A4).
-    for i = 1, #HUD._all do
-        local h = HUD._all[i]
-        if h.shown then h:applyBounds() end
-    end
-    return true
-end
-
--- All live instances, one per displayed local player. Used only to fan a
--- shared-prefs style toggle out to every readout; HUD:destroy() below keeps
--- this from growing across a player's whole disconnect/reconnect life.
-HUD._all = HUD._all or {}
-
 function HUD.new(cls, playerNum)
     local o = ISUIElement:new(0, 0, Geo.readout.w, Geo.readout.h)
     setmetatable(o, cls)
@@ -378,6 +374,8 @@ function HUD.new(cls, playerNum)
     o.t0 = 0
     o.target = Geo.weight.start
     o.shown = false
+    o.style = "beam"
+    o.range = nil   -- Core.rangeFor: nil is the medical range
     o.playerNum = playerNum or 0
     -- No setAlwaysOnTop: it is a no-op before the element is instantiated
     -- (ISUIElement:setAlwaysOnTop guards on self.javaObject, which only
@@ -385,7 +383,6 @@ function HUD.new(cls, playerNum)
     -- it. An element added last is drawn last anyway.
     -- plain ISUIElement paints no background/border unless told to; nothing
     -- to disable, unlike ISPanel-derived windows.
-    table.insert(HUD._all, o)
     return o
 end
 
@@ -394,9 +391,6 @@ end
 -- nothing about it can leak.
 function HUD:destroy()
     self:hide()
-    for i = #HUD._all, 1, -1 do
-        if HUD._all[i] == self then table.remove(HUD._all, i) end
-    end
 end
 
 function HUD:onResolutionChange(oldW, oldH, newW, newH)

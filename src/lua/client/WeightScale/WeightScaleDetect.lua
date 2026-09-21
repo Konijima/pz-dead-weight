@@ -12,7 +12,7 @@
 -- (cached as scales, nearest first, a few at most); while any is cached the
 -- nearest one that has something to weigh is read every throttled tick (the
 -- nearest one when none has; it is kept as scaleSquare) and onOccupancy(n, kg|nil, selfOn, wasEmpty,
--- wasSelf, inReach, settled) fires when the one decimal total changes. A change caused by
+-- wasSelf, inReach, settled, scaleEntry) fires when the one decimal total changes. A change caused by
 -- someone else must hold for Detect.debounce polls (a zombie crossing the
 -- tile must not flicker the readout); the viewer's own step on/off is instant.
 -- See docs/API-COMPAT.md for which calls are proven on which build.
@@ -339,7 +339,7 @@ local function poll(n, s, playerObj)
     s.shownKey, s.selfOn = key, selfOn
     if key then s.emptySeen[chosen], s.shownSquare = nil, chosen else s.shownSquare = nil end
     s.pendKey, s.pendN = nil, 0
-    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, shownInReach, settled) end
+    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, shownInReach, settled, s.scaleEntry) end
 end
 
 -- n is the player index (0-based, as getSpecificPlayer/getPlayerNum use it).

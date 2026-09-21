@@ -86,11 +86,11 @@ function Main.onGameStart()
     -- already occupied, a second or later occupant, and walking out of reach
     -- (inReach false, unless the viewer was the one on it) all change the
     -- reading in silence.
-    WeightScale.Detect.onOccupancy = function(n, kg, selfOn, wasEmpty, wasSelf, inReach, settled)
+    WeightScale.Detect.onOccupancy = function(n, kg, selfOn, wasEmpty, wasSelf, inReach, settled, entry)
         local playerObj = getSpecificPlayer and getSpecificPlayer(n)
         if kg then
             local hud = Main.hudFor(n)
-            if wasEmpty then hud:startOn(kg) else hud:retarget(kg) end
+            if wasEmpty then hud:startOn(kg, entry) else hud:retarget(kg, entry) end
             if wasEmpty and (settled or selfOn) then WeightScale.Sound.playOn(playerObj) end
         else
             local hud = Main.huds[n]

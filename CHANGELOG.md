@@ -9,6 +9,10 @@ note box.
 ## Unreleased
 
 - New furniture, Build 42 only: the Digital Scale, a small bathroom scale you can place on the floor or on a counter, in four facings, and pick up again. This is the furniture only for now; it does not read your weight yet.
+- The Digital Scale reads weight: people, animals and zombies on the floor, and items on it or on a counter. It shows the plain native panel and reads 0 to 130 kg. The clinic scale keeps its beam head readout.
+- The right click style switch between the beam head and the panel is gone: each scale now has its own look. Left click still switches kg and lb.
+- You only read a scale you are facing. Turn away and the readout goes; turn back and it returns.
+- On a counter, the Digital Scale sits back from the front edge and items you set on it are lifted onto its plate. "Step on Scale" is not offered for a scale on a counter.
 - Fixed the step on and off sound with two scales in reach: it no longer plays just because a scale with something on it comes into view or goes out of view. It plays only when something is put on, or taken off, the scale you are watching.
 
 ## 1.2.0 - 2026-09-21

@@ -154,14 +154,10 @@ check(hud:hitLocal(-1, 10) == false, "left of the element is not a hit")
 check(hud:hitLocal(Geo.readout.w, 10) == false, "right of the element is not a hit")
 check(hud:onMouseDown(10, 10) == true, "left click inside toggles and is consumed")
 check(Prefs.unit == "lb", "left click toggles kg -> lb, got " .. tostring(Prefs.unit))
-check(hud:onRightMouseDown(10, 10) == true, "right click inside toggles and is consumed")
-check(Prefs.style == "panel", "right click toggles beam -> panel, got " .. tostring(Prefs.style))
-check(hud.width == Geo.panel.w, "the element follows the panel style width")
-check(hud.height == Geo.panel.h, "the element follows the panel style height")
-check(hud.y == math.floor(SCREEN.h / 2 + Geo.panel.dy), "the element follows the panel offset")
+check(hud.onRightMouseDown == nil or hud.onRightMouseDown == ISUIElement.onRightMouseDown, "the HUD has no right click handler of its own: the style follows the scale")
+check(hud.style == "beam" and hud.width == Geo.readout.w, "a medical scale reads with the beam head")
 hud:onMouseDown(10, 10)
-hud:onRightMouseDown(10, 10)
-check(Prefs.unit == "kg" and Prefs.style == "beam", "toggles are reversible")
+check(Prefs.unit == "kg", "left click toggles back to kg")
 
 -- 4. resolution change keeps the element on the readout rectangle.
 SCREEN.w, SCREEN.h = 1280, 720
@@ -184,7 +180,7 @@ fire("OnPlayerUpdate", PLAYERS[0])
 check(registered(hud) == 0, "the leaving animation over, the HUD is unregistered")
 check(#UIManager.ui == 0, "nothing is left in the UI manager")
 check(hud.mode == "idle", "the HUD is idle once unregistered")
-check(hud:onRightMouseDown(10, 10) == false, "an idle HUD consumes no click")
+check(hud:onMouseDown(10, 10) == false, "an idle HUD consumes no click")
 check(#SOUND_LOG == 2, "letting the leaving animation finish plays no extra sound")
 
 -- 6. on/off cycles never leave two elements registered. onScaleOn/Off are
@@ -378,17 +374,21 @@ hudR:drawBeam(0, 0, { alpha = 1, dy = 0, angle = 0, reading = Geo.weight.max }, 
 ok = allInside(0, 0, Geo.readout.w, Geo.readout.h)
 check(ok, "beam head (lb, widest value) must draw entirely inside the readout rectangle")
 
--- 11. toggling style while visible resizes and re-anchors at once, for
---     every local player (already exercised structurally in step 3; this
---     is the direct applyBounds() re-check for the instance used above).
-Prefs.style = "panel"
-hudR:applyBounds()
-check(hudR.width == Geo.panel.w and hudR.height == Geo.panel.h,
-    "toggling to panel while visible resizes the element to the panel rectangle")
-Prefs.style = "beam"
-hudR:applyBounds()
-check(hudR.width == Geo.readout.w and hudR.height == Geo.readout.h,
-    "toggling back to beam while visible resizes the element to the readout rectangle")
+-- 11. the style follows the scale being read: a digital scale gets the native
+--     panel over 0 to 130 kg, and moving to the other kind of scale while the
+--     readout is up re-applies the bounds at once.
+local DIG = WeightScale.Scales.forSprite("deadweight_digital_01_0")
+local MED = WeightScale.Scales.forSprite("location_community_medical_01_8")
+hudR:startOn(12.5, DIG)
+check(hudR.style == "panel" and hudR.range == Geo.weightDigital, "a digital scale starts the panel over 0..130")
+check(hudR.width == Geo.panel.w and hudR.height == Geo.panel.h, "the element takes the panel rectangle")
+NOW = NOW + Core.T.onEnd + 10
+hudR:retarget(70, MED)
+check(hudR.style == "beam" and hudR.range == Geo.weight, "reading a medical scale next switches to the beam head")
+check(hudR.width == Geo.readout.w and hudR.height == Geo.readout.h, "and resizes the element at once")
+hudR:retarget(12.5, DIG)
+check(hudR.style == "panel" and hudR.width == Geo.panel.w, "and back to the panel")
+hudR:startOff(); hudR.mode = "idle"; hudR:hide()
 
 -- 12. retarget (task 2026-09-20): the total changed while the readout is up.
 --     Stays registered exactly once, slides from what is on screen now, and

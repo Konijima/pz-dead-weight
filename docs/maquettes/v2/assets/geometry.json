@@ -1,5 +1,6 @@
 {
  "weight": { "min": 35.0, "max": 130.0, "start": 80.0 },
+ "weightDigital": { "min": 0.0, "max": 130.0, "start": 0.0 },
  "bands": [
   { "id": "emaciated",  "upTo": 50.0, "inc": true,  "colour": [138, 58, 52] },
   { "id": "tresMaigre", "upTo": 65.0, "inc": true,  "colour": [152, 96, 46] },

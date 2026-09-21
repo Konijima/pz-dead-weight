@@ -43,8 +43,11 @@ local function findScaleSquare(worldobjects)
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
         if WeightScale.Scales.forSprite(name) then
+            -- a scale on a counter or table (drawn lifted by the surface's
+            -- render offset) cannot be stepped on and holds no animal
+            local lift = obj.getRenderYOffset and obj:getRenderYOffset()
             local square = obj.getSquare and obj:getSquare()
-            if square then return square end
+            if square and not (type(lift) == "number" and lift > 0) then return square end
         end
     end
     return nil

@@ -1043,5 +1043,22 @@ do
     check(#out == 1 and near(out[1], 30), "floor scale: an item at floor height counts")
 end
 
+
+-- 20. the readout style and range follow the scale that is read ---------------
+do
+    sandbox(nil)
+    local sqD = spriteSquare(90, 90, "deadweight_digital_01_0")
+    sqD.floor = { item(1.1, 0.5, 0.5) }
+    local viewer = makePlayer(0, 80)
+    put(viewer, 91, 90)
+    Detect.clear(0)
+    tick(0, 4)
+    check(mode(0) == "on" and hud(0).style == "panel" and hud(0).range == WeightScale.Geo.weightDigital,
+        "an item on a digital scale reads with the panel over 0..130, got " .. tostring(hud(0).style))
+    check(near(hud(0).target, 1.1), "the panel reads the item's true weight")
+    sqD.floor = {}
+    tick(0, 4)
+end
+
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

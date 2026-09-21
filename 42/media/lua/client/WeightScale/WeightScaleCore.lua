@@ -19,14 +19,25 @@ local function clamp01(v)
     return clamp(v, 0, 1)
 end
 
-function WeightScaleCore.mapX(w)
-    local t = (clamp(w, W.min, W.max) - W.min) / (W.max - W.min)
+-- The weight range a HUD maps: the medical scale's (Geo.weight) unless a scale
+-- entry says "digital" (Geo.weightDigital, 0 to 130 kg). The optional `r`
+-- argument below defaults to the medical range, so the maquette parity check
+-- (anim.js) reads the same numbers as before.
+function WeightScaleCore.rangeFor(entry)
+    if entry and entry.range == "digital" then return Geo.weightDigital end
+    return W
+end
+
+function WeightScaleCore.mapX(w, r)
+    r = r or W
+    local t = (clamp(w, r.min, r.max) - r.min) / (r.max - r.min)
     return Geo.track.x0 + t * Geo.track.w
 end
 
-function WeightScaleCore.unmapX(x)
+function WeightScaleCore.unmapX(x, r)
+    r = r or W
     local t = (x - Geo.track.x0) / Geo.track.w
-    return W.min + t * (W.max - W.min)
+    return r.min + t * (r.max - r.min)
 end
 
 function WeightScaleCore.bandOf(w)
@@ -136,10 +147,11 @@ function WeightScaleCore.zombieWeight(id)
 end
 
 -- mode "on" | "off"; t in ms from the start of that move; target in kg.
--- from (optional, kg, default the scale minimum) is where the slide starts,
+-- from (optional, kg, default the range minimum) is where the slide starts,
 -- so a retarget can glide from the current reading instead of from the stop.
--- Returns { alpha, dy, angle, reading, visible }, same fields as anim.js sample().
-function WeightScaleCore.sample(mode, t, target, from)
+-- r (optional) is the weight range, default the medical one. Returns { alpha, dy, angle, reading, visible }, same fields as anim.js sample().
+function WeightScaleCore.sample(mode, t, target, from, r)
+    r = r or W
     local ease = WeightScaleCore.ease
     local s = { alpha = 1, dy = 0, angle = 0, reading = target, visible = true }
 
@@ -157,18 +169,18 @@ function WeightScaleCore.sample(mode, t, target, from)
     s.dy = 10 * (1 - ease.outCubic(clamp01(t / T.appear)))
     if t < T.slideStart then
         s.angle = -Geo.beam.maxDeg * ease.outQuad(clamp01(t / T.tipDur))
-        s.reading = W.min
+        s.reading = r.min
     elseif t < T.settleStart then
         local p = ease.inOutCubic(clamp01((t - T.slideStart) / T.slide))
         s.angle = -Geo.beam.maxDeg
-        local w0 = from or W.min
-        if target < W.min or target > W.max or w0 < W.min or w0 > W.max then
+        local w0 = from or r.min
+        if target < r.min or target > r.max or w0 < r.min or w0 > r.max then
             -- outside the scale range the beam is pinned at an end, so the
             -- numeral counts in kg instead of through the (clamped) beam x.
             s.reading = w0 + (target - w0) * p
         else
-            local x0 = WeightScaleCore.mapX(w0)
-            s.reading = WeightScaleCore.unmapX(x0 + (WeightScaleCore.mapX(target) - x0) * p)
+            local x0 = WeightScaleCore.mapX(w0, r)
+            s.reading = WeightScaleCore.unmapX(x0 + (WeightScaleCore.mapX(target, r) - x0) * p, r)
         end
     else
         local u = (t - T.settleStart) / 1000
