@@ -15,12 +15,13 @@ Supports Build 41 and Build 42 from one repository.
 src/          hand edited source, the ONLY place to make changes
   lua/client/WeightScale/   Lua modules, see Module map below
   translate/strings.json    every translation string, one file, all languages
+  sandbox-options.txt       the DeadWeight.* sandbox options (WeighCarried, WholeSquare, ViewDistance)
   textures/, sounds/, scripts/
 
 mod.info      Build 41 mod.info, root of the repo (root IS the mod folder)
-media/        Build 41 generated tree (lua, textures, sound, scripts)
+media/        Build 41 generated tree (lua, textures, sound, scripts, sandbox-options.txt)
 42/           Build 42 generated tree (mod.info, lua, icon, posters)
-common/       Build 42 generated tree (textures, sound, scripts)
+common/       Build 42 generated tree (textures, sound, scripts, sandbox-options.txt)
 ```
 
 Never hand edit `media/`, `42/` or `common/`. After any change under `src/`:
@@ -56,16 +57,23 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
 - `WeightScaleGeo.lua`: generated, see above. HUD geometry, weight range,
   band thresholds and colours.
 - `WeightScaleDetect.lua`: per local player presence detection (is this
-  player standing on a scale tile, or one square from one in the same
-  room), occupancy polling with a debounce, splitscreen aware.
+  player standing on a scale tile, or within `DeadWeight.ViewDistance`
+  squares of one in the same room and in line of sight), occupancy polling
+  of the nearest scale that has something on it, with a debounce,
+  splitscreen aware.
 - `WeightScaleOccupants.lua`: who stands on the scale tile and what each
-  weighs (player, animal, zombie); the game API for it lives here.
+  weighs (player, animal, zombie); the game API for it lives here. With the
+  `DeadWeight.WeighCarried` sandbox option on it also adds each local
+  player's carried mass and the tile's floor items (`Occupants.remoteLoad`
+  is the relay seam for remote players).
 - `WeightScaleHUD.lua`: the on screen readout, an `ISUIElement` sized to
   the readout, added to and removed from the UI manager as it appears.
 - `WeightScalePrefs.lua`: per user prefs (unit, beam/panel style), read and
   written with core Lua file APIs stable across both builds.
-- `WeightScaleSound.lua`: step on/off cues, one shot per transition.
-- `WeightScaleMenu.lua`: the right click "Step on Scale" context menu option.
+- `WeightScaleSound.lua`: step on/off cues, one shot per transition; every
+  viewer plays them locally (no network) when the scale goes empty <-> occupied.
+- `WeightScaleMenu.lua`: the right click "Step on Scale" context menu option,
+  and "Put Animal on Scale" when the player holds an animal (Build 42).
 - `WeightScaleCharScreen.lua`: patches the Info tab's weight line to show
   the category word instead of the number.
 - `WeightScaleMain.lua`: wires the modules to game events; computes
@@ -126,7 +134,8 @@ upload silently turns it private again.
   table); `IGUI_` keys load from `IG_UI.json` (B42, not `IGUI.json`) /
   `IGUI_<LANG>.txt` (B41). B41 `.txt` files are Lua tables encoded in that
   language's own charset (Korean is UTF-16); B42 reads JSON only, UTF-8
-  without BOM. Add a new prefix to `PREFIX_TO_FILE` before using a new key
+  without BOM. `Sandbox_` keys load from `Sandbox.json` (B42) / `Sandbox_<LANG>.txt`
+  (B41). Add a new prefix to `PREFIX_TO_FILE` before using a new key
   family, or the key shows up raw in game.
 - `mod.info` description quirks: rich text tags need a space on both sides
   or the parser glues the neighbouring word to the tag and it vanishes;

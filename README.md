@@ -23,10 +23,13 @@ goes with you; nowhere else in the game can you read it that precisely.
 - Your survivor turns once to face the scale's column on stopping.
 - Two short sounds: stepping on, stepping off.
 - A "Step on Scale" option at the top of the scale's right click menu, with
-  its own icon, walks you there.
+  its own icon, walks you there. Holding an animal (Build 42), a "Put Animal
+  on Scale" option sets it down on the plate from the next square (single player for now), so it is
+  weighed without you.
 - Every local splitscreen player gets their own readout.
 - The scale reads everyone on it: survivors, animals and zombies, added up.
-  Stand one square away and you read them too, like a doctor weighing a
+  Stand a couple of squares away (a sandbox option, 2 by default, blocked by
+  walls and shut doors) and you read them too, like a doctor weighing a
   patient.
 - No per frame scanning: the reading only exists while someone is on the
   scale and you are next to it.
@@ -34,20 +37,33 @@ goes with you; nowhere else in the game can you read it that precisely.
 
 ## Weigh others, and anything else
 
-Whatever stands on the scale is weighed, and anyone standing on it or one
-square away in the same room reads the same number. Two survivors together
+Whatever stands or lies on the scale's plate is weighed, and anyone standing
+on it or within reach in the same room and in plain sight (2 squares by
+default) reads the same number, in multiplayer too. With two scales side by
+side, you read the nearest one that has something on it. Two survivors together
 read their true combined weight: the beam rests at its end and the number
 stays honest. A light animal reads under 35 kg, a heavy pair over 130 kg.
 
 ![An animal on the scale, read from the next tile](workshop/art/deadweight-animal.gif)
 
 A zombie has no weight in the game, so each one gets a believable invented
-weight, the same every time you see it. Only the first person to step on or
-off hears the sound.
+weight, the same every time you see it. Everyone who can see the readout hears
+the sound when the scale goes from empty to occupied or back.
 
 ![A zombie on the scale, read from the next tile](workshop/art/deadweight-zombie.gif)
 
 ![The beam readout and the Info tab weight category](workshop/art/deadweight-banner-2.png)
+
+## Sandbox options
+
+Page "Dead Weight" in the sandbox options:
+
+- **Weigh what you carry** (off by default): adds worn items and bag contents
+  to each survivor's reading. Zombies and animals stay body weight only.
+- **Weigh the whole square** (off by default): count anything in the scale's
+  square instead of only what is on the plate.
+- **Reading distance** (0 to 5, default 2): how many squares away you can
+  stand and still read the scale.
 
 ## Controls
 

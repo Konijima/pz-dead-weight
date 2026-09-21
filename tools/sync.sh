@@ -18,6 +18,8 @@ B41_SND="media/sound/WeightScale"
 B42_SND="common/media/sound/WeightScale"
 B41_SCR="media/scripts"
 B42_SCR="common/media/scripts"
+B41_SBX="media/sandbox-options.txt"
+B42_SBX="common/media/sandbox-options.txt"
 B41_TR="media/lua/shared/Translate"
 B42_TR="42/media/lua/shared/Translate"
 
@@ -33,6 +35,12 @@ cp "$SND_SRC"/*.ogg "$B42_SND"/
 cp "$SCR_SRC"/*.txt "$B41_SCR"/
 cp "$SCR_SRC"/*.txt "$B42_SCR"/
 
+# One sandbox options file, read by CustomSandboxOptions.init from BOTH the
+# version dir (media/ at the root for B41) and the common dir (B42), see
+# docs/API-COMPAT.md "Sandbox option".
+cp src/sandbox-options.txt "$B41_SBX"
+cp src/sandbox-options.txt "$B42_SBX"
+
 # Translations are generated, not copied verbatim: B41 reads the legacy
 # Lua-table .txt, B42 reads JSON (see tools/gen-translate.py and
 # docs/API-COMPAT.md "Translations" for the proof).
@@ -42,4 +50,5 @@ echo "synced $LUA_SRC -> $B41_LUA, $B42_LUA"
 echo "synced $TEX_SRC -> $B41_TEX, $B42_TEX"
 echo "synced $SND_SRC -> $B41_SND, $B42_SND"
 echo "synced $SCR_SRC -> $B41_SCR, $B42_SCR"
+echo "synced src/sandbox-options.txt -> $B41_SBX, $B42_SBX"
 echo "generated src/translate/strings.json -> $B41_TR (.txt), $B42_TR (.json)"

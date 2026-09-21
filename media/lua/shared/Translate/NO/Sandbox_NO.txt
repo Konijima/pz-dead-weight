@@ -1,0 +1,17 @@
+Sandbox_NO = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Vei det du bærer",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Vekten legger også det du bærer, medregnet det du har på deg og innholdet i vesker, til kroppsvekten. Av: bare kroppsvekt. Ting som ligger på vekten, blir alltid veid.",
+
+    Sandbox_DeadWeight_WholeSquare = "Vei hele ruten",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Av (standard): bare figurer og gjenstander som står eller ligger på selve vektens bilde, midt i ruten, blir veid. På: alt i vektens rute teller med, også ved siden av bildet.",
+
+    Sandbox_DeadWeight_ViewDistance = "Avlesningsavstand",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Hvor mange ruter unna vekten, i samme rom, man kan stå og likevel lese av den, som en lege som veier en pasient. 0: bare spilleren på vekten leser den av. Standard 2.",
+
+}

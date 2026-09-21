@@ -1,0 +1,17 @@
+Sandbox_JP = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "所持品も量る",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "体重計は、身につけた物やバッグの中身を含む持ち物も、体重に加えて量ります。オフ: 体重のみ。体重計の上に置かれた物は常に量られます。",
+
+    Sandbox_DeadWeight_WholeSquare = "升目全体を量る",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "オフ（デフォルト）: 体重計の升目の中央にある体重計の絵そのものの上に立っている、または置かれているキャラクターとアイテムだけを量ります。オン: 絵の脇でも、体重計の升目内にあるものはすべて量ります。",
+
+    Sandbox_DeadWeight_ViewDistance = "読み取り距離",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "体重計から同じ部屋の中で何升目離れても読み取れるか。患者の体重を量る医師のように。0: 体重計に乗っているプレイヤーだけが読み取れます。デフォルトは 2。",
+
+}

@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Weeg wat je draagt",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "De weegschaal telt ook wat je draagt, gedragen spullen en tasinhoud inbegrepen, bij je lichaamsgewicht op. Uit: alleen lichaamsgewicht. Wat op het plateau ligt, wordt altijd gewogen.",
+    "Sandbox_DeadWeight_WholeSquare": "Weeg het hele vak",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Uit (standaard): alleen personages en voorwerpen die op de afbeelding van de weegschaal zelf staan of liggen, midden in het vak, worden gewogen. Aan: alles in het vak van de weegschaal telt mee, ook naast de afbeelding.",
+    "Sandbox_DeadWeight_ViewDistance": "Leesafstand",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Hoeveel vakken van de weegschaal, in dezelfde ruimte, je mag staan en hem toch kunt aflezen, zoals een arts die een patiënt weegt. 0: alleen de speler op de weegschaal leest hem af. Standaard 2."
+}

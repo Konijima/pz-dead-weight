@@ -1,0 +1,17 @@
+Sandbox_ES_CL = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Pesar lo que llevas",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "La báscula también suma al peso corporal lo que llevas encima, incluidos los objetos puestos y el contenido de las mochilas. Desactivado: solo el peso corporal. Lo que está sobre el plato siempre se pesa.",
+
+    Sandbox_DeadWeight_WholeSquare = "Pesar toda la casilla",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Desactivado (por defecto): solo se pesan los personajes y objetos que están sobre la propia imagen de la báscula, en el centro de su casilla. Activado: cuenta todo lo que hay en la casilla de la báscula, incluso junto a la imagen.",
+
+    Sandbox_DeadWeight_ViewDistance = "Distancia de lectura",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A cuántas casillas de la báscula, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la báscula la lee. Por defecto 2.",
+
+}

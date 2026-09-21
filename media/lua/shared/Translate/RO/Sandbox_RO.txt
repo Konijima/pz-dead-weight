@@ -1,0 +1,17 @@
+Sandbox_RO = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Ia în calcul ce porþi",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Cântarul adaugã la greutatea corporalã ºi ce porþi asupra ta, inclusiv obiectele purtate ºi conþinutul genþilor. Oprit: doar greutatea corporalã. Ce se aflã pe platformã este mereu cântãrit.",
+
+    Sandbox_DeadWeight_WholeSquare = "Cântãreºte tot careul",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Dezactivat (implicit): sunt cântãrite doar personajele ºi obiectele aflate pe imaginea cântarului însãºi, în mijlocul careului ei. Activat: conteazã tot ce se aflã pe careul cântarului, chiar ºi lângã imagine.",
+
+    Sandbox_DeadWeight_ViewDistance = "Distanþa de citire",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "La câte careuri de cântar, în aceeaºi camerã, poþi sta ºi tot îl poþi citi, ca un medic care cântãreºte un pacient. 0: doar jucãtorul aflat pe cântar îl citeºte. Implicit 2.",
+
+}

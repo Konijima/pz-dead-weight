@@ -2,4 +2,6 @@ ContextMenu_NO = {
 
     ContextMenu_WeightScale_StepOn = "Stå på personvekten",
 
+    ContextMenu_WeightScale_PutAnimal = "Sett dyret på personvekten",
+
 }

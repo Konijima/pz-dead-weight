@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "소지품도 측정",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "체중계가 착용한 물건과 가방 속 물건을 포함한 소지품도 체중에 더해 측정합니다. 끔: 체중만 측정. 체중계 위에 놓인 물건은 항상 측정됩니다.",
+    "Sandbox_DeadWeight_WholeSquare": "칸 전체를 측정",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "끔(기본값): 체중계 칸 중앙의 체중계 그림 위에 서 있거나 놓인 캐릭터와 물건만 측정합니다. 켬: 그림 옆이라도 체중계 칸 안에 있는 모든 것을 측정합니다.",
+    "Sandbox_DeadWeight_ViewDistance": "읽기 거리",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "체중계에서 같은 방 안에서 몇 칸 떨어진 곳까지 서서 읽을 수 있는지를 정합니다. 환자의 체중을 재는 의사처럼요. 0: 체중계에 올라선 플레이어만 읽을 수 있습니다. 기본값 2."
+}

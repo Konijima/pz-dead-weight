@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Timbang barang bawaan",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "Timbangan juga menambahkan apa yang kamu bawa, termasuk barang yang dikenakan dan isi tas, ke berat badanmu. Nonaktif: hanya berat badan. Benda yang tergeletak di atas timbangan selalu ditimbang.",
+    "Sandbox_DeadWeight_WholeSquare": "Timbang seluruh kotak",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Nonaktif (bawaan): hanya karakter dan barang yang berdiri atau tergeletak di gambar timbangan itu sendiri, di tengah kotaknya, yang ditimbang. Aktif: semua yang ada di kotak timbangan dihitung, bahkan di samping gambarnya.",
+    "Sandbox_DeadWeight_ViewDistance": "Jarak baca",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 2."
+}

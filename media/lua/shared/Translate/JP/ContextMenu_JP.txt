@@ -2,4 +2,6 @@ ContextMenu_JP = {
 
     ContextMenu_WeightScale_StepOn = "体重計に乗る",
 
+    ContextMenu_WeightScale_PutAnimal = "動物を体重計に乗せる",
+
 }
