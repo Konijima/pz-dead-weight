@@ -79,12 +79,10 @@ server shows the relay unreliable, the fallback is `sendClientCommand`/
 
 ## Cue and pick-up rough edges with two scales in reach
 
-From the 1.2.0 review (low severity, only with overlapping scales):
-`settledEmpty` is not reset when the shown scale changes, so a viewer settled
-by an empty scale A can get an "on" cue when occupied scale B comes into reach;
-leaving occupied A's reach or a door closing while empty B is in reach can give
-an "off" cue although nobody stepped off; and a straight step onto another
-scale in the very window after a scale was dropped skips the turn to face it.
+From the 1.2.0 review (low severity, only with overlapping scales): a straight
+step onto another scale in the very window after a scale was dropped skips the
+turn to face it. (The cue half of this item is fixed: cues are tracked per
+scale in `Detect.poll`, `emptySeen` and `shownSquare`.)
 The `[DeadWeight] animal held/released` prints in `WeightScaleMenu.lua` can go
 once the animal drop is settled.
 
