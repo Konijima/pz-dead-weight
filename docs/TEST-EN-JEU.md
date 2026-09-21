@@ -225,7 +225,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 45. **Un zombie sur la balance.** Poser un zombie immobile sur la case : le
     releve affiche un poids plausible (environ 60 a 90 kg), le meme tant que
     ce zombie reste. Un autre zombie donne en general un autre poids.
-46. **Le docteur regarde.** Se tenir a 1 case de la balance, dans la meme
+46. **Le docteur regarde.** Se tenir a 1 ou 2 cases de la balance (distance de lecture par defaut : 2), dans la meme
     piece, un patient (autre joueur, animal ou zombie) sur la balance : le
     releve du patient s'affiche, sans aucun son. A 2 cases, ou de l'autre
     cote d'une porte dans une autre piece : rien ne s'affiche.
@@ -238,12 +238,14 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 48. **Zombie qui traverse.** Un zombie qui ne fait que traverser la case
     (une fraction de seconde) ne doit pas faire clignoter ni sauter le
     releve.
-49. **Sons : seulement le premier.** Le son "on" ne joue que quand le joueur
-    local monte sur une balance vide. Aucun son quand il monte sur une
-    balance deja occupee, quand un deuxieme occupant arrive ou repart, ni
-    pour un simple observateur. Le son "off" ne joue que quand le joueur
-    local, qui etait dessus, laisse la balance vide.
-50. **S'eloigner.** Le docteur qui s'eloigne a plus de 1 case : le releve
+49. **Sons : vide <-> occupee.** Le son "on" joue chez tout joueur qui voit le
+    releve quand la balance passe de vide a occupee (lui-meme qui monte, un
+    autre joueur, ou un simple objet pose), a condition qu'il ait vu la
+    balance vide avant (s'approcher d'une balance deja occupee est silencieux).
+    Aucun son quand un deuxieme occupant arrive ou repart. Le son "off" joue
+    chez tout joueur qui voit le releve quand la balance redevient vide. En
+    multijoueur, chaque client joue son propre son : rien n'est diffuse.
+50. **S'eloigner.** Le docteur qui s'eloigne a plus de 2 cases : le releve
     part tout de suite (animation de sortie, pas de son). Verifier qu'un clic
     droit dans le monde marche partout apres (l'element ne doit plus etre
     enregistre).
@@ -251,11 +253,106 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     voient le meme releve dans leur propre moitie d'ecran, seul le joueur 1
     entend le son.
 52. **Multijoueur (deux clients).** Le patient monte sur la balance, le
-    docteur a 1 case lit un poids. Si la valeur du patient semble figee ou
-    fausse a distance, noter la valeur lue et celle affichee dans l'onglet
-    Info du patient : dans ce cas seulement il faudra un relais
-    `sendClientCommand`/`sendServerCommand` (fichier Lua serveur a ajouter).
-    Un meme zombie doit donner le meme poids sur les deux clients.
+    docteur a 1 case lit un poids. Un meme zombie doit donner le meme poids
+    sur les deux clients.
+52b. **Multijoueur, poids porte.** Option `WeighCarried` activee, deux
+    clients : le patient (sac charge) monte sur la balance, le docteur a
+    1 case doit lire le meme total que le patient, a 3 secondes pres.
+    Le patient ajoute ou lache un objet : le total des deux clients suit.
+    Option desactivee : les deux lisent le poids du corps seul.
+52c. **Distance de lecture.** Options de partie, page DeadWeight, "Distance de
+    lecture" (0 a 5, defaut 2, quitter et recharger la partie si l'editeur de
+    debug ne l'applique pas). A 2 : le docteur lit a 2 cases, pas a 3. A 0 :
+    seul celui qui est sur la balance la lit. A 4 : lecture a 4 cases.
+52d. **Balance ramassee puis reposee.** Le docteur reste immobile a portee, un
+    autre joueur ramasse la balance : le releve part. Il la repose au meme
+    endroit ou a un autre a portee : le docteur relit sans bouger (compter
+    jusqu'a 1 seconde).
+52e. **Deux balances cote a cote.** Poser deux balances adjacentes. Marcher
+    directement de l'une sur l'autre : le personnage se tourne vers la colonne
+    de la seconde, une seule fois. Un docteur entre les deux (ou a portee des
+    deux) lit la plus proche qui a quelque chose a peser : patient sur la
+    balance lointaine seulement, il lit celui-la ; les deux occupees, il lit
+    la plus proche ; le patient de la plus proche part, il bascule sur
+    l'autre. Ramasser la balance lue : il bascule sur l'autre, et revient sur
+    la premiere une fois reposee.
+52f. **Mur entre le docteur et la balance.** Le docteur immobile a portee lit la
+    balance. Construire un mur (ou fermer une porte) entre eux : le releve
+    part en moins d'une seconde. Retirer le mur / rouvrir la porte : il
+    revient sans bouger. Une fenetre ou une porte ouverte ne cache pas la
+    balance. Sur la balance elle-meme, toujours lisible.
 53. **Balance ramassee.** Ramasser/deplacer la balance pendant qu'un patient
     est dessus et que le docteur regarde : le releve doit partir, pas rester
     fige.
+
+## Ajout 2026-09-20, option bac a sable "Weigh what you carry"
+
+Option `DeadWeight.WeighCarried` (page "Dead Weight" des options de bac a
+sable, desactivee par defaut) : elle ne concerne QUE ce que porte chaque
+joueur. Les objets poses sur la plaque comptent et sont releves sur la
+plaque dans tous les cas, option activee ou non. A tester en solo d'abord : en multijoueur le
+sac des AUTRES joueurs n'est pas releve (relais a venir), seul leur corps.
+
+54. **Option desactivee (defaut).** Monter sur la balance avec un sac
+    charge : le releve est exactement celui d'avant (poids du corps seul,
+    identique a l'onglet Info en mots). Poser un objet sur la plaque : le
+    releve augmente quand meme de son poids (le sol compte toujours).
+55. **Option activee, on porte quelque chose.** Activer l'option dans les
+    options de bac a sable (nouvelle partie, ou options de la partie en
+    cours en debug). Monter sur la balance : le releve = corps + tout ce
+    qu'on porte (vetements portes et contenu du sac inclus a 100 %).
+    Deposer un objet lourd dans le sac ou le retirer : le releve suit apres
+    le meme delai que pour un autre occupant.
+56. **Vider le sac au sol.** Debout sur la balance, jeter le contenu du
+    sac sur la case : le total ne change pas (l'objet compte maintenant par
+    le sol de la case). Le pousser sur une case voisine : le releve baisse.
+57. **Objet au sol sur la case.** Poser un objet (un sac charge par exemple)
+    sur la case de la balance, en restant dessus : le releve augmente du
+    poids de l'objet, contenu du sac compris, une seule fois.
+58. **Objet sur la case voisine.** Poser le meme objet sur une case a cote de
+    la balance : le releve ne change pas.
+58b. **Objet sur la case mais a cote de la plaque.** Poser un objet sur la
+    case de la balance, mais visiblement a cote de la plaque (pres d'un coin
+    de la case, comme un bidon d'eau pose sur le bord) : il ne compte pas.
+    Le poser sur la plaque, au milieu de la case : il compte. Si la zone
+    parait trop petite ou trop grande, ajuster `Occupants.plateHalf`.
+59. **Objet seul, personne dessus.** Un objet sur la balance sans personne
+    dessus : se placer a une case (meme piece) fait apparaitre le releve avec
+    le poids de l'objet, comme si quelqu'un y etait, sans son (on arrive apres coup). Poser un
+    objet pendant qu'on regarde la balance vide joue le son "on", le reprendre
+    joue le son "off". Le
+    reprendre ou s'eloigner de plus d'une case : le releve disparait.
+60. **Zombie ou animal.** Avec l'option activee, un zombie ou un animal sur la
+    balance ne compte que son poids de corps (les objets au sol de la case
+    comptent toujours une fois).
+61. **Retour a l'option desactivee.** Redesactiver l'option : ce que le
+    joueur porte ne compte plus (les objets au sol restent comptes), sans
+    redemarrer.
+62. **Zone de la plaque, personnage.** Option "Peser toute la case"
+    desactivee (defaut). Se tenir dans un coin de la case de la
+    balance, a cote de la plaque : pas de releve, pas de son. Marcher jusqu'au
+    milieu de la case (la plaque n'est pas au meme endroit selon l'orientation
+    de la balance, verifier les deux), sur la plaque : le releve apparait avec
+    le son. Ressortir
+    de la plaque en restant dans la case : le releve se ferme avec le son de
+    sortie. Un zombie ou un animal dans un coin de la case n'est pas pese.
+63. **Objet pose sur la plaque.** Avec "Peser ce que l'on porte" activee,
+    poser un petit objet sur la plaque : il apparait pose dessus, pas cache
+    dessous. Si la hauteur parait fausse, ajuster `Occupants.plateTop`.
+64. **Toute la case.** Activer "Peser toute la case" (puis quitter et recharger la partie : l'editeur de debug ne
+    rafraichit pas SandboxVars en direct) : se tenir dans un coin de la case
+    ou y poser un objet compte comme avant, toute la case pese, et rien n'est
+    souleve.
+65. **Poser un animal sur la balance (B42).** Prendre un petit animal dans les
+    mains (poule, lapin). Clic droit sur la balance : "Poser l'animal sur la
+    balance" est en haut du menu. Le choisir : le personnage marche jusqu'a une
+    case voisine (pas sur la balance), se tourne vers la balance, pose l'animal, qui apparait sur la plaque
+    avec son cri de depose, et le releve affiche son poids d'animal seul (pas
+    le sien). Debout sur la balance avec l'animal dans les mains : l'option
+    reste, et fait sortir le personnage de la balance avant de poser. Sans
+    animal en main : l'option n'apparait pas. L'animal reste immobile sur la plaque
+    environ 3,5 secondes (`Menu.holdMs`), puis repart et le releve se ferme.
+    Si l'animal s'echappe quand meme : lire console.txt, lignes
+    `[DeadWeight] animal held at ...` puis `animal released, put back N times`
+    (N > 0 : il a essaye de partir et a ete remis en place). En multijoueur : l'autre joueur voit-il l'animal
+    apparaitre ? (non prouve, voir docs/API-COMPAT.md).

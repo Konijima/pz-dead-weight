@@ -190,6 +190,26 @@ Detect.updateFacing(11, pB)
 check(#pA.turns == 1 and #pB.turns == 1 and pB.turns[1] == DIR_N,
     "player 11 turns independently, toward the opposite of its own scale's Facing")
 
+-- 9: stepping straight from one scale onto the next (no square between)
+-- arms a fresh turn toward the new scale's column, and does not turn again
+-- while standing still on it.
+local sqA, sqB = scaleSquare(true, DIR_E), scaleSquare(true, DIR_S)
+local pNext = makePlayer()
+pNext.getCurrentSquare = function() return sqA end
+Detect.update(20, pNext)
+Detect.updateFacing(20, pNext)
+check(#pNext.turns == 1 and pNext.turns[1] == DIR_W, "first scale: turned to face it")
+pNext.getCurrentSquare = function() return sqB end
+Detect.update(20, pNext)
+Detect.updateFacing(20, pNext)
+check(#pNext.turns == 2 and pNext.turns[2] == DIR_N, "straight onto the next scale: turned toward its column")
+Detect.updateFacing(20, pNext)
+check(#pNext.turns == 2, "and only once")
+Detect.players[20].pendKey, Detect.players[20].pendN = 5, 1
+pNext.getCurrentSquare = function() return sqA end
+Detect.update(20, pNext)
+check(Detect.players[20].pendKey == nil and Detect.players[20].pendN == 0, "a half confirmed change is dropped on switching scales")
+
 Detect.tickEvery = 6
 
 print(nAssert .. " assertions passed")

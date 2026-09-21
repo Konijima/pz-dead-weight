@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Pesar lo que se lleva",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "La balanza también suma al peso corporal lo que se lleva encima, incluidas las prendas puestas y el contenido de las bolsas. Desactivado: solo el peso corporal. Lo que está sobre el plato siempre se pesa.",
+    "Sandbox_DeadWeight_WholeSquare": "Pesar toda la casilla",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Desactivado (por defecto): solo se pesan los personajes y objetos que hay sobre la propia imagen de la balanza, en el centro de su casilla. Activado: cuenta todo lo que hay en la casilla de la balanza, incluso junto a la imagen.",
+    "Sandbox_DeadWeight_ViewDistance": "Distancia de lectura",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "A cuántas casillas de la balanza, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la balanza la lee. Por defecto 2."
+}

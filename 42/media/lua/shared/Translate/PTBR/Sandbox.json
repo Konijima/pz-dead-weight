@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Pesar o que você carrega",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "A balança também soma ao peso corporal o que você carrega, incluindo itens em uso e o conteúdo das mochilas. Desativado: apenas o peso corporal. O que estiver sobre o prato é sempre pesado.",
+    "Sandbox_DeadWeight_WholeSquare": "Pesar o quadrado inteiro",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Desativado (padrão): só são pesados os personagens e objetos que estão sobre a própria imagem da balança, no centro do seu quadrado. Ativado: conta tudo o que está no quadrado da balança, mesmo ao lado da imagem.",
+    "Sandbox_DeadWeight_ViewDistance": "Distância de leitura",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "A quantos quadrados da balança, no mesmo cômodo, você pode ficar e ainda assim lê-la, como um médico que pesa um paciente. 0: só o jogador que está na balança a lê. Padrão 2."
+}

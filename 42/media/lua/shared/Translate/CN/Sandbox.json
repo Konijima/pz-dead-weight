@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "称量随身物品",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "体重秤还会把你携带的物品，包括穿戴的物品和背包里的东西，加到身体重量上。关闭时只称身体重量。放在秤盘上的东西一律会被称量。",
+    "Sandbox_DeadWeight_WholeSquare": "称量整个格子",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "关闭（默认）：只称量站在或放在秤图像本身上的角色和物品，即秤所在格子的中央。开启：秤所在格子内的一切都会计入，即使在图像旁边。",
+    "Sandbox_DeadWeight_ViewDistance": "读数距离",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "你可以站在离秤几格远的地方（同一房间内）仍然读取读数，就像医生给病人称重一样。0：只有站在秤上的玩家能读取。默认为 2。"
+}

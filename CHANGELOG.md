@@ -8,6 +8,21 @@ note box.
 
 ## Unreleased
 
+## 1.2.0 - 2026-09-21
+
+The scale reads what lies on it and what you carry, and it works better with other people around.
+
+- Everything lying on the scale's plate is weighed, once, and added to whoever stands on it. An item left on the scale is read by anyone in reach, as if someone were on it, and small items dropped on the plate are lifted onto it instead of sinking under it.
+- The scale now reads only what stands or lies on the plate itself, not anything in its square. New sandbox setting "Weigh the whole square" (off by default) brings back the old whole square behaviour.
+- New sandbox setting "Weigh what you carry" (off by default): each survivor's reading also adds everything they carry, worn items and bag contents included. Zombies and animals still read their body weight only.
+- Multiplayer: everyone in reach reads the same number as the player on the scale, down to the last digit, including what the player carries when "Weigh what you carry" is on.
+- New sandbox setting "Reading distance": how many squares from the scale you can stand and still read it. Default 2 (it was 1), 0 to 5.
+- You read a scale only if you could see it: a wall, a shut door or a barricade between you and the scale hides it, and the reading comes back when the view opens again.
+- With two scales side by side, you read the nearest one that has something on it, not just the nearest one. Walking straight from one scale onto the next turns you to face the new one.
+- If the scale is picked up and set down again while you stand in range, you read it again right away instead of having to walk out and back.
+- The step on and off cue plays on your own machine for everyone who sees the reading, including when only an item is put on the scale or taken off. In multiplayer it is no longer heard twice, and it follows the game's Sound Volume setting: at zero it is silent, before it was still heard.
+- Holding an animal in your hands, the scale's right click menu offers "Put Animal on Scale": you walk up next to the scale, turn to face it, and set the animal down on the plate, where it reads its own weight. Build 42 only, and single player for now: in multiplayer the animal would vanish, so the option is hidden there.
+
 ## 1.1.0 - 2026-09-20
 
 The scale now weighs whoever stands on it, not only you.

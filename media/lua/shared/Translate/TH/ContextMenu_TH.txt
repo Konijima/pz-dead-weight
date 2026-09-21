@@ -2,4 +2,6 @@ ContextMenu_TH = {
 
     ContextMenu_WeightScale_StepOn = "ขึ้นเครื่องชั่งน้ำหนัก",
 
+    ContextMenu_WeightScale_PutAnimal = "วางสัตว์บนเครื่องชั่งน้ำหนัก",
+
 }

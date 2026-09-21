@@ -1,0 +1,17 @@
+Sandbox_FI = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Punnitse kantamasi",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Vaaka lisää ruumiinpainoosi myös kantamasi tavarat, päällä olevat esineet ja laukkujen sisällön mukaan lukien. Pois: vain ruumiinpaino. Vaa'alla olevat esineet punnitaan aina.",
+
+    Sandbox_DeadWeight_WholeSquare = "Punnitse koko ruutu",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Pois (oletus): vain itse vaa'an kuvan päällä sen ruudun keskellä seisovat tai makaavat hahmot ja esineet punnitaan. Päällä: kaikki vaa'an ruudulla olevat lasketaan mukaan, myös kuvan vieressä olevat.",
+
+    Sandbox_DeadWeight_ViewDistance = "Lukuetäisyys",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Kuinka monen ruudun päässä vaa'asta samassa huoneessa voi seistä ja silti lukea sen, kuten lääkäri, joka punnitsee potilasta. 0: vain vaa'alla oleva pelaaja lukee sen. Oletus 2.",
+
+}

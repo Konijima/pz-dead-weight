@@ -1,0 +1,17 @@
+Sandbox_CS = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Vážit i to, co neseš",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Váha k tìlesné hmotnosti pøiète i to, co neseš, vèetnì nošených vìcí a obsahu batohù. Vypnuto: jen tìlesná hmotnost. Vìci ležící na váze se zvažují vždy.",
+
+    Sandbox_DeadWeight_WholeSquare = "Vážit celé pole",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Vypnuto (výchozí): váží se jen postavy a pøedmìty stojící nebo ležící pøímo na obrázku váhy uprostøed jeho pole. Zapnuto: zapoèítá se vše na poli váhy, i vedle obrázku.",
+
+    Sandbox_DeadWeight_ViewDistance = "Vzdálenost ètení",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Kolik polí od váhy, ve stejné místnosti, mùžete stát a stále ji èíst, jako lékaø, který váží pacienta. 0: ète ji jen hráè stojící na váze. Výchozí 2.",
+
+}

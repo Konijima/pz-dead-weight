@@ -1,0 +1,17 @@
+Sandbox_IT = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Pesa ciò che porti",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "La bilancia aggiunge al peso corporeo anche ciò che porti con te, oggetti indossati e contenuto delle borse inclusi. Disattivato: solo il peso corporeo. Ciò che si trova sul piatto viene sempre pesato.",
+
+    Sandbox_DeadWeight_WholeSquare = "Pesa l'intera casella",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Disattivato (predefinito): vengono pesati solo i personaggi e gli oggetti in piedi o appoggiati sull'immagine stessa della bilancia, al centro della sua casella. Attivato: conta tutto ciò che si trova nella casella della bilancia, anche accanto all'immagine.",
+
+    Sandbox_DeadWeight_ViewDistance = "Distanza di lettura",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quante caselle dalla bilancia, nella stessa stanza, ci si può trovare e leggerla comunque, come un medico che pesa un paziente. 0: solo il giocatore sulla bilancia la legge. Predefinito 2.",
+
+}

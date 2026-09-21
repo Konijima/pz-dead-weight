@@ -1,0 +1,17 @@
+Sandbox_TR = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Taþýnaný da tart",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Tartý, taþýdýklarýný, üzerindeki eþyalar ve çanta içerikleri dahil, vücut aðýrlýðýna ekler. Kapalý: yalnýzca vücut aðýrlýðý. Tartýnýn üzerinde duran eþyalar her zaman tartýlýr.",
+
+    Sandbox_DeadWeight_WholeSquare = "Karenin tamamýný tart",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Kapalý (varsayýlan): yalnýzca tartýnýn görselinin kendisi üzerinde, karesinin ortasýnda duran ya da yatan karakterler ve eþyalar tartýlýr. Açýk: tartýnýn karesindeki her þey, görselin yanýndakiler bile hesaba katýlýr.",
+
+    Sandbox_DeadWeight_ViewDistance = "Okuma mesafesi",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Ayný odada, tartýdan kaç kare uzakta durup yine de okuyabileceðiniz; hastayý tartan bir doktor gibi. 0: yalnýzca tartýnýn üzerindeki oyuncu okur. Varsayýlan 2.",
+
+}

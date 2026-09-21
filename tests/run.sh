@@ -48,6 +48,9 @@ echo "-- lua core bench ($LUA) --"
 echo "-- lua hud lifecycle bench ($LUA) --"
 "$LUA" tests/hud_spec.lua
 
+echo "-- lua sound volume bench ($LUA) --"
+"$LUA" tests/sound_spec.lua
+
 echo "-- lua context menu bench ($LUA) --"
 "$LUA" tests/menu_spec.lua
 

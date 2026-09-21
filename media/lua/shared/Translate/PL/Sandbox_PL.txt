@@ -1,0 +1,17 @@
+Sandbox_PL = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Wa¿ to, co niesiesz",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "Waga dolicza do masy cia³a tak¿e to, co niesiesz, ³¹cznie z noszonymi rzeczami i zawartoœci¹ toreb. Wy³¹czone: tylko masa cia³a. To, co le¿y na wadze, jest wa¿one zawsze.",
+
+    Sandbox_DeadWeight_WholeSquare = "Wa¿ ca³e pole",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Wy³¹czone (domyœlnie): wa¿one s¹ tylko postacie i przedmioty stoj¹ce lub le¿¹ce na samym obrazku wagi, poœrodku jego pola. W³¹czone: liczy siê wszystko na polu wagi, tak¿e obok obrazka.",
+
+    Sandbox_DeadWeight_ViewDistance = "Odleg³oœæ odczytu",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Ile pól od wagi, w tym samym pomieszczeniu, mo¿na staæ i nadal j¹ odczytaæ, jak lekarz wa¿¹cy pacjenta. 0: odczytuje j¹ tylko gracz stoj¹cy na wadze. Domyœlnie 2.",
+
+}

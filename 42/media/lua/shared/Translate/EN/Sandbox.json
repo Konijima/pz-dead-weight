@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Weigh what you carry",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "The scale also adds what you carry, worn items and bag contents included, to your body weight. Off: body weight only. Things lying on the plate are always weighed.",
+    "Sandbox_DeadWeight_WholeSquare": "Weigh the whole square",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Off (default): only characters and items standing or lying on the scale sprite itself, in the middle of its square, are weighed. On: anything in the scale's square counts, even beside the sprite.",
+    "Sandbox_DeadWeight_ViewDistance": "Reading distance",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "How many squares away from the scale you can stand, in the same room, and still read it, like a doctor weighing a patient. 0: only the player on the scale reads it. Default 2."
+}

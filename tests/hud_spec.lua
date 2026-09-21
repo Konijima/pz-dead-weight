@@ -122,7 +122,7 @@ local Detect, Prefs, Main = WeightScale.Detect, WeightScale.Prefs, WeightScale.M
 -- tile (Main wires Detect.onOccupancy; the sound/HUD wiring is what is under
 -- test here, the detection itself is tests/occupancy_spec.lua).
 local function occOn(n) Detect.onOccupancy(n, 80, true, true, false) end
-local function occOff(n) Detect.onOccupancy(n, nil, false, false, true) end
+local function occOff(n) Detect.onOccupancy(n, nil, false, false, true, true) end
 
 -- 1. mod loaded, player idle: nothing at all in the UI manager.
 check(#UIManager.ui == 0, "loading the mod must not register anything")

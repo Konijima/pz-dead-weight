@@ -13,6 +13,9 @@ diff -rq "src/textures" "common/media/textures/WeightScale" || fail=1
 diff -rq "src/sounds" "media/sound/WeightScale" || fail=1
 diff -rq "src/sounds" "common/media/sound/WeightScale" || fail=1
 
+diff -q "src/sandbox-options.txt" "media/sandbox-options.txt" || fail=1
+diff -q "src/sandbox-options.txt" "common/media/sandbox-options.txt" || fail=1
+
 # Translations are generated (src/translate/strings.json -> B41 .txt, B42
 # .json, see tools/gen-translate.py), so regenerate into a temp tree and
 # diff that against what is committed rather than comparing to a src/ copy.

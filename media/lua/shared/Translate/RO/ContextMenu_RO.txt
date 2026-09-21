@@ -2,4 +2,6 @@ ContextMenu_RO = {
 
     ContextMenu_WeightScale_StepOn = "Urcã pe cântar",
 
+    ContextMenu_WeightScale_PutAnimal = "Pune animalul pe cântar",
+
 }

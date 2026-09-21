@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Vážit i to, co neseš",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "Váha k tělesné hmotnosti přičte i to, co neseš, včetně nošených věcí a obsahu batohů. Vypnuto: jen tělesná hmotnost. Věci ležící na váze se zvažují vždy.",
+    "Sandbox_DeadWeight_WholeSquare": "Vážit celé pole",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Vypnuto (výchozí): váží se jen postavy a předměty stojící nebo ležící přímo na obrázku váhy uprostřed jeho pole. Zapnuto: započítá se vše na poli váhy, i vedle obrázku.",
+    "Sandbox_DeadWeight_ViewDistance": "Vzdálenost čtení",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Kolik polí od váhy, ve stejné místnosti, můžete stát a stále ji číst, jako lékař, který váží pacienta. 0: čte ji jen hráč stojící na váze. Výchozí 2."
+}

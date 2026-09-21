@@ -1,0 +1,17 @@
+Sandbox_HU = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Hordott tárgyak mérése",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "A mérleg a testsúlyodhoz hozzáadja azt is, amit magadnál hordasz, a viselt tárgyakkal és a táskák tartalmával együtt. Ki: csak a testsúly. A mérlegen fekvõ dolgokat mindig megméri.",
+
+    Sandbox_DeadWeight_WholeSquare = "A teljes mezõ mérése",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Ki (alapértelmezett): csak a mérleg képén magán, a mezõ közepén álló vagy fekvõ karakterek és tárgyak kerülnek mérésre. Be: a mérleg mezõjén lévõ minden számít, a kép melletti is.",
+
+    Sandbox_DeadWeight_ViewDistance = "Leolvasási távolság",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Hány mezõnyire állhatsz a mérlegtõl, ugyanabban a helyiségben, és még mindig leolvashatod, mint egy orvos, aki megméri a pácienst. 0: csak a mérlegen álló játékos olvassa le. Alapértelmezett: 2.",
+
+}

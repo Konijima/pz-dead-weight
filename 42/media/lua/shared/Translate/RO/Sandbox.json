@@ -1,0 +1,9 @@
+{
+    "Sandbox_DeadWeight": "Dead Weight",
+    "Sandbox_DeadWeight_WeighCarried": "Ia în calcul ce porţi",
+    "Sandbox_DeadWeight_WeighCarried_tooltip": "Cântarul adaugă la greutatea corporală şi ce porţi asupra ta, inclusiv obiectele purtate şi conţinutul genţilor. Oprit: doar greutatea corporală. Ce se află pe platformă este mereu cântărit.",
+    "Sandbox_DeadWeight_WholeSquare": "Cântăreşte tot careul",
+    "Sandbox_DeadWeight_WholeSquare_tooltip": "Dezactivat (implicit): sunt cântărite doar personajele şi obiectele aflate pe imaginea cântarului însăşi, în mijlocul careului ei. Activat: contează tot ce se află pe careul cântarului, chiar şi lângă imagine.",
+    "Sandbox_DeadWeight_ViewDistance": "Distanţa de citire",
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "La câte careuri de cântar, în aceeaşi cameră, poţi sta şi tot îl poţi citi, ca un medic care cântăreşte un pacient. 0: doar jucătorul aflat pe cântar îl citeşte. Implicit 2."
+}

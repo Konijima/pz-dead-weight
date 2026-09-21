@@ -2,4 +2,6 @@ ContextMenu_FR = {
 
     ContextMenu_WeightScale_StepOn = "Monter sur la balance",
 
+    ContextMenu_WeightScale_PutAnimal = "Poser l'animal sur la balance",
+
 }

@@ -1,0 +1,17 @@
+Sandbox_FR = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Peser ce que l'on porte",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "La balance ajoute aussi ce que l'on porte, vêtements et contenu des sacs compris, au poids du corps. Désactivé : poids du corps seulement. Ce qui est posé sur le plateau est toujours pesé.",
+
+    Sandbox_DeadWeight_WholeSquare = "Peser toute la case",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Désactivé (par défaut) : seuls les personnages et objets sur la balance elle-même, au milieu de sa case, sont pesés. Activé : tout ce qui se trouve dans la case de la balance compte, même à côté.",
+
+    Sandbox_DeadWeight_ViewDistance = "Distance de lecture",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "À combien de cases de la balance, dans la même pièce, on peut se tenir et la lire quand même, comme un médecin qui pèse un patient. 0 : seul le joueur sur la balance la lit. Par défaut 2.",
+
+}

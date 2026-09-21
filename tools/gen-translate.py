@@ -80,11 +80,15 @@ LANGS = tuple(sorted(LANG_CHARSET))
 #     ContextMenu_<LANG>.txt, Lua table ContextMenu_<LANG> (B41).
 #   - IGUI_* keys load from IG_UI.json (B42) -- NOT "IGUI.json" -- /
 #     IG_UI_<LANG>.txt, Lua table IGUI_<LANG> (B41).
+#   - Sandbox_* keys (the DeadWeight sandbox page title, option label and
+#     tooltip, see src/sandbox-options.txt) load from Sandbox.json (B42) /
+#     Sandbox_<LANG>.txt, Lua table Sandbox_<LANG> (B41).
 # A key whose prefix (its first "_"-separated segment) is not listed here
 # fails the generator instead of silently landing in the wrong file.
 PREFIX_TO_FILE = {
     "ContextMenu": {"b41_stem": "ContextMenu", "b41_table": "ContextMenu", "b42_stem": "ContextMenu"},
     "IGUI": {"b41_stem": "IG_UI", "b41_table": "IGUI", "b42_stem": "IG_UI"},
+    "Sandbox": {"b41_stem": "Sandbox", "b41_table": "Sandbox", "b42_stem": "Sandbox"},
 }
 
 

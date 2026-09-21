@@ -1,0 +1,17 @@
+Sandbox_CA = {
+
+    Sandbox_DeadWeight = "Dead Weight",
+
+    Sandbox_DeadWeight_WeighCarried = "Pesar el que portes",
+
+    Sandbox_DeadWeight_WeighCarried_tooltip = "La bàscula també suma al pes corporal el que portes, objectes posats i contingut de les motxilles inclosos. Desactivat: només el pes corporal. El que hi ha sobre el plat sempre es pesa.",
+
+    Sandbox_DeadWeight_WholeSquare = "Pesar tota la casella",
+
+    Sandbox_DeadWeight_WholeSquare_tooltip = "Desactivat (per defecte): només es pesen els personatges i objectes que hi ha sobre la mateixa imatge de la bàscula, al mig de la seva casella. Activat: compta tot el que hi ha a la casella de la bàscula, fins i tot al costat de la imatge.",
+
+    Sandbox_DeadWeight_ViewDistance = "Distància de lectura",
+
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quantes caselles de la bàscula, a la mateixa sala, es pot estar i encara llegir-la, com un metge que pesa un pacient. 0: només el jugador que és a la bàscula la llegeix. Per defecte 2.",
+
+}
