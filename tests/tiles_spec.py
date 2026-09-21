@@ -129,6 +129,13 @@ for f in FACES:
     src = Image.open(ROOT / f"src/tiles/digital_scale_{f}.png")
     check(src.size == (128, 256), f"src/tiles/digital_scale_{f}.png is {src.size}, needs 128x256")
 
+# every face is assigned a depth map (else the game uses a whole tile box and a
+# survivor on the slab is drawn behind it)
+depth = (ROOT / "common/media/tileDepthTextureAssignments.txt").read_text()
+check("VERSION = 1" in depth, "tileDepthTextureAssignments.txt needs VERSION = 1")
+for i in range(4):
+    check(f"{SHEET}_{i} = " in depth, f"no depth assignment for {SHEET}_{i}")
+
 if failures:
     for m in failures:
         print("FAIL:", m, file=sys.stderr)

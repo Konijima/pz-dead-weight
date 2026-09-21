@@ -4,6 +4,7 @@ hand edited faces in src/tiles/:
 
   common/media/texturepacks/DeadWeightDigital.pack   (PZPK texture pack)
   common/media/DeadWeightDigital.tiles               (binary tdef tile definitions)
+  common/media/tileDepthTextureAssignments.txt       (depth map of each face, see DEPTH_ASSIGN)
 
 Never hand edit the two outputs. Edit src/tiles/digital_scale_{S,E,N,W}.png (the
 game's 2x frame, 128x256 RGBA) or TILE_PROPS below and rerun (tools/sync.sh does).
@@ -41,6 +42,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(ROOT, "src", "tiles")
 PACK_REL = os.path.join("common", "media", "texturepacks", "DeadWeightDigital.pack")
 TILES_REL = os.path.join("common", "media", "DeadWeightDigital.tiles")
+DEPTH_REL = os.path.join("common", "media", "tileDepthTextureAssignments.txt")
+# A sprite with no depth map gets the game's whole tile box (TileDepthTextureManager
+# default), so a survivor standing on the slab is hidden behind it. The vanilla
+# "Floor" preset depth map (preset_depthmaps_01_0) is a flat plane at floor level:
+# the slab is 2.5 cm high, so a person or an animal always draws over it.
+# TileDepthTextureAssignments reads it from the mod's common/media dir.
+DEPTH_ASSIGN = "preset_depthmaps_01_0"
 
 SHEET = "deadweight_digital_01"
 PAGE_NAME = "DeadWeightDigital0"  # fixed, like FoodDrying's "<pack>0"
@@ -152,6 +160,14 @@ def build_tiles():
     return b"".join(out)
 
 
+def build_depth():
+    lines = ["tileDepthTextureAssignments", "{", "    VERSION = 1,"]
+    for i in range(len(FACES)):
+        lines.append("    %s_%d = %s," % (SHEET, i, DEPTH_ASSIGN))
+    lines.append("}")
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
 def generate(base_dir):
     faces = load_faces()
     pack_path = os.path.join(base_dir, PACK_REL)
@@ -161,7 +177,10 @@ def generate(base_dir):
         f.write(build_pack(faces))
     with open(tiles_path, "wb") as f:
         f.write(build_tiles())
-    return pack_path, tiles_path
+    depth_path = os.path.join(base_dir, DEPTH_REL)
+    with open(depth_path, "wb") as f:
+        f.write(build_depth())
+    return pack_path, tiles_path, depth_path
 
 
 def split_pack(data):
@@ -196,11 +215,12 @@ def main():
             print("wrote " + os.path.relpath(p, ROOT))
         return
     with tempfile.TemporaryDirectory() as tmp:
-        pack_new, tiles_new = generate(tmp)
+        pack_new, tiles_new, depth_new = generate(tmp)
         bad = []
         for new, rel, same in (
             (pack_new, PACK_REL, same_pack),
             (tiles_new, TILES_REL, lambda a, b: a == b),
+            (depth_new, DEPTH_REL, lambda a, b: a == b),
         ):
             live = os.path.join(ROOT, rel)
             if not os.path.isfile(live):
