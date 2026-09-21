@@ -62,7 +62,14 @@ local function roomKeyOf(container)
 end
 
 function D.limit(roomName, containerType, container)
-    if type(container) ~= "table" and type(container) ~= "userdata" then return end
+    -- OnFillContainer also fires with an ItemPickerJava.ItemPickerContainer
+    -- (zombie bags, seen in game 2026-09-21: "attempted index: getItems of
+    -- non-table"), which is not an ItemContainer and cannot be indexed from Lua.
+    if type(instanceof) == "function" then
+        if not instanceof(container, "ItemContainer") then return end
+    elseif type(container) ~= "table" then
+        return
+    end
     if type(container.getItems) ~= "function" then return end
     local items = container:getItems()
     local mine = {}

@@ -125,13 +125,22 @@ end
 function Spawn.candidates(room)
     local squares = room:getSquares()
     local out, free = {}, 0
-    -- why clear squares were turned down, for the console line
-    local why = { opening = 0, nowall = 0, neardoor = 0, nilnb = 0, notfree = 0, furn = 0 }
-    if not squares or squares:size() < Spawn.minSquares then return out, 0, why end
+    -- why clear squares were turned down, for the console line; edge and
+    -- walled count every square of the room (clear or not) that touches the
+    -- outside, and how many of those edges the game calls a wall
+    local why = { opening = 0, nowall = 0, neardoor = 0, nilnb = 0, notfree = 0, furn = 0, edge = 0, walled = 0 }
+    if not squares then return out, 0, why end
     for i = 0, squares:size() - 1 do
         local sq = squares:get(i)
         local isfree = type(sq.isFree) ~= "function" or sq:isFree(false)
         local furn = hasFurniture(sq)
+        for _, name in ipairs(DIRS) do
+            local n = neighbour(sq, name)
+            if n and n:getRoom() ~= room then
+                why.edge = why.edge + 1
+                if type(sq.isWallTo) == "function" and sq:isWallTo(n) then why.walled = why.walled + 1 end
+            end
+        end
         if not isfree then why.notfree = why.notfree + 1 elseif furn then why.furn = why.furn + 1 end
         if isfree and not furn then
             free = free + 1
@@ -193,8 +202,8 @@ function Spawn.tryRoom(square, roll)
     if hasScale(room) then Spawn.log("bathroom at " .. at .. " already has one") return nil end
     local list, free, why = Spawn.candidates(room)
     local n = room:getSquares():size()
-    if #list == 0 or free - 1 < Spawn.minFree then
-        Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room (opening "
+    if n < Spawn.minSquares or #list == 0 or free - 1 < Spawn.minFree then
+        Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room (room edges " .. why.edge .. ", of which walls " .. why.walled .. "; opening "
             .. why.opening .. ", no wall " .. why.nowall .. ", near a door " .. why.neardoor .. ", unloaded neighbour " .. why.nilnb
             .. "; squares not free " .. why.notfree .. ", with furniture " .. why.furn .. ")")
         return nil

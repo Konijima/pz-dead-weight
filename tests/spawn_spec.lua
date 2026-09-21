@@ -26,7 +26,8 @@ function getCell() return {} end
 function getSprite(name) return { name = name } end
 local ADDED = {}
 IsoObject = { new = function(_, sq, sprite) return { sq = sq, spriteName = sprite.name } end }
-function instanceof() return false end
+-- like the game: only a real ItemContainer is one (a plain table here with getItems)
+function instanceof(o, cls) return cls == "ItemContainer" and type(o) == "table" and rawget(o, "getItems") ~= nil end
 local onNew = {}
 MapObjects = { OnNewWithSprite = function(name, fn, prio) onNew[name] = fn end }
 
@@ -141,6 +142,9 @@ check(#elsewhere.list == 1, "another room keeps its scale")
 D.limit("bathroom", "counter", twice)
 check(#twice.list == 2, "re-checking the container that already holds the room's scale changes nothing")
 D.limit("x", "y", nil)
+-- ItemPickerContainer (zombie bags): userdata that throws on any index
+local picker = setmetatable({}, { __index = function() error("attempted index: getItems of non-table") end })
+check(pcall(D.limit, "x", "y", picker), "an ItemPickerContainer argument is ignored, not indexed")
 
 -- 2. the toilet hook and queue ---------------------------------------------------
 check(handlers.chunk == Spawn.process, "the rooms are examined at LoadChunk")
