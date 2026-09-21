@@ -197,6 +197,24 @@ local function isBathroom(room)
     return type(name) == "string" and name:find("bathroom", 1, true) ~= nil
 end
 
+-- A home scale belongs in a home: the building must hold a bedroom, a living
+-- room or a motel room. A public restroom (stalls, a paper towel dispenser, in
+-- a gas station or an office) is named "bathroom" too. If the building cannot
+-- be read the room is let through rather than the feature silently dying.
+local HOMEY = { bedroom = true, livingroom = true, motelroom = true }
+
+function Spawn.residential(room)
+    local b = type(room.getBuilding) == "function" and room:getBuilding()
+    local def = b and type(b.getDef) == "function" and b:getDef()
+    local rooms = def and type(def.getRooms) == "function" and def:getRooms()
+    if not rooms then return true end
+    for i = 0, rooms:size() - 1 do
+        local name = rooms:get(i):getName()
+        if HOMEY[name] then return true end
+    end
+    return false
+end
+
 -- our own four sprites: the client folder's Scales table is not loaded on a
 -- dedicated server
 local ours = {}
@@ -221,6 +239,7 @@ function Spawn.tryRoom(square, roll)
     local room = square and type(square.getRoom) == "function" and square:getRoom()
     if not isBathroom(room) then return nil end
     local at = where(square)
+    if not Spawn.residential(room) then Spawn.log("bathroom at " .. at .. " is not in a home, none") return nil end
     local pct = Spawn.chance()
     if pct <= 0 then return nil end
     local die = roll or ZombRand(100)

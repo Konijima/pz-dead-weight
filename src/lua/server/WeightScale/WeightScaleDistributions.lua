@@ -61,6 +61,17 @@ local function roomKeyOf(container)
     return def and type(def.getID) == "function" and def:getID() or room
 end
 
+-- a public restroom's counter gets no scale either (same rule as the floor
+-- spawn, WeightScaleSpawn.lua, which owns it); a room that cannot be read is let through
+local function inAHome(container)
+    local Spawn = WeightScale.Spawn
+    local parent = type(container.getParent) == "function" and container:getParent()
+    local sq = parent and type(parent.getSquare) == "function" and parent:getSquare()
+    local room = sq and type(sq.getRoom) == "function" and sq:getRoom()
+    if not room or not Spawn or type(Spawn.residential) ~= "function" then return true end
+    return Spawn.residential(room)
+end
+
 function D.limit(roomName, containerType, container)
     -- OnFillContainer also fires with an ItemPickerJava.ItemPickerContainer
     -- (zombie bags, seen in game 2026-09-21: "attempted index: getItems of
@@ -80,7 +91,8 @@ function D.limit(roomName, containerType, container)
     if #mine == 0 then return end
     local key = roomKeyOf(container)
     local keep = 1
-    if key and givenRoom[key] ~= nil and givenRoom[key] ~= container then keep = 0 end
+    if not inAHome(container) then keep = 0 end
+    if keep == 1 and key and givenRoom[key] ~= nil and givenRoom[key] ~= container then keep = 0 end
     for i = keep + 1, #mine do container:Remove(mine[i]) end
     if keep == 1 and key then givenRoom[key] = container end
 end

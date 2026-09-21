@@ -220,6 +220,29 @@ check(spots(ROOM)[key(2, 1)] == "E", "a window wall is a wall")
 grid[key(2, 1)].isWallTo = function(_, n) return inRoom(2, 1) ~= inRoom(n.x, n.y) end
 grid[key(2, 1)].getWindowTo = nil
 
+-- 5c. a home scale belongs in a home ------------------------------------------------
+local function buildingOf(names)
+    local rooms = {}
+    for _, n in ipairs(names) do rooms[#rooms + 1] = { getName = function() return n end } end
+    return { getDef = function() return { getRooms = function() return javaList(rooms) end } end }
+end
+reset()
+SandboxVars = { DeadWeight = { HomeScaleFloor = 100 } }
+ROOM.getBuilding = function() return buildingOf({ "bathroom", "stall", "hall" }) end
+check(Spawn.tryRoom(grid[key(0, 0)], 0) == nil and LOG[#LOG]:find("not in a home", 1, true),
+    "a public restroom (no bedroom, living room or motel room in the building) gets no floor scale")
+local pub = container({ itemOf("Mov_DeadWeightDigital") }, 9)
+pub.getParent = function() return { getSquare = function() return { getRoom = function() return ROOM end } end } end
+D.limit("bathroom", "counter", pub)
+check(#pub.list == 0, "nor a scale in its counter")
+ROOM.getBuilding = function() return buildingOf({ "bathroom", "bedroom" }) end
+check(Spawn.tryRoom(grid[key(0, 0)], 0) ~= nil, "a house bathroom does")
+reset()
+ROOM.getBuilding = function() return buildingOf({ "bathroom", "motelroom" }) end
+check(Spawn.tryRoom(grid[key(0, 0)], 0) ~= nil, "a motel bathroom does")
+reset()
+ROOM.getBuilding = nil
+
 -- 6. process: one roll per room however many toilets it holds --------------------
 reset()
 FURN[key(0, 0)] = true
