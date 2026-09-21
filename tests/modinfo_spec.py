@@ -80,6 +80,30 @@ for base, keys, posters in ((REPO, root_keys, root_posters), (REPO / "42", b42_k
         print(f"FAIL: missing icon file {base / icon}")
         fail = True
 
+# Tile pack (Build 42 only): the root mod.info is Build 41 and must not carry
+# pack=/tiledef=. In 42/mod.info, pack=<n> is read as media/texturepacks/<n>.pack
+# and tiledef=<n> <number> as media/<n>.tiles, from the mod's common/ dir or its
+# version dir (ZomboidFileSystem.loadMod indexes both); the number must be in
+# 100..8189 (ChooseGameInfo).
+for key in ("pack", "tiledef"):
+    if key in root_keys:
+        print(f"FAIL: root mod.info (Build 41) must not carry {key}=")
+        fail = True
+b42_dirs = (REPO / "common", REPO / "42")
+if "pack" in b42_keys:
+    name = b42_keys["pack"]
+    if not any((d / "media" / "texturepacks" / f"{name}.pack").is_file() for d in b42_dirs):
+        print(f"FAIL: 42/mod.info pack={name}: no media/texturepacks/{name}.pack in common/ or 42/")
+        fail = True
+if "tiledef" in b42_keys:
+    parts = b42_keys["tiledef"].split()
+    if len(parts) != 2 or not parts[1].isdigit() or not 100 <= int(parts[1]) <= 8189:
+        print(f"FAIL: 42/mod.info tiledef={b42_keys['tiledef']!r}: needs '<name> <number 100..8189>'")
+        fail = True
+    elif not any((d / "media" / f"{parts[0]}.tiles").is_file() for d in b42_dirs):
+        print(f"FAIL: 42/mod.info tiledef={parts[0]}: no media/{parts[0]}.tiles in common/ or 42/")
+        fail = True
+
 for base in (REPO / "mod.info", REPO / "42" / "mod.info"):
     for problem in check_description_spacing(base):
         print(f"FAIL: {problem}")

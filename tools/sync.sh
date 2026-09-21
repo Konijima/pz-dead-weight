@@ -9,6 +9,10 @@ LUA_SRC="src/lua/client/WeightScale"
 TEX_SRC="src/textures"
 SND_SRC="src/sounds"
 SCR_SRC="src/scripts"
+TILES_SRC="src/tiles"
+# Script files that only Build 42 may see: ItemType = base:moveable is B42
+# syntax and the item's sprite lives in the B42 tile pack (untested on B41).
+B42_ONLY_SCRIPTS="deadweight_items.txt"
 
 B41_LUA="media/lua/client/WeightScale"
 B42_LUA="42/media/lua/client/WeightScale"
@@ -32,8 +36,11 @@ cp "$TEX_SRC"/*.png "$B41_TEX"/
 cp "$TEX_SRC"/*.png "$B42_TEX"/
 cp "$SND_SRC"/*.ogg "$B41_SND"/
 cp "$SND_SRC"/*.ogg "$B42_SND"/
-cp "$SCR_SRC"/*.txt "$B41_SCR"/
-cp "$SCR_SRC"/*.txt "$B42_SCR"/
+for f in "$SCR_SRC"/*.txt; do
+    name="$(basename "$f")"
+    cp "$f" "$B42_SCR"/
+    case " $B42_ONLY_SCRIPTS " in *" $name "*) ;; *) cp "$f" "$B41_SCR"/ ;; esac
+done
 
 # One sandbox options file, read by CustomSandboxOptions.init from BOTH the
 # version dir (media/ at the root for B41) and the common dir (B42), see
@@ -46,9 +53,15 @@ cp src/sandbox-options.txt "$B42_SBX"
 # docs/API-COMPAT.md "Translations" for the proof).
 python3 tools/gen-translate.py
 
+# The Digital Scale tile pack and tile definitions are generated too, B42 only
+# (common/media/texturepacks/*.pack, common/media/*.tiles); the root tree is
+# Build 41 and gets nothing. See tools/gen-tiles.py.
+python3 tools/gen-tiles.py
+
 echo "synced $LUA_SRC -> $B41_LUA, $B42_LUA"
 echo "synced $TEX_SRC -> $B41_TEX, $B42_TEX"
 echo "synced $SND_SRC -> $B41_SND, $B42_SND"
 echo "synced $SCR_SRC -> $B41_SCR, $B42_SCR"
 echo "synced src/sandbox-options.txt -> $B41_SBX, $B42_SBX"
 echo "generated src/translate/strings.json -> $B41_TR (.txt), $B42_TR (.json)"
+echo "generated $TILES_SRC/*.png -> common/media/texturepacks/DeadWeightDigital.pack, common/media/DeadWeightDigital.tiles"

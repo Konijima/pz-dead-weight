@@ -28,11 +28,25 @@ diff -rq "$TR_TMP/42/media/lua/shared/Translate" "42/media/lua/shared/Translate"
 # media/scripts and common/media/scripts also hold a .gitkeep (and, on
 # common/, other mods' nothing -- this mod owns only its own file), so these
 # two are compared file by file rather than whole-directory.
+# deadweight_items.txt is B42 only (tools/sync.sh B42_ONLY_SCRIPTS): it must
+# reach common/ and must NOT reach the Build 41 root tree.
+B42_ONLY_SCRIPTS="deadweight_items.txt"
 for f in src/scripts/*.txt; do
     name="$(basename "$f")"
-    diff -q "$f" "media/scripts/$name" || fail=1
     diff -q "$f" "common/media/scripts/$name" || fail=1
+    case " $B42_ONLY_SCRIPTS " in
+        *" $name "*)
+            if [ -e "media/scripts/$name" ]; then
+                echo "DRIFT: media/scripts/$name must not exist (Build 42 only)" >&2
+                fail=1
+            fi
+            ;;
+        *) diff -q "$f" "media/scripts/$name" || fail=1 ;;
+    esac
 done
+
+# The Digital Scale tile pack and .tiles are generated from src/tiles/*.png.
+python3 tools/gen-tiles.py --check || fail=1
 
 if [ "$fail" -ne 0 ]; then
     echo "DRIFT: live trees do not match src/. Run tools/sync.sh." >&2

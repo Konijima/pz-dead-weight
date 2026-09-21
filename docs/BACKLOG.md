@@ -115,3 +115,13 @@ and pass it into `read`.
 `Occupants.plateHalf` (0.28), `Occupants.plateCentres`, `Occupants.plateTop`
 (0.04). The centres come from the sprite art; the half size and the lift height
 are still estimates.
+
+## Digital Scale art origin and licensing
+
+`src/tiles/digital_scale_{S,E,N,W}.png` is placeholder art derived from the
+vanilla scale sprites (`location_community_medical_01_8` and `_9`, 2x): plate
+kept, column removed, shrunk to about 60 percent, a small LCD painted on top;
+N and W are the S and E faces mirrored horizontally, not drawn faces. The
+plate pixels are Indie Stone's. Whether a mod may ship art derived from them
+(Workshop and the LICENSE notes) is an open question: settle it, or redraw the
+plate from scratch, before the Digital Scale goes public.

@@ -559,3 +559,51 @@ file on some install) the word falls back to the hardcoded English word,
 never the key itself. `tests/translate_spec.py` is unchanged in logic (it
 loops `source.keys()`, not a hardcoded count) and now covers 7 keys instead
 of 2.
+
+## 2026-09-21, Digital Scale tile pack (Build 42, PROVEN by decompile plus a real mod)
+
+Client install decompiled (`projectzomboid.jar`, CFR; `ChooseGameInfo` via
+`javap -c`, CFR fails on it), cross checked against Workshop item 3747396551
+(FoodDrying), which ships one `.tiles` and one `.pack`.
+
+- `mod.info` `pack=<name>` (`ChooseGameInfo`): read as `media/texturepacks/<name>.pack`
+  (`ZomboidFileSystem.loadModPackFiles`), mounted by `GameWindow.LoadTexturePack`.
+- `mod.info` `tiledef=<name> <number>`: exactly two whitespace separated fields,
+  number must be in 100..8189, read as `media/<name>.tiles`
+  (`ZomboidFileSystem.loadModTileDefs`), `IsoWorld.LoadTileDefinitions(..., number)`.
+  Two mods with the same number: the second is refused. 6417 is unused by every
+  installed Workshop mod on this machine (used: 741-743, 2026, 4048, 4126, 4848,
+  5620, 7551, 7811, 8188, 8189).
+- Both lookups go through `activeFileMap`, which `ZomboidFileSystem.loadMod` fills
+  from the mod's `common/` dir AND its version dir (`42/`), keyed by the path
+  relative to each and lower cased. So `common/media/...` and `42/media/...` are
+  equivalent; FoodDrying uses `42/media/`, this mod uses `common/media/` like its
+  scripts and sounds. Root `media/` (Build 41) is not involved: the root
+  `mod.info` carries neither line.
+- `.tiles`: int32 little endian, strings end with `\n`: `tdef`, version 1, sheet
+  count; per sheet name, png name, wTiles, hTiles, tilesetNumber (1..512), nTiles;
+  per tile nProps then (key, value) pairs. Sprites are `<sheet>_<index>`; sprite id
+  is `0x100000 + (number-2)*262144 + (tilesetNumber-1)*512 + index`.
+- `.pack`: `PZPK`, version 1, page count; per page: name, entry count, mask flag,
+  per entry name and 8 int32 (x, y, w, h, offsetX, offsetY, frameW, frameH), PNG
+  length, PNG bytes; strings are int32 length plus bytes. Entries are the sprite
+  names; the frame is the 2x 128x256 and offsets place the trimmed rect in it.
+- Movable groups: the loader groups tiles by `GroupName` and `Facing`, and adds
+  `Noffset`/`Eoffset`/... itself from the sprite order. `GroupName=DeadWeight`
+  (not vanilla's `Weighing`) keeps the two scales in separate groups. The
+  display name key is `<GroupName> <CustomName>` with spaces turned to `_`
+  (`Translator.getMoveableDisplayName`), so `DeadWeight_Digital_Scale` in
+  `Moveables.json`; the item's script name loads from `ItemName.json`
+  (`Base.Mov_DeadWeightDigital`).
+- Tabletop placement (`ISMoveableSpriteProps.canPlaceMoveableInternal`): with
+  `IsTableTop` and `BlocksPlacement` the object also places on a free floor tile;
+  with `IsSurfaceOffset` and `Surface=34` the render offset is the table height
+  minus 34. The placeholder art is NOT derived from that math: its content
+  bottom sits at row 174 of the 256 frame, copied from the vanilla Microscope's
+  pack entry (`oy=106`, `h=68`), which carries the same three properties (the
+  vanilla floor scale bottoms at about row 231). Whether that height is right on
+  the floor and on a counter is unverified until placed in game beside a
+  Microscope.
+- NOT verified: that 1x tile scale (`Core.tileScale == 1`) finds the 2x sprite
+  (only 2x art is shipped); that Build 41 ignores or survives `deadweight_items.txt`
+  (it is therefore staged for Build 42 only). In game placement is the open gate.

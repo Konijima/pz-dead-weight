@@ -8,6 +8,8 @@ note box.
 
 ## Unreleased
 
+- New furniture, Build 42 only: the Digital Scale, a small bathroom scale you can place on the floor or on a counter, in four facings, and pick up again. This is the furniture only for now; it does not read your weight yet.
+
 ## 1.2.0 - 2026-09-21
 
 The scale reads what lies on it and what you carry, and it works better with other people around.

@@ -89,6 +89,15 @@ PREFIX_TO_FILE = {
     "ContextMenu": {"b41_stem": "ContextMenu", "b41_table": "ContextMenu", "b42_stem": "ContextMenu"},
     "IGUI": {"b41_stem": "IG_UI", "b41_table": "IGUI", "b42_stem": "IG_UI"},
     "Sandbox": {"b41_stem": "Sandbox", "b41_table": "Sandbox", "b42_stem": "Sandbox"},
+    # Digital Scale furniture, Build 42 only (b41_stem None: nothing generated
+    # for B41, the tile does not exist there). Moveable display names load from
+    # Moveables.json keyed "<GroupName>_<CustomName>" with spaces as "_"
+    # (Translator.getMoveableDisplayName; tiles carry GroupName=DeadWeight,
+    # CustomName=Digital Scale); the item's name loads from ItemName.json keyed
+    # by full type. "vanilla_key" is a vanilla key of that same shape, used by
+    # tests/translate_spec.py to prove the file (the prefix itself is ours).
+    "DeadWeight": {"b41_stem": None, "b41_table": None, "b42_stem": "Moveables", "vanilla_key": "White_Microscope"},
+    "Base.Mov": {"b41_stem": None, "b41_table": None, "b42_stem": "ItemName", "vanilla_key": "Base.Mov_Microscope"},
 }
 
 
@@ -151,10 +160,11 @@ def generate(base_dir):
     groups = group_by_prefix(strings)
     for lang in LANGS:
         for prefix, group_strings in groups.items():
-            gen_b41_txt(
-                group_strings, lang, prefix,
-                base_dir / "media/lua/shared/Translate" / lang,
-            )
+            if PREFIX_TO_FILE[prefix]["b41_stem"] is not None:
+                gen_b41_txt(
+                    group_strings, lang, prefix,
+                    base_dir / "media/lua/shared/Translate" / lang,
+                )
             gen_b42_json(
                 group_strings, lang, prefix,
                 base_dir / "42/media/lua/shared/Translate" / lang,
