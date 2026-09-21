@@ -8,8 +8,6 @@ note box.
 
 ## Unreleased
 
-- "Weigh what you carry" is now on by default, and the default reading distance is 1 square (was 2). Worlds that already saved these settings keep their values.
-
 ## 1.3.0 - 2026-09-21
 
 The Digital Scale: a home scale you can place, and find in bathrooms. Build 42 only.
@@ -23,6 +21,8 @@ The Digital Scale: a home scale you can place, and find in bathrooms. Build 42 o
 - On a counter, the Digital Scale sits back from the front edge and items you set on it are lifted onto its plate. "Step on Scale" is not offered for a scale on a counter.
 - A survivor walking through the square of a scale on a counter (for example a low counter in front of a window) is no longer weighed, nor turned to face it. Climbing through the window over the scale still reads.
 - Fixed the step on and off sound with two scales in reach: it no longer plays just because a scale with something on it comes into view or goes out of view. It plays only when something is put on, or taken off, the scale you are watching.
+- "Weigh what you carry" is now on by default, and the default reading distance is 1 square (was 2). Worlds that already saved these settings keep their values.
+
 
 ## 1.2.0 - 2026-09-21
 
