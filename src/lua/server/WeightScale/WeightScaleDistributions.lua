@@ -1,4 +1,4 @@
--- Loot: the Digital Scale can turn up in bathroom containers (Build 42 only,
+-- Loot: the Digital Scale can turn up in bathroom counters (Build 42 only,
 -- the item Mov_DeadWeightDigital lives in the B42 tile pack and script, see
 -- tools/sync.sh). The lists are extended in OnPreDistributionMerge, the hook
 -- vanilla's own SuburbsDistributions uses, so the change is merged with the
@@ -13,9 +13,10 @@ local D = WeightScale.Distributions
 
 D.item = "Mov_DeadWeightDigital"
 D.default = 3
+-- Counters only (the cupboards under a basin): a bathroom scale does not
+-- belong in a wall medicine cabinet or on a shelf (seen in game, 2026-09-21).
 D.lists = {
-    "BathroomCounter", "BathroomCounterEmpty", "BathroomCounterMotel",
-    "BathroomCounterNoMeds", "BathroomCabinet", "BathroomShelf",
+    "BathroomCounter", "BathroomCounterEmpty", "BathroomCounterMotel", "BathroomCounterNoMeds",
 }
 
 -- the sandbox weight, D.default when the option is not readable yet

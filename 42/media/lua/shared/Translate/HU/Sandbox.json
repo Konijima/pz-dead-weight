@@ -6,8 +6,8 @@
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Ki (alapértelmezett): csak a mérleg képén magán, a mező közepén álló vagy fekvő karakterek és tárgyak kerülnek mérésre. Be: a mérleg mezőjén lévő minden számít, a kép melletti is.",
     "Sandbox_DeadWeight_ViewDistance": "Leolvasási távolság",
     "Sandbox_DeadWeight_ViewDistance_tooltip": "Hány mezőnyire állhatsz a mérlegtől, ugyanabban a helyiségben, és még mindig leolvashatod, mint egy orvos, aki megméri a pácienst. 0: csak a mérlegen álló játékos olvassa le. Alapértelmezett: 2.",
-    "Sandbox_DeadWeight_HomeScaleSpawn": "Digitális mérleg a fürdőszobai bútorokban",
-    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Milyen gyakran bukkan fel digitális mérleg a fürdőszobai pultokban, szekrényekben és polcokon. 0: soha. Alapértelmezett: 3. Csak a mostantól feltöltött tárolókat érinti.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Digitális mérleg a fürdőszobai pultokban",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Milyen gyakran bukkan fel digitális mérleg a fürdőszobai pultokban, a mosdó alatti szekrényekben. 0: soha. Alapértelmezett: 3. Csak a mostantól feltöltött tárolókat érinti.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Digitális mérleg a fürdőszobák padlóján",
     "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Annak százalékos esélye, hogy egy elég nagy, még senki által nem látott fürdőszoba padlóján, a fal mellett ott áll egy digitális mérleg. Csak a térkép még fel nem fedezett területein lévő helyiségeket érinti. 0: soha. Alapértelmezett: 20."
 }

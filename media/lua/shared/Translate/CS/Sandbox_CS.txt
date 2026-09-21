@@ -14,9 +14,9 @@ Sandbox_CS = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "Kolik polí od váhy, ve stejné místnosti, mùžete stát a stále ji èíst, jako lékaø, který váží pacienta. 0: ète ji jen hráè stojící na váze. Výchozí 2.",
 
-    Sandbox_DeadWeight_HomeScaleSpawn = "Digitální váha v koupelnovém nábytku",
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digitální váha v koupelnových skøíòkách",
 
-    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Jak èasto se digitální váha objeví v koupelnových deskách, skøíòkách a policích. 0: nikdy. Výchozí 3. Týká se jen kontejnerù naplnìných od této chvíle.",
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Jak èasto se digitální váha objeví v koupelnových skøíòkách, tedy ve skøíòkách pod umyvadlem. 0: nikdy. Výchozí 3. Týká se jen kontejnerù naplnìných od této chvíle.",
 
     Sandbox_DeadWeight_HomeScaleFloor = "Digitální váha na podlaze koupelen",
 

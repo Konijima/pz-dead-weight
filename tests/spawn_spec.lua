@@ -91,16 +91,20 @@ end
 require("WeightScale/WeightScaleDistributions")
 require("WeightScale/WeightScaleSpawn")
 local D, Spawn = WeightScale.Distributions, WeightScale.Spawn
+local LOG = {}
+Spawn.log = function(m) LOG[#LOG + 1] = m end
 
 -- 1. loot ------------------------------------------------------------------------
 ProceduralDistributions = { list = { BathroomCounter = { items = { "Comb", 6 } }, BathroomCabinet = { items = {} } } }
+local cabinet = ProceduralDistributions.list.BathroomCabinet
 check(handlers.merge == D.merge, "the merge is hooked on OnPreDistributionMerge")
-check(D.merge() == 2, "two of the six lists exist in this stub: the others are skipped")
+check(D.merge() == 1, "only the counter list exists in this stub: the others are skipped")
 local items = ProceduralDistributions.list.BathroomCounter.items
 check(items[3] == "Mov_DeadWeightDigital" and items[4] == 3, "item and default weight 3 appended")
+check(#cabinet.items == 0, "a wall medicine cabinet never gets a scale")
 SandboxVars = { DeadWeight = { HomeScaleSpawn = 0 } }
-ProceduralDistributions.list.BathroomCabinet.items = {}
-check(D.merge() == 0 and #ProceduralDistributions.list.BathroomCabinet.items == 0, "weight 0 adds nothing")
+ProceduralDistributions.list.BathroomCounter.items = {}
+check(D.merge() == 0 and #ProceduralDistributions.list.BathroomCounter.items == 0, "weight 0 adds nothing")
 SandboxVars = { DeadWeight = { HomeScaleSpawn = 99 } }
 check(D.weight() == 20, "the weight is clamped to 20")
 ProceduralDistributions = nil
@@ -134,6 +138,8 @@ local wallN = sq.y == 0 and "deadweight_digital_01_0"
 local wallW = sq.x == 0 and "deadweight_digital_01_1"
 local wallE = sq.x == 2 and "deadweight_digital_01_3"
 check(obj.spriteName == (wallN or wallW or wallE), "the sprite faces away from its wall, got " .. tostring(obj.spriteName))
+
+check(#LOG > 0 and LOG[#LOG]:find("placed at", 1, true), "the placement is logged")
 
 -- 4. only once per room and only in a bathroom ------------------------------------
 check(Spawn.tryRoom(grid[key(0, 0)], 0) == nil, "a room that already has a scale gets no second one")

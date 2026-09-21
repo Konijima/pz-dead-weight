@@ -78,7 +78,7 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
 - `WeightScaleCharScreen.lua`: patches the Info tab's weight line to show
   the category word instead of the number.
 - `lua/server/WeightScale/WeightScaleDistributions.lua` (Build 42 only): adds the
-  Digital Scale to the bathroom loot lists at `OnPreDistributionMerge`,
+  Digital Scale to the bathroom counter loot lists at `OnPreDistributionMerge`,
   weight from `DeadWeight.HomeScaleSpawn`.
 - `lua/server/WeightScale/WeightScaleSpawn.lua` (Build 42, server and single
   player only): puts a Digital Scale on the floor of a big enough bathroom, in

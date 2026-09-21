@@ -14,9 +14,9 @@ Sandbox_CN = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "你可以站在离秤几格远的地方（同一房间内）仍然读取读数，就像医生给病人称重一样。0：只有站在秤上的玩家能读取。默认为 2。",
 
-    Sandbox_DeadWeight_HomeScaleSpawn = "浴室家具中的电子体重秤",
+    Sandbox_DeadWeight_HomeScaleSpawn = "浴室台面中的电子体重秤",
 
-    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "电子体重秤出现在浴室台面、柜子和架子里的频率。0：从不。默认为 3。仅对从现在开始填充的容器生效。",
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "电子体重秤出现在浴室台面（洗手盆下方的柜子）里的频率。0：从不。默认为 3。仅对从现在开始填充的容器生效。",
 
     Sandbox_DeadWeight_HomeScaleFloor = "浴室地板上的电子体重秤",
 

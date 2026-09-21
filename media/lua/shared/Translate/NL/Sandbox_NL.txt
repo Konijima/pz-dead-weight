@@ -14,9 +14,9 @@ Sandbox_NL = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "Hoeveel vakken van de weegschaal, in dezelfde ruimte, je mag staan en hem toch kunt aflezen, zoals een arts die een patiënt weegt. 0: alleen de speler op de weegschaal leest hem af. Standaard 2.",
 
-    Sandbox_DeadWeight_HomeScaleSpawn = "Digitale weegschaal in badkamermeubilair",
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digitale weegschaal in badkamerkastjes",
 
-    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Hoe vaak er een digitale weegschaal opduikt in badkamerkastjes, -werkbladen en -planken. 0: nooit. Standaard 3. Alleen containers die vanaf nu gevuld worden, worden beïnvloed.",
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Hoe vaak er een digitale weegschaal opduikt in badkamerkastjes, de kastjes onder een wastafel. 0: nooit. Standaard 3. Alleen containers die vanaf nu gevuld worden, worden beïnvloed.",
 
     Sandbox_DeadWeight_HomeScaleFloor = "Digitale weegschaal op badkamervloeren",
 

@@ -42,6 +42,11 @@ Spawn.spriteFor = {
 }
 local DIRS = { "N", "W", "S", "E" }
 
+-- One console line per bathroom examined (a new chunk only, a handful per
+-- town), to diagnose "why no scale here" from console.txt.
+function Spawn.log(msg) print("[DeadWeight] spawn: " .. msg) end
+local function where(sq) return sq.getX and (sq:getX() .. "," .. sq:getY()) or (tostring(sq.x) .. "," .. tostring(sq.y)) end
+
 function Spawn.chance()
     local c = type(SandboxVars) == "table" and type(SandboxVars.DeadWeight) == "table"
         and SandboxVars.DeadWeight.HomeScaleFloor
@@ -169,17 +174,24 @@ end
 function Spawn.tryRoom(square, roll)
     local room = square and type(square.getRoom) == "function" and square:getRoom()
     if not isBathroom(room) then return nil end
+    local at = where(square)
     local pct = Spawn.chance()
     if pct <= 0 then return nil end
-    if (roll or ZombRand(100)) >= pct then return nil end
-    if hasScale(room) then return nil end
+    local die = roll or ZombRand(100)
+    if die >= pct then Spawn.log("bathroom at " .. at .. ", roll " .. die .. " >= " .. pct .. "%, none") return nil end
+    if hasScale(room) then Spawn.log("bathroom at " .. at .. " already has one") return nil end
     local list, free = Spawn.candidates(room)
-    if #list == 0 or free - 1 < Spawn.minFree then return nil end
+    local n = room:getSquares():size()
+    if #list == 0 or free - 1 < Spawn.minFree then
+        Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room")
+        return nil
+    end
     local pick = list[(roll and 1) or (ZombRand(#list) + 1)]
     local sq = pick.sq
     local obj = IsoObject.new(getCell(), sq, getSprite(Spawn.spriteFor[pick.side]))
     sq:AddSpecialObject(obj)
     if type(sq.RecalcProperties) == "function" then sq:RecalcProperties() end
+    Spawn.log("bathroom at " .. at .. ": placed at " .. where(sq) .. ", wall " .. pick.side)
     return sq
 end
 
@@ -204,6 +216,7 @@ end
 function Spawn.onNewToilet(obj)
     local sq = obj and type(obj.getSquare) == "function" and obj:getSquare()
     if not sq then return end
+    Spawn.log("toilet in a new chunk at " .. where(sq))
     pending[#pending + 1] = sq
 end
 

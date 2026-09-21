@@ -6,8 +6,8 @@
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Av (standard): bare figurer og gjenstander som står eller ligger på selve vektens bilde, midt i ruten, blir veid. På: alt i vektens rute teller med, også ved siden av bildet.",
     "Sandbox_DeadWeight_ViewDistance": "Avlesningsavstand",
     "Sandbox_DeadWeight_ViewDistance_tooltip": "Hvor mange ruter unna vekten, i samme rom, man kan stå og likevel lese av den, som en lege som veier en pasient. 0: bare spilleren på vekten leser den av. Standard 2.",
-    "Sandbox_DeadWeight_HomeScaleSpawn": "Digital vekt i baderomsmøbler",
-    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Hvor ofte en digital vekt dukker opp i baderomsbenker, skap og hyller. 0: aldri. Standard 3. Bare beholdere som fylles fra nå av, påvirkes.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Digital vekt i baderomsbenker",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Hvor ofte en digital vekt dukker opp i baderomsbenker, skapene under en vask. 0: aldri. Standard 3. Bare beholdere som fylles fra nå av, påvirkes.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Digital vekt på baderomsgulv",
     "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Prosent sjanse for at et stort nok bad som ingen noen gang har sett, har en digital vekt på gulvet, inntil en vegg. Bare rom i områder av kartet som ikke er utforsket ennå, påvirkes. 0: aldri. Standard 20."
 }

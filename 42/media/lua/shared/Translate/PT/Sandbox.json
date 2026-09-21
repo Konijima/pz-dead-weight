@@ -6,8 +6,8 @@
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Desativado (por predefinição): só são pesados as personagens e os objetos que estão sobre a própria imagem da balança, no centro do seu quadrado. Ativado: conta tudo o que está no quadrado da balança, mesmo ao lado da imagem.",
     "Sandbox_DeadWeight_ViewDistance": "Distância de leitura",
     "Sandbox_DeadWeight_ViewDistance_tooltip": "A quantos quadrados da balança, na mesma divisão, se pode estar e ainda assim lê-la, como um médico que pesa um doente. 0: só o jogador que está na balança a lê. Por predefinição 2.",
-    "Sandbox_DeadWeight_HomeScaleSpawn": "Balança Digital em móveis de casa de banho",
-    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Com que frequência uma Balança Digital aparece dentro dos balcões, armários e prateleiras das casas de banho. 0: nunca. Por predefinição 3. Só são afetados os contentores preenchidos a partir de agora.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Balança Digital em balcões de casa de banho",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Com que frequência uma Balança Digital aparece dentro dos balcões das casas de banho, os armários debaixo de um lavatório. 0: nunca. Por predefinição 3. Só são afetados os contentores preenchidos a partir de agora.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Balança Digital no chão das casas de banho",
     "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Probabilidade, em percentagem, de uma casa de banho suficientemente grande que ninguém viu ainda ter uma Balança Digital no chão, encostada a uma parede. Só são afetadas as divisões em zonas do mapa ainda por explorar. 0: nunca. Por predefinição 20."
 }

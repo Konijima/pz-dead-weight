@@ -14,9 +14,9 @@ Sandbox_ES_MX = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "A cuántas casillas de la báscula, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la báscula la lee. Por defecto 2.",
 
-    Sandbox_DeadWeight_HomeScaleSpawn = "Báscula Digital en muebles de baño",
+    Sandbox_DeadWeight_HomeScaleSpawn = "Báscula Digital en cubiertas de baño",
 
-    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Con qué frecuencia aparece una Báscula Digital dentro de las cubiertas, gabinetes y repisas de los baños. 0: nunca. Por defecto 3. Solo se ven afectados los contenedores que se llenen a partir de ahora.",
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Con qué frecuencia aparece una Báscula Digital dentro de las cubiertas de los baños, los gabinetes bajo un lavabo. 0: nunca. Por defecto 3. Solo se ven afectados los contenedores que se llenen a partir de ahora.",
 
     Sandbox_DeadWeight_HomeScaleFloor = "Báscula Digital en el piso de los baños",
 

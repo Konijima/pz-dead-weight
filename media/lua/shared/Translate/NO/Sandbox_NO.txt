@@ -14,9 +14,9 @@ Sandbox_NO = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "Hvor mange ruter unna vekten, i samme rom, man kan stå og likevel lese av den, som en lege som veier en pasient. 0: bare spilleren på vekten leser den av. Standard 2.",
 
-    Sandbox_DeadWeight_HomeScaleSpawn = "Digital vekt i baderomsmøbler",
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digital vekt i baderomsbenker",
 
-    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Hvor ofte en digital vekt dukker opp i baderomsbenker, skap og hyller. 0: aldri. Standard 3. Bare beholdere som fylles fra nå av, påvirkes.",
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Hvor ofte en digital vekt dukker opp i baderomsbenker, skapene under en vask. 0: aldri. Standard 3. Bare beholdere som fylles fra nå av, påvirkes.",
 
     Sandbox_DeadWeight_HomeScaleFloor = "Digital vekt på baderomsgulv",
 

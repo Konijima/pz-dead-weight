@@ -6,8 +6,8 @@
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Dezactivat (implicit): sunt cântărite doar personajele şi obiectele aflate pe imaginea cântarului însăşi, în mijlocul careului ei. Activat: contează tot ce se află pe careul cântarului, chiar şi lângă imagine.",
     "Sandbox_DeadWeight_ViewDistance": "Distanţa de citire",
     "Sandbox_DeadWeight_ViewDistance_tooltip": "La câte careuri de cântar, în aceeaşi cameră, poţi sta şi tot îl poţi citi, ca un medic care cântăreşte un pacient. 0: doar jucătorul aflat pe cântar îl citeşte. Implicit 2.",
-    "Sandbox_DeadWeight_HomeScaleSpawn": "Cântar digital în mobilierul de baie",
-    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Cât de des apare un cântar digital în blaturile, dulapurile şi rafturile din băi. 0: niciodată. Implicit 3. Sunt afectate doar containerele umplute de acum înainte.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Cântar digital în blaturile din baie",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Cât de des apare un cântar digital în blaturile din băi, dulapurile de sub un lavoar. 0: niciodată. Implicit 3. Sunt afectate doar containerele umplute de acum înainte.",
     "Sandbox_DeadWeight_HomeScaleFloor": "Cântar digital pe podeaua băilor",
     "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Şansa, în procente, ca o baie suficient de mare pe care nimeni nu a văzut-o încă să aibă un cântar digital pe podea, lângă un perete. Sunt afectate doar camerele din zonele hărţii neexplorate încă. 0: niciodată. Implicit 20."
 }
