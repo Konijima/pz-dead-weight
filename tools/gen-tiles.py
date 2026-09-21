@@ -101,6 +101,13 @@ def load_faces():
     return faces
 
 
+def _pow2(n):
+    p = 1
+    while p < n:
+        p *= 2
+    return p
+
+
 def build_pack(faces):
     # Shelf packing, in face order, rows capped at PAGE_MAX_W.
     x = y = row_h = page_w = 0
@@ -113,6 +120,10 @@ def build_pack(faces):
         row_h = max(row_h, im.height)
         page_w = max(page_w, x - PAD)
     page_h = y + row_h
+    # Power of two page, at least 256x256 like the vanilla and the bulk of the
+    # Workshop packs. A tight 190x29 page showed each face as a squashed window
+    # over the whole page in game (2026-09-21); a padded page is the suspected fix.
+    page_w, page_h = max(256, _pow2(page_w)), max(256, _pow2(page_h))
     page = Image.new("RGBA", (page_w, page_h), (0, 0, 0, 0))
     for (im, ox, oy), (px, py) in zip(faces, placed):
         page.paste(im, (px, py))
