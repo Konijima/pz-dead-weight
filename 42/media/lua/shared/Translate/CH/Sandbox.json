@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "稱量整個格子",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "關閉（預設）：只稱量站在或放在秤圖像本身上的角色和物品，即秤所在格子的中央。開啟：秤所在格子內的一切都會計入，即使在圖像旁邊。",
     "Sandbox_DeadWeight_ViewDistance": "讀數距離",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "你可以站在離秤幾格遠的地方（同一房間內）仍然讀取讀數，就像醫生為病人稱重一樣。0：只有站在秤上的玩家能讀取。預設為 2。"
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "你可以站在離秤幾格遠的地方（同一房間內）仍然讀取讀數，就像醫生為病人稱重一樣。0：只有站在秤上的玩家能讀取。預設為 2。",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "浴室家具中的電子體重秤",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "電子體重秤出現在浴室檯面、櫃子和架子裡的頻率。0：從不。預設為 3。僅對從現在開始填充的容器生效。",
+    "Sandbox_DeadWeight_HomeScaleFloor": "浴室地板上的電子體重秤",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "從未有人見過、空間夠大的浴室，地板上靠牆放有電子體重秤的機率（百分比）。僅影響地圖上尚未探索區域內的房間。0：從不。預設為 20。"
 }

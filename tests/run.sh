@@ -69,6 +69,9 @@ echo "-- lua occupancy bench ($LUA) --"
 echo "-- lua scale table bench ($LUA) --"
 "$LUA" tests/scales_spec.lua
 
+echo "-- lua loot and world spawn bench ($LUA) --"
+"$LUA" tests/spawn_spec.lua
+
 echo "-- lua char screen bench ($LUA) --"
 "$LUA" tests/charscreen_spec.lua
 

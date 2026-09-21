@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Vážit celé pole",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Vypnuto (výchozí): váží se jen postavy a předměty stojící nebo ležící přímo na obrázku váhy uprostřed jeho pole. Zapnuto: započítá se vše na poli váhy, i vedle obrázku.",
     "Sandbox_DeadWeight_ViewDistance": "Vzdálenost čtení",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Kolik polí od váhy, ve stejné místnosti, můžete stát a stále ji číst, jako lékař, který váží pacienta. 0: čte ji jen hráč stojící na váze. Výchozí 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Kolik polí od váhy, ve stejné místnosti, můžete stát a stále ji číst, jako lékař, který váží pacienta. 0: čte ji jen hráč stojící na váze. Výchozí 2.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Digitální váha v koupelnovém nábytku",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Jak často se digitální váha objeví v koupelnových deskách, skříňkách a policích. 0: nikdy. Výchozí 3. Týká se jen kontejnerů naplněných od této chvíle.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Digitální váha na podlaze koupelen",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Procentuální šance, že dostatečně velká koupelna, kterou nikdo nikdy neviděl, má na podlaze u zdi digitální váhu. Týká se jen místností v dosud neprozkoumaných oblastech mapy. 0: nikdy. Výchozí 20."
 }

@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Weeg het hele vak",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Uit (standaard): alleen personages en voorwerpen die op de afbeelding van de weegschaal zelf staan of liggen, midden in het vak, worden gewogen. Aan: alles in het vak van de weegschaal telt mee, ook naast de afbeelding.",
     "Sandbox_DeadWeight_ViewDistance": "Leesafstand",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Hoeveel vakken van de weegschaal, in dezelfde ruimte, je mag staan en hem toch kunt aflezen, zoals een arts die een patiënt weegt. 0: alleen de speler op de weegschaal leest hem af. Standaard 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Hoeveel vakken van de weegschaal, in dezelfde ruimte, je mag staan en hem toch kunt aflezen, zoals een arts die een patiënt weegt. 0: alleen de speler op de weegschaal leest hem af. Standaard 2.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Digitale weegschaal in badkamermeubilair",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Hoe vaak er een digitale weegschaal opduikt in badkamerkastjes, -werkbladen en -planken. 0: nooit. Standaard 3. Alleen containers die vanaf nu gevuld worden, worden beïnvloed.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Digitale weegschaal op badkamervloeren",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Percentage kans dat een groot genoeg badkamer die nog nooit iemand heeft gezien een digitale weegschaal op de vloer heeft, tegen een muur. Alleen ruimtes in nog niet verkende delen van de kaart worden beïnvloed. 0: nooit. Standaard 20."
 }

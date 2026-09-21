@@ -14,4 +14,12 @@ Sandbox_EN = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "How many squares away from the scale you can stand, in the same room, and still read it, like a doctor weighing a patient. 0: only the player on the scale reads it. Default 2.",
 
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digital Scale in bathroom furniture",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "How often a Digital Scale turns up inside bathroom counters, cabinets and shelves. 0: never. Default 3. Only containers filled from now on are affected.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Digital Scale on bathroom floors",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Percent chance that a big enough bathroom nobody has ever seen has a Digital Scale on its floor, against a wall. Only rooms in areas of the map not yet explored are affected. 0: never. Default 20.",
+
 }

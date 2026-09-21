@@ -14,4 +14,12 @@ Sandbox_TR = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "Ayný odada, tartýdan kaç kare uzakta durup yine de okuyabileceðiniz; hastayý tartan bir doktor gibi. 0: yalnýzca tartýnýn üzerindeki oyuncu okur. Varsayýlan 2.",
 
+    Sandbox_DeadWeight_HomeScaleSpawn = "Banyo mobilyalarýnda Dijital Tartý",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Banyo tezgâhlarýnda, dolaplarýnda ve raflarýnda Dijital Tartý bulunma sýklýðý. 0: asla. Varsayýlan 3. Yalnýzca bundan sonra doldurulan kaplar etkilenir.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Banyo zeminlerinde Dijital Tartý",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Kimsenin daha önce görmediði, yeterince büyük bir banyonun zemininde, bir duvarýn dibinde Dijital Tartý bulunma olasýlýðý (yüzde). Yalnýzca haritada henüz keþfedilmemiþ bölgelerdeki odalar etkilenir. 0: asla. Varsayýlan 20.",
+
 }

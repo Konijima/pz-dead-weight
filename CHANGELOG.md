@@ -10,6 +10,7 @@ note box.
 
 - New furniture, Build 42 only: the Digital Scale, a small bathroom scale you can place on the floor or on a counter, in four facings, and pick up again. This is the furniture only for now; it does not read your weight yet.
 - The Digital Scale reads weight: people, animals and zombies on the floor, and items on it or on a counter. It shows the plain native panel and reads 0 to 130 kg. The clinic scale keeps its beam head readout.
+- The Digital Scale can now turn up: inside bathroom counters, cabinets and shelves (new sandbox setting "Digital Scale in bathroom furniture", 0 to 20, default 3, 0 is never), and standing on the floor against a wall in big enough bathrooms that nobody has seen yet (new sandbox setting "Digital Scale on bathroom floors", percent, default 20, 0 is never). Only new loot and areas of the map you have not explored are affected: rooms you have already visited never get one. Build 42 only.
 - The right click style switch between the beam head and the panel is gone: each scale now has its own look. Left click still switches kg and lb.
 - Stepping onto the Digital Scale turns you to look at its screen, like the clinic scale's column.
 - You only read a scale you are facing. Turn away and the readout goes; turn back and it returns.

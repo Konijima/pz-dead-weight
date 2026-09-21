@@ -14,6 +14,10 @@ TILES_SRC="src/tiles"
 # syntax and the item's sprite lives in the B42 tile pack (untested on B41).
 B42_ONLY_SCRIPTS="deadweight_items.txt"
 
+# Server side Lua (loot and world spawn of the Digital Scale) is Build 42 only.
+SRV_SRC="src/lua/server/WeightScale"
+B42_SRV="42/media/lua/server/WeightScale"
+
 B41_LUA="media/lua/client/WeightScale"
 B42_LUA="42/media/lua/client/WeightScale"
 B41_TEX="media/textures/WeightScale"
@@ -27,11 +31,12 @@ B42_SBX="common/media/sandbox-options.txt"
 B41_TR="media/lua/shared/Translate"
 B42_TR="42/media/lua/shared/Translate"
 
-rm -rf "$B41_LUA" "$B42_LUA" "$B41_TEX" "$B42_TEX" "$B41_SND" "$B42_SND" "$B41_TR" "$B42_TR"
-mkdir -p "$B41_LUA" "$B42_LUA" "$B41_TEX" "$B42_TEX" "$B41_SND" "$B42_SND" "$B41_SCR" "$B42_SCR"
+rm -rf "$B42_SRV" "$B41_LUA" "$B42_LUA" "$B41_TEX" "$B42_TEX" "$B41_SND" "$B42_SND" "$B41_TR" "$B42_TR"
+mkdir -p "$B42_SRV" "$B41_LUA" "$B42_LUA" "$B41_TEX" "$B42_TEX" "$B41_SND" "$B42_SND" "$B41_SCR" "$B42_SCR"
 
 cp "$LUA_SRC"/*.lua "$B41_LUA"/
 cp "$LUA_SRC"/*.lua "$B42_LUA"/
+cp "$SRV_SRC"/*.lua "$B42_SRV"/
 cp "$TEX_SRC"/*.png "$B41_TEX"/
 cp "$TEX_SRC"/*.png "$B42_TEX"/
 cp "$SND_SRC"/*.ogg "$B41_SND"/

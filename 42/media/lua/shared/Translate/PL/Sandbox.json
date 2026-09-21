@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Waż całe pole",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Wyłączone (domyślnie): ważone są tylko postacie i przedmioty stojące lub leżące na samym obrazku wagi, pośrodku jego pola. Włączone: liczy się wszystko na polu wagi, także obok obrazka.",
     "Sandbox_DeadWeight_ViewDistance": "Odległość odczytu",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Ile pól od wagi, w tym samym pomieszczeniu, można stać i nadal ją odczytać, jak lekarz ważący pacjenta. 0: odczytuje ją tylko gracz stojący na wadze. Domyślnie 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Ile pól od wagi, w tym samym pomieszczeniu, można stać i nadal ją odczytać, jak lekarz ważący pacjenta. 0: odczytuje ją tylko gracz stojący na wadze. Domyślnie 2.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Waga cyfrowa w meblach łazienkowych",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Jak często waga cyfrowa pojawia się w łazienkowych szafkach, blatach i na półkach. 0: nigdy. Domyślnie 3. Dotyczy tylko pojemników wypełnionych od teraz.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Waga cyfrowa na podłogach łazienek",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Procentowa szansa, że dostatecznie duża łazienka, której nikt jeszcze nie widział, ma na podłodze przy ścianie wagę cyfrową. Dotyczy tylko pomieszczeń w jeszcze nieodkrytych obszarach mapy. 0: nigdy. Domyślnie 20."
 }

@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Timbang seluruh kotak",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Nonaktif (bawaan): hanya karakter dan barang yang berdiri atau tergeletak di gambar timbangan itu sendiri, di tengah kotaknya, yang ditimbang. Aktif: semua yang ada di kotak timbangan dihitung, bahkan di samping gambarnya.",
     "Sandbox_DeadWeight_ViewDistance": "Jarak baca",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 2.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Timbangan Digital di furnitur kamar mandi",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Seberapa sering Timbangan Digital muncul di dalam meja, lemari, dan rak kamar mandi. 0: tidak pernah. Bawaan 3. Hanya wadah yang diisi mulai sekarang yang terpengaruh.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Timbangan Digital di lantai kamar mandi",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Persentase peluang kamar mandi yang cukup besar dan belum pernah dilihat siapa pun memiliki Timbangan Digital di lantainya, bersandar di dinding. Hanya ruangan di area peta yang belum dijelajahi yang terpengaruh. 0: tidak pernah. Bawaan 20."
 }

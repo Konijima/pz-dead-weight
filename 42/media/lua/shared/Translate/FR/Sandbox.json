@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Peser toute la case",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Désactivé (par défaut) : seuls les personnages et objets sur la balance elle-même, au milieu de sa case, sont pesés. Activé : tout ce qui se trouve dans la case de la balance compte, même à côté.",
     "Sandbox_DeadWeight_ViewDistance": "Distance de lecture",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "À combien de cases de la balance, dans la même pièce, on peut se tenir et la lire quand même, comme un médecin qui pèse un patient. 0 : seul le joueur sur la balance la lit. Par défaut 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "À combien de cases de la balance, dans la même pièce, on peut se tenir et la lire quand même, comme un médecin qui pèse un patient. 0 : seul le joueur sur la balance la lit. Par défaut 2.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Balance numérique dans les meubles de salle de bain",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Fréquence à laquelle une balance numérique apparaît dans les plans de toilette, armoires et étagères des salles de bain. 0 : jamais. Par défaut 3. Seuls les conteneurs remplis à partir de maintenant sont concernés.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Balance numérique au sol des salles de bain",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Pourcentage de chances qu'une salle de bain assez grande, encore jamais vue, ait une balance numérique posée au sol contre un mur. Seules les pièces des zones de la carte pas encore explorées sont concernées. 0 : jamais. Par défaut 20."
 }

@@ -14,6 +14,7 @@ Supports Build 41 and Build 42 from one repository.
 ```
 src/          hand edited source, the ONLY place to make changes
   lua/client/WeightScale/   Lua modules, see Module map below
+  lua/server/WeightScale/   Build 42 only: Digital Scale loot (Distributions) and world spawn (Spawn)
   translate/strings.json    every translation string, one file, all languages
   sandbox-options.txt       the DeadWeight.* sandbox options (WeighCarried, WholeSquare, ViewDistance)
   textures/, sounds/, scripts/
@@ -76,6 +77,14 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
   and "Put Animal on Scale" when the player holds an animal (Build 42).
 - `WeightScaleCharScreen.lua`: patches the Info tab's weight line to show
   the category word instead of the number.
+- `lua/server/WeightScale/WeightScaleDistributions.lua` (Build 42 only): adds the
+  Digital Scale to the bathroom loot lists at `OnPreDistributionMerge`,
+  weight from `DeadWeight.HomeScaleSpawn`.
+- `lua/server/WeightScale/WeightScaleSpawn.lua` (Build 42, server and single
+  player only): puts a Digital Scale on the floor of a big enough bathroom, in
+  new chunks only (`MapObjects.OnNewWithSprite` on toilet sprites, examined at
+  `LoadChunk`), against a wall, chance `DeadWeight.HomeScaleFloor`. Never uses
+  `RoomDef.explored`, see `docs/API-COMPAT.md`.
 - `WeightScaleMain.lua`: wires the modules to game events; computes
   nothing itself.
 

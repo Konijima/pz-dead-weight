@@ -8,6 +8,9 @@ fail=0
 
 diff -rq "src/lua/client/WeightScale" "media/lua/client/WeightScale" || fail=1
 diff -rq "src/lua/client/WeightScale" "42/media/lua/client/WeightScale" || fail=1
+diff -rq "src/lua/server/WeightScale" "42/media/lua/server/WeightScale" || fail=1
+# server Lua names a B42 only item: Build 41 (the repo root) must not carry it
+[ ! -e "media/lua/server" ] || { echo "media/lua/server must not exist (B42 only)"; fail=1; }
 diff -rq "src/textures" "media/textures/WeightScale" || fail=1
 diff -rq "src/textures" "common/media/textures/WeightScale" || fail=1
 diff -rq "src/sounds" "media/sound/WeightScale" || fail=1

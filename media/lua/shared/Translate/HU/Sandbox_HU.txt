@@ -14,4 +14,12 @@ Sandbox_HU = {
 
     Sandbox_DeadWeight_ViewDistance_tooltip = "Hány mezõnyire állhatsz a mérlegtõl, ugyanabban a helyiségben, és még mindig leolvashatod, mint egy orvos, aki megméri a pácienst. 0: csak a mérlegen álló játékos olvassa le. Alapértelmezett: 2.",
 
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digitális mérleg a fürdõszobai bútorokban",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Milyen gyakran bukkan fel digitális mérleg a fürdõszobai pultokban, szekrényekben és polcokon. 0: soha. Alapértelmezett: 3. Csak a mostantól feltöltött tárolókat érinti.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Digitális mérleg a fürdõszobák padlóján",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Annak százalékos esélye, hogy egy elég nagy, még senki által nem látott fürdõszoba padlóján, a fal mellett ott áll egy digitális mérleg. Csak a térkép még fel nem fedezett területein lévõ helyiségeket érinti. 0: soha. Alapértelmezett: 20.",
+
 }
