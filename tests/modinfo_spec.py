@@ -109,6 +109,19 @@ for base in (REPO / "mod.info", REPO / "42" / "mod.info"):
         print(f"FAIL: {problem}")
         fail = True
 
+# The Workshop page text is capped at 8000 characters (Steam's own limit; the
+# game's submit screen carries the same number). The uploader appends each
+# description= line to the one before with a newline, so count it that way.
+WORKSHOP_MAX = 8000
+ws = REPO / "workshop" / "workshop.txt"
+if ws.is_file():
+    desc = "\n".join(l.split("=", 1)[1].strip() for l in ws.read_text(encoding="utf-8").splitlines()
+                     if l.strip().startswith("description="))
+    print(f"workshop description: {len(desc)} of {WORKSHOP_MAX} characters")
+    if len(desc) > WORKSHOP_MAX:
+        print(f"FAIL: workshop/workshop.txt description is {len(desc)} characters, Steam's limit is {WORKSHOP_MAX}")
+        fail = True
+
 tracked = subprocess.run(["git", "-C", str(REPO), "ls-files"], capture_output=True, text=True, check=True).stdout.splitlines()
 for rel in tracked:
     fp = REPO / rel

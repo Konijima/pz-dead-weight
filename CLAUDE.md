@@ -134,7 +134,7 @@ bash tools/sync.sh && bash tools/check-sync.sh && bash tests/run.sh
 and fails loud, not silently, if one is missing. It runs, in order: the
 geometry generator drift check, the `mod.info` guard (id/name match,
 poster/icon files exist, no U+2014 anywhere tracked, description tags
-space delimited), the translation bench, the `workshop.txt` generator
+space delimited, Workshop description under Steam's 8000 character cap), the translation bench, the `workshop.txt` generator
 drift check, the tile pack drift check and its parse back bench, the
 changelog guard (top released version equals `42/mod.info` `modversion=`, an
 `Unreleased` section exists), nine Lua unit suites (core math, HUD lifecycle,
