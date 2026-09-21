@@ -114,7 +114,12 @@ end
 
 function Detect.facingFor(square)
     local obj, entry = scaleObjectOn(square)
-    if not obj or entry.faceColumn == false then return nil end   -- no column to face
+    if not obj then return nil end
+    -- no column: a scale may name the direction to look instead (the digital
+    -- scale's screen reads from the side it faces, so the player looks away
+    -- from that side, at the screen)
+    if entry.faceDir and IsoDirections then return IsoDirections[entry.faceDir] end
+    if entry.faceColumn == false then return nil end   -- nothing to face
     if type(obj.getFacing) ~= "function" then return nil end
     local facing = obj:getFacing()
     if facing == nil then return nil end

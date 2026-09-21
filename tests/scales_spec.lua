@@ -52,7 +52,11 @@ check(Detect.scaleEntryOn(med) == m8, "scaleEntryOn returns the medical entry")
 check(Detect.scaleEntryOn(dig) == Scales.forSprite("deadweight_digital_01_0"), "scaleEntryOn returns the digital entry")
 check(Detect.scaleEntryOn(other) == nil and Detect.scaleEntryOn(nil) == nil, "scaleEntryOn is nil without a scale")
 check(Detect.facingFor(med) == IsoDirections.W, "medical scale still faces opposite its Facing")
-check(Detect.facingFor(dig) == nil, "a digital scale has no column to face")
+check(Detect.facingFor(dig) == IsoDirections.N, "a digital scale facing S is read looking north, whatever its Facing property says")
+for i, want in ipairs({ "N", "W", "S", "E" }) do
+    local sq = squareWith("deadweight_digital_01_" .. (i - 1), IsoDirections.E)
+    check(Detect.facingFor(sq) == IsoDirections[want], "digital sprite " .. (i - 1) .. " turns the player " .. want)
+end
 check(Detect.facingFor(other) == nil, "no scale, no facing")
 
 print("scales_spec: " .. nAssert .. " assertions OK")

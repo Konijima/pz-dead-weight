@@ -11,6 +11,9 @@
 --   plateTop    height of the plate's top above the ground, tile fractions
 --   standable   a character may stand on it
 --   faceColumn  the scale has a column the player turns to face on stepping on
+--   faceDir     a fixed direction ("N","S","E","W") the player turns to on
+--               stepping on, for a scale with no column: they look at the
+--               reading, so away from the side its screen text reads from
 --   range       which weight range the HUD maps ("medical" = Geo.weight)
 -- The medical numbers were measured off the sprite art (Tiles2x.pack,
 -- location_community_medical_01_8 and _9), see WeightScaleOccupants. The
@@ -29,8 +32,10 @@ end
 
 -- the slab is drawn BACK_SHIFT (0.13, tools/gen-scale-art.py) behind the tile
 -- centre, away from the side it faces: (rx, ry) is the direction it faces
+local FACE_NAME = { ["0,1"] = "N", ["1,0"] = "W", ["0,-1"] = "S", ["-1,0"] = "E" }
 local function digital(rx, ry)
     return {
+        faceDir = FACE_NAME[rx .. "," .. ry],
         kind = "digital", style = "panel", plate = { 0.5 - 0.13 * rx, 0.5 - 0.13 * ry }, half = 0.2,
         plateTop = 0.03, standable = true, faceColumn = false, range = "digital",
     }
