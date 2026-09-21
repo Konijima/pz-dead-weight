@@ -253,13 +253,45 @@ end
 -- other clients; an item already at that height is left alone, so this writes
 -- once per item. plateTop is the scale's own (Scales entry), Occupants.plateTop
 -- for an unknown sprite.
-local function liftOntoPlate(box, wo)
+-- A scale standing on a counter or table is drawn lifted by the surface's
+-- height (the game's setRenderYOffset, in 1x pixels, 96 to a tile: a moveable
+-- onto a surface, ISMoveableSpriteProps), and an item dropped there lies at
+-- that same surface height. `base` is that height in tile fractions, 0 for a
+-- scale on the floor; the plate top is base + plateTop. Nil when the square
+-- has no scale object or the call is missing.
+local function baseZ(square)
+    if type(square.getObjects) ~= "function" then return 0 end
+    local objs = square:getObjects()
+    if not objs then return 0 end
+    for i = 0, objs:size() - 1 do
+        local obj = objs:get(i)
+        local sprite = obj and type(obj.getSprite) == "function" and obj:getSprite()
+        local name = sprite and type(sprite.getName) == "function" and sprite:getName()
+        if name and WeightScale.Scales.forSprite(name) then
+            local y = type(obj.getRenderYOffset) == "function" and obj:getRenderYOffset()
+            return type(y) == "number" and y > 0 and y / 96 or 0
+        end
+    end
+    return 0
+end
+
+local BASE_SLACK = 0.02   -- an item within this of the surface is on it, below it is on the floor under it
+
+local function liftOntoPlate(box, wo, base)
     if not Occupants.plateOnly() then return end   -- the whole square counts: nothing to sit on
     if type(wo.getOffX) ~= "function" or type(wo.getOffY) ~= "function"
         or type(wo.getOffZ) ~= "function" or type(wo.setOffset) ~= "function" then return end
     local oz = wo:getOffZ()
-    if type(oz) ~= "number" or oz >= box.plateTop - 0.001 then return end
-    wo:setOffset(wo:getOffX(), wo:getOffY(), box.plateTop)
+    local top = base + box.plateTop
+    if type(oz) ~= "number" or oz >= top - 0.001 then return end
+    wo:setOffset(wo:getOffX(), wo:getOffY(), top)
+end
+
+-- an item at floor height under a counter scale is not on the plate
+local function atPlateHeight(wo, base)
+    if base <= 0 or not Occupants.plateOnly() or type(wo.getOffZ) ~= "function" then return true end
+    local oz = wo:getOffZ()
+    return type(oz) ~= "number" or oz >= base - BASE_SLACK
 end
 
 -- kg of the floor items lying on the plate. getWorldObjects is a Java
@@ -271,10 +303,12 @@ local function floorWeight(square, plate)
     local list = square:getWorldObjects()
     if not list then return 0 end
     local sum = 0
+    local base
     for i = 0, list:size() - 1 do
         local wo = list:get(i)
-        if wo and itemOnPlate(plate, wo) then
-            liftOntoPlate(plate, wo)
+        base = base or baseZ(square)
+        if wo and itemOnPlate(plate, wo) and atPlateHeight(wo, base) then
+            liftOntoPlate(plate, wo, base)
             local item = type(wo.getItem) == "function" and wo:getItem()
             local w = item and type(item.getUnequippedWeight) == "function" and item:getUnequippedWeight()
             if type(w) == "number" then sum = sum + w end

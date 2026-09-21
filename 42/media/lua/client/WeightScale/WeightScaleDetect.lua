@@ -31,6 +31,7 @@ Detect.rescanFor = 600        -- polls the search lasts (about a minute), then i
 Detect.maxScales = 4          -- scales in reach that are ever considered, nearest first
 Detect.losEvery = 5           -- polls between line of sight checks of the watched scale
 Detect.maxRadius = 5          -- ceiling for the sandbox value (scan is (2R+1)^2 squares)
+Detect.faceCos = 0.35         -- a scale is faced when it is within about 70 degrees of the viewer's heading
 Detect.debounce = 2           -- polls a non self change must hold
 Detect.players = Detect.players or {}  -- [n] = {tick, onScale, lastSquare, ...}
 Detect.onScaleOn = nil        -- function(n, square)
@@ -50,6 +51,7 @@ local function stateFor(n)
               shownKey = false,   -- one decimal total on screen, false = empty
               selfOn = false,     -- viewer was on the tile at the last apply
               emptySeen = {},     -- [scale square] = true once this viewer read THAT scale empty
+              faced = {},         -- [scale square] = false while the viewer is turned away from it
               shownSquare = nil,  -- the scale the reading on screen belongs to
               pendKey = nil, pendN = 0, buf = {} }
         Detect.players[n] = s
@@ -207,6 +209,24 @@ local function findScales(square)
     return out
 end
 
+-- Facing: a scale the viewer is not turned towards has nothing to show them,
+-- so a scale other than the one they stand on is read only while it lies in
+-- front of them. IsoGameCharacter:getForwardDirection() is a Vector2 in world
+-- x, y, the same axes as the squares (PROVEN client lua, see docs/API-COMPAT.md);
+-- anything unexpected counts as facing, the behaviour before this check.
+local function facing(playerObj, sq)
+    if type(playerObj.getForwardDirection) ~= "function" or type(playerObj.getX) ~= "function"
+        or type(sq.getX) ~= "function" then return true end
+    local ok, r = pcall(function()
+        local f = playerObj:getForwardDirection()
+        local dx, dy = sq:getX() + 0.5 - playerObj:getX(), sq:getY() + 0.5 - playerObj:getY()
+        local len = math.sqrt(dx * dx + dy * dy)
+        if not f or len < 0.6 then return true end   -- standing on or against it
+        return (f:getX() * dx + f:getY() * dy) / len >= Detect.faceCos
+    end)
+    return not ok or r ~= false
+end
+
 -- One poll of the scales in reach. The nearest scale that has something to
 -- weigh wins (a scale is read only while it is the one shown); when none has,
 -- the nearest one stands for the empty reading. key is the one decimal total
@@ -254,13 +274,26 @@ local function poll(n, s, playerObj)
     end
     local chosen, total, selfOn
     local nRead = #s.scales
+    -- a scale that is not faced is skipped, and what was known of it is dropped
+    -- so turning back to it earns no cue; a change of what is faced applies at once
+    local facedNow, facedChanged = {}, false
     for j = 1, #s.scales do
         local sq = s.scales[j]
-        local on = s.onScale and sq == s.ownSquare and Occ.onPlate(sq, playerObj)
-        local occ = Occ.read(sq, s.buf, on and playerObj or nil)
-        local t = Core.sumWeights(occ)
-        if t then chosen, total, selfOn = sq, t, on nRead = j break end
-        s.emptySeen[sq] = true
+        facedNow[sq] = sq == s.ownSquare or facing(playerObj, sq)
+        if facedNow[sq] ~= (s.faced[sq] ~= false) then facedChanged = true end
+    end
+    s.faced = facedNow
+    for j = 1, #s.scales do
+        local sq = s.scales[j]
+        if not facedNow[sq] then
+            s.emptySeen[sq] = nil
+        else
+            local on = s.onScale and sq == s.ownSquare and Occ.onPlate(sq, playerObj)
+            local occ = Occ.read(sq, s.buf, on and playerObj or nil)
+            local t = Core.sumWeights(occ)
+            if t then chosen, total, selfOn = sq, t, on nRead = j break end
+            s.emptySeen[sq] = true
+        end
     end
     -- scales past the occupied one were not read this poll: their state is unknown
     for j = nRead + 1, #s.scales do s.emptySeen[s.scales[j]] = nil end
@@ -286,10 +319,10 @@ local function poll(n, s, playerObj)
     -- leaves in silence and at once, even if another scale is still in reach
     local shownInReach = false
     for j = 1, #s.scales do
-        if s.scales[j] == s.shownSquare then shownInReach = true break end
+        if s.scales[j] == s.shownSquare and facedNow[s.scales[j]] then shownInReach = true break end
     end
     local lost = s.shownSquare ~= nil and not shownInReach
-    local selfChanged = selfOn ~= s.selfOn
+    local selfChanged = selfOn ~= s.selfOn or facedChanged
     if key == s.shownKey then
         if total then s.shownSquare = chosen end   -- same total, maybe read off another scale
         s.pendKey, s.pendN = nil, 0

@@ -71,7 +71,16 @@ LCD_MARGIN = 0.026          # from the far edge of the slab
 PAD_X, PAD_W, PAD_LEN = 0.098, 0.05, 0.2   # pad centre offset, width, length
 
 
+# The slab sits BACK_SHIFT tile fractions behind the tile centre (away from the
+# reader): a counter is inset against its wall, so a slab centred in the tile
+# ends up at the counter's front edge (seen in game, 2026-09-21). The plate
+# centres in WeightScaleScales.lua carry the same shift.
+BACK_SHIFT = 0.13
+OFF = [0.0, 0.0]
+
+
 def pt(u, v, h=0.0):
+    u, v = u + OFF[0], v + OFF[1]
     return ((64 + (u - v) * 64) * SS, (192 + (u + v) * 32 - h) * SS)
 
 
@@ -107,6 +116,8 @@ def strips(d, pts_fn, c0, c1, n):
 def draw_face(face):
     # No outline strokes: the game's own sprites shade edges with a darker or
     # lighter tone of the surface, never a black line (Mathieu, 2026-09-21).
+    reader = FACING[face]["reader"]
+    OFF[0], OFF[1] = -BACK_SHIFT * reader[0], -BACK_SHIFT * reader[1]
     img = Image.new("RGBA", (FRAME_W * SS, FRAME_H * SS), (0, 0, 0, 0))
     shadow = Image.new("RGBA", img.size, (0, 0, 0, 0))
     sd = ImageDraw.Draw(shadow)

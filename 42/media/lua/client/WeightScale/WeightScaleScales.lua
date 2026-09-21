@@ -14,7 +14,7 @@
 --   range       which weight range the HUD maps ("medical" = Geo.weight)
 -- The medical numbers were measured off the sprite art (Tiles2x.pack,
 -- location_community_medical_01_8 and _9), see WeightScaleOccupants. The
--- digital slab is drawn by tools/gen-scale-art.py: 0.34 tile square centred
+-- digital slab is drawn by tools/gen-scale-art.py: 0.34 tile square, 0.13 behind the centre
 -- (a bathroom scale is about 30 cm), 2.5/96 tile thick; half 0.2 leaves room to stand on it; plateTop is unproven until placed in game.
 WeightScale = WeightScale or {}
 WeightScale.Scales = WeightScale.Scales or {}
@@ -27,9 +27,11 @@ local function medical(cx, cy)
     }
 end
 
-local function digital()
+-- the slab is drawn BACK_SHIFT (0.13, tools/gen-scale-art.py) behind the tile
+-- centre, away from the side it faces: (rx, ry) is the direction it faces
+local function digital(rx, ry)
     return {
-        kind = "digital", style = "panel", plate = { 0.5, 0.5 }, half = 0.2,
+        kind = "digital", style = "panel", plate = { 0.5 - 0.13 * rx, 0.5 - 0.13 * ry }, half = 0.2,
         plateTop = 0.03, standable = true, faceColumn = false, range = "digital",
     }
 end
@@ -37,10 +39,10 @@ end
 Scales.byName = {
     ["location_community_medical_01_8"] = medical(0.33, 0.43),
     ["location_community_medical_01_9"] = medical(0.48, 0.37),
-    ["deadweight_digital_01_0"] = digital(),
-    ["deadweight_digital_01_1"] = digital(),
-    ["deadweight_digital_01_2"] = digital(),
-    ["deadweight_digital_01_3"] = digital(),
+    ["deadweight_digital_01_0"] = digital(0, 1),    -- S
+    ["deadweight_digital_01_1"] = digital(1, 0),    -- E
+    ["deadweight_digital_01_2"] = digital(0, -1),   -- N
+    ["deadweight_digital_01_3"] = digital(-1, 0),   -- W
 }
 
 -- the entry of a sprite name, nil when it is not a scale

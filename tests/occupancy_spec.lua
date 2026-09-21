@@ -976,5 +976,72 @@ check(Occupants.onPlate(sq9, at(sq9, 0.5, 0.72)) == false, "sprite _9: the front
 check(Occupants.onPlate(sq9, at(sq9, 0.33, 0.43)) == true, "sprite _9: a spot both plates share is on it")
 check(Occupants.onPlate(sqU, at(sqU, 0.5, 0.5)) == true and Occupants.onPlate(sqU, at(sqU, 0.9, 0.9)) == false, "an unknown sprite falls back to the middle of the tile")
 
+-- 18. a viewer turned away from the scale reads nothing --------------------
+do
+    sandbox(nil)
+    for i = #SOUND, 1, -1 do SOUND[i] = nil end
+    local viewer = makePlayer(0, 80)
+    local patient = makePlayer(1, 72.4)
+    put(patient, 10, 10)
+    put(viewer, 12, 10)
+    Detect.clear(0)
+    local heading = { x = -1, y = 0 }   -- towards the scale at (10.5, 10.5) from (12.5, 10.5)
+    function viewer:getForwardDirection()
+        return { getX = function() return heading.x end, getY = function() return heading.y end }
+    end
+    tick(0, 4)
+    check(mode(0) == "on" and near(hud(0).target, 72.4), "facing the scale from 2 squares: it reads")
+    heading.x, heading.y = 1, 0
+    tick(0)
+    check(mode(0) == "off", "turning away drops the reading at once")
+    check(not sounds():find("WeightScaleOff"), "turning away is silent, got " .. sounds())
+    NOW = NOW + Core.T.offEnd + 1
+    hud(0):tick()
+    tick(0, 4)
+    check(mode(0) ~= "on", "still turned away: nothing shows")
+    heading.x, heading.y = -1, 0
+    tick(0)
+    check(mode(0) == "on" and near(hud(0).target, 72.4), "turning back reads it again at once")
+    check(not sounds():find("WeightScaleOn@0,WeightScaleOn"), "turning back earns no second on cue, got " .. sounds())
+    heading.x, heading.y = 0, 1   -- 90 degrees off
+    tick(0)
+    check(mode(0) == "off", "a scale at the side is not faced")
+    -- standing on the plate needs no facing
+    put(viewer, 10, 10)
+    heading.x, heading.y = 1, 0
+    tick(0, 3)
+    check(mode(0) == "on", "on the scale itself the facing does not matter")
+    -- a player object without getForwardDirection still reads (API unproven)
+    viewer.getForwardDirection = nil
+    put(viewer, 12, 10)
+    tick(0, 4)
+    check(mode(0) == "on", "no getForwardDirection: counts as facing")
+    remove(patient)
+end
+
+-- 19. a scale on a counter: items sit on the counter, not on the floor beneath -
+do
+    sandbox(nil)
+    local sq = spriteSquare(90, 90, "deadweight_digital_01_0")
+    sq.objects[1].getRenderYOffset = function() return 34 end   -- a 34 px counter
+    local base = 34 / 96
+    local function itemAt(kg, oz)
+        local it = item(kg, 0.5, 0.5)
+        it.oz = oz
+        return it
+    end
+    local onCounter, underCounter, lifted = itemAt(1.1, base), itemAt(30, 0), itemAt(2, base + 0.03)
+    sq.floor = { onCounter, underCounter, lifted }
+    local out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 3.1), "counter scale: the item on the counter counts, the floor one does not, got " .. tostring(out[1]))
+    check(near(onCounter.oz, base + 0.03), "the counter item is raised onto the plate, got " .. tostring(onCounter.oz))
+    check((lifted.lifts or 0) == 0 and (underCounter.lifts or 0) == 0, "an item already on the plate, or beneath, is not written")
+    -- the same scale on the floor: floor items count as before
+    sq.objects[1].getRenderYOffset = nil
+    sq.floor = { itemAt(30, 0) }
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 30), "floor scale: an item at floor height counts")
+end
+
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")
