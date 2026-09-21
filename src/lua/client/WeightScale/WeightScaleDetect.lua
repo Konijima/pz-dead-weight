@@ -17,16 +17,12 @@
 -- tile must not flicker the readout); the viewer's own step on/off is instant.
 -- See docs/API-COMPAT.md for which calls are proven on which build.
 require "WeightScale/WeightScaleCore"
+require "WeightScale/WeightScaleScales"
 require "WeightScale/WeightScaleOccupants"
 
 WeightScale = WeightScale or {}
 WeightScale.Detect = WeightScale.Detect or {}
 local Detect = WeightScale.Detect
-
-Detect.spriteNames = {
-    ["location_community_medical_01_8"] = true,
-    ["location_community_medical_01_9"] = true,
-}
 
 Detect.tickEvery = 6          -- every few ticks, not every frame
 Detect.radius = 2             -- default squares a viewer may stand from the scale
@@ -48,6 +44,7 @@ local function stateFor(n)
               scales = {},        -- scale squares within reach, own tile then nearest first
               ownSquare = nil,    -- the viewer's own square while it holds a scale
               scaleSquare = nil,  -- the one shown: nearest with something to weigh, else nearest
+              scaleEntry = nil,   -- the WeightScale.Scales entry of that scale (kind, style, ...)
               rescanLeft = 0,     -- polls left to look for a scale put back after it vanished
               losTick = 0,        -- polls since the last line of sight check
               shownKey = false,   -- one decimal total on screen, false = empty
@@ -66,6 +63,8 @@ function Detect.clear(n)
     Detect.players[n] = nil
 end
 
+-- The scale object on a square and its WeightScale.Scales entry (looked up by
+-- sprite name, one walk of the square's few objects), nil when there is none.
 local function scaleObjectOn(square)
     if not square or not square.getObjects then return nil end
     local objs = square:getObjects()
@@ -75,8 +74,9 @@ local function scaleObjectOn(square)
         local obj = objs:get(i)
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
-        if name and Detect.spriteNames[name] then
-            return obj
+        local entry = WeightScale.Scales.forSprite(name)
+        if entry then
+            return obj, entry
         end
     end
     return nil
@@ -84,6 +84,12 @@ end
 
 local function hasScaleSprite(square)
     return scaleObjectOn(square) ~= nil
+end
+
+-- the Scales entry of the scale on a square, nil when there is none
+function Detect.scaleEntryOn(square)
+    local _, entry = scaleObjectOn(square)
+    return entry
 end
 
 -- Face the scale's column (task 2026-09-18, point B): each placed scale
@@ -105,8 +111,9 @@ if IsoDirections then
 end
 
 function Detect.facingFor(square)
-    local obj = scaleObjectOn(square)
-    if not obj or type(obj.getFacing) ~= "function" then return nil end
+    local obj, entry = scaleObjectOn(square)
+    if not obj or entry.faceColumn == false then return nil end   -- no column to face
+    if type(obj.getFacing) ~= "function" then return nil end
     local facing = obj:getFacing()
     if facing == nil then return nil end
     return OPPOSITE_FACING[facing] or facing
@@ -262,6 +269,11 @@ local function poll(n, s, playerObj)
         selfOn = s.onScale and chosen == s.ownSquare and Occ.onPlate(chosen, playerObj)
     end
     selfOn = selfOn and true or false
+    -- the entry is looked up again only when the shown scale changed (a
+    -- dropped scale clears it above), not on every poll
+    if chosen ~= s.scaleSquare or (chosen and not s.scaleEntry) or dropped then
+        s.scaleEntry = chosen and Detect.scaleEntryOn(chosen) or nil
+    end
     s.scaleSquare = chosen
     local key = total and WeightScale.Core.format(total, "kg") or false
     -- settled: this viewer had already watched THIS scale sit empty before
@@ -338,6 +350,7 @@ function Detect.update(n, playerObj)
         s.emptySeen = seen
         s.ownSquare = onNow and square or nil
         s.scaleSquare = s.scales[1]
+        s.scaleEntry = s.scaleSquare and Detect.scaleEntryOn(s.scaleSquare) or nil
     end
 
     -- Idle away from every scale: none in reach and nothing on screen, no call.
