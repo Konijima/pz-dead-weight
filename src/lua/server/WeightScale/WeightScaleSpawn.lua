@@ -19,8 +19,8 @@ WeightScale.Spawn = WeightScale.Spawn or {}
 local Spawn = WeightScale.Spawn
 
 Spawn.defaultChance = 20      -- percent of the qualifying bathrooms, DeadWeight.HomeScaleFloor
-Spawn.minSquares = 9          -- room area, counting only loaded squares
-Spawn.minFree = 5             -- clear floor squares the room keeps besides the scale
+Spawn.minSquares = 8          -- room area, counting only loaded squares
+Spawn.minFree = 3             -- clear floor squares the room keeps besides the scale
 Spawn.priority = 5
 
 -- every toilet tile (fixtures_bathroom_01_0..11, fixtures_bathroom_02_*),
