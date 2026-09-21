@@ -83,7 +83,7 @@ for i, (props, face) in enumerate(zip(tiles, FACES)):
         check(flag in props and props[flag] == "", f"{tag}: has flag {flag}")
     check(props.get("CustomName") == "Digital Scale", f"{tag}: CustomName")
     check(props.get("GroupName") == "DeadWeight", f"{tag}: GroupName is ours, not vanilla's Weighing")
-    check(props.get("Surface") == "4", f"{tag}: Surface")
+    check(props.get("Surface") == "3", f"{tag}: Surface")
     check("IsSurfaceOffset" not in props, f"{tag}: art is at floor level, no IsSurfaceOffset")
     for solid in ("solid", "solidtrans", "collideN", "collideW"):
         check(solid not in props, f"{tag}: walkable, must not have {solid}")

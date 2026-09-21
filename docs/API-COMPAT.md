@@ -601,9 +601,9 @@ Client install decompiled (`projectzomboid.jar`, CFR; `ChooseGameInfo` via
   (`setRenderYOffset(currentSurface)`, minus the object's own `Surface` when it
   carries `IsSurfaceOffset`, which the vanilla Microscope does because its art is
   drawn raised). The Digital Scale therefore has NO `IsSurfaceOffset`: its art
-  (`tools/gen-scale-art.py`) is drawn at floor level, footprint 0.6 tile
+  (`tools/gen-scale-art.py`) is drawn at floor level, footprint 0.34 tile
   centred, and the same sprite sits right on a floor and, lifted by the game, on
-  a counter. `Surface=4` is the slab top in 1x pixels. Unverified until placed in
+  a counter. `Surface=3` is the slab top in 1x pixels. Unverified until placed in
   game on a floor and on a counter.
 - NOT verified: that 1x tile scale (`Core.tileScale == 1`) finds the 2x sprite
   (only 2x art is shipped); that Build 41 ignores or survives `deadweight_items.txt`

@@ -27,9 +27,9 @@ from PIL import Image, ImageDraw
 
 SS = 4                      # supersampling, downscaled with a box filter
 FRAME_W, FRAME_H = 128, 256
-LO, HI = 0.20, 0.80         # footprint of the slab in the tile (0.6 tile square)
-H = 8                       # slab thickness in 2x pixels (about 4/96 of a tile)
-BEVEL = 0.025               # inset of the top face inside its rim, tile units
+LO, HI = 0.33, 0.67         # footprint of the slab in the tile (0.34 tile square, a real bathroom scale is about 30 cm)
+H = 5                       # slab thickness in 2x pixels (about 2.5/96 of a tile, 2.5 cm)
+BEVEL = 0.015               # inset of the top face inside its rim, tile units
 
 TOP = (216, 214, 206, 255)
 RIM = (240, 238, 230, 255)
@@ -56,10 +56,10 @@ FONT = {
     "5": ["111", "100", "111", "001", "111"],
     ".": ["0", "0", "0", "0", "1"],
 }
-TEXT = "72.5"
+TEXT = "7.5"
 
-LCD_W, LCD_D = 0.44, 0.17   # tile units, along the reader's right and up axes
-LCD_MARGIN = 0.05           # from the reader's edge of the slab
+LCD_W, LCD_D = 0.22, 0.09   # tile units, along the reader's right and up axes
+LCD_MARGIN = 0.03           # from the reader's edge of the slab
 
 
 def pt(u, v, h=0.0):
@@ -92,7 +92,7 @@ def draw_face(face):
     b = BEVEL
     poly(d, [(LO + b, LO + b, H), (HI - b, LO + b, H), (HI - b, HI - b, H), (LO + b, HI - b, H)], TOP)
     # a soft glint band across the far corner of the top
-    poly(d, [(LO + 0.06, LO + 0.06, H), (LO + 0.20, LO + 0.06, H), (LO + 0.06, LO + 0.20, H)], GLINT)
+    poly(d, [(LO + 0.03, LO + 0.03, H), (LO + 0.11, LO + 0.03, H), (LO + 0.03, LO + 0.11, H)], GLINT)
     # the LCD window and its digits, in the top plane
     def lp(a, b):
         return lcd_point(face, a, b)
