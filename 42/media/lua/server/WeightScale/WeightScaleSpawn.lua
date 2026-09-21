@@ -125,25 +125,36 @@ end
 function Spawn.candidates(room)
     local squares = room:getSquares()
     local out, free = {}, 0
-    if not squares or squares:size() < Spawn.minSquares then return out, 0 end
+    -- why clear squares were turned down, for the console line
+    local why = { opening = 0, nowall = 0, neardoor = 0, nilnb = 0, notfree = 0, furn = 0 }
+    if not squares or squares:size() < Spawn.minSquares then return out, 0, why end
     for i = 0, squares:size() - 1 do
         local sq = squares:get(i)
-        if clear(sq) then
+        local isfree = type(sq.isFree) ~= "function" or sq:isFree(false)
+        local furn = hasFurniture(sq)
+        if not isfree then why.notfree = why.notfree + 1 elseif furn then why.furn = why.furn + 1 end
+        if isfree and not furn then
             free = free + 1
-            if not hasOpening(sq) then
+            if hasOpening(sq) then
+                why.opening = why.opening + 1
+            else
                 local side = wallSide(sq, room)
-                if side then
+                if not side then
+                    why.nowall = why.nowall + 1
+                    for _, name in ipairs(DIRS) do if not neighbour(sq, name) then why.nilnb = why.nilnb + 1 break end end
+                else
                     local nearDoor = false
                     for _, name in ipairs(DIRS) do
                         local n = neighbour(sq, name)
                         if n and n:getRoom() == room and hasOpening(n) then nearDoor = true break end
                     end
-                    if not nearDoor then out[#out + 1] = { sq = sq, side = side } end
+                    if nearDoor then why.neardoor = why.neardoor + 1
+                    else out[#out + 1] = { sq = sq, side = side } end
                 end
             end
         end
     end
-    return out, free
+    return out, free, why
 end
 
 local function isBathroom(room)
@@ -180,10 +191,12 @@ function Spawn.tryRoom(square, roll)
     local die = roll or ZombRand(100)
     if die >= pct then Spawn.log("bathroom at " .. at .. ", roll " .. die .. " >= " .. pct .. "%, none") return nil end
     if hasScale(room) then Spawn.log("bathroom at " .. at .. " already has one") return nil end
-    local list, free = Spawn.candidates(room)
+    local list, free, why = Spawn.candidates(room)
     local n = room:getSquares():size()
     if #list == 0 or free - 1 < Spawn.minFree then
-        Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room")
+        Spawn.log("bathroom at " .. at .. ": " .. n .. " squares, " .. free .. " clear, " .. #list .. " wall spots, no room (opening "
+            .. why.opening .. ", no wall " .. why.nowall .. ", near a door " .. why.neardoor .. ", unloaded neighbour " .. why.nilnb
+            .. "; squares not free " .. why.notfree .. ", with furniture " .. why.furn .. ")")
         return nil
     end
     local pick = list[(roll and 1) or (ZombRand(#list) + 1)]
