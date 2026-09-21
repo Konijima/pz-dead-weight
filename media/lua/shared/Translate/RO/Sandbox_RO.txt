@@ -12,6 +12,14 @@ Sandbox_RO = {
 
     Sandbox_DeadWeight_ViewDistance = "Distanþa de citire",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "La câte careuri de cântar, în aceeaºi camerã, poþi sta ºi tot îl poþi citi, ca un medic care cântãreºte un pacient. 0: doar jucãtorul aflat pe cântar îl citeºte. Implicit 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "La câte careuri de cântar, în aceeaºi camerã, poþi sta ºi tot îl poþi citi, ca un medic care cântãreºte un pacient. 0: doar jucãtorul aflat pe cântar îl citeºte. Implicit 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Cântar digital în blaturile din baie",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Cât de des apare un cântar digital în blaturile din bãi, dulapurile de sub un lavoar. 0: niciodatã. Implicit 3. Sunt afectate doar containerele umplute de acum înainte.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Cântar digital pe podeaua bãilor",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "ªansa, în procente, ca o baie suficient de mare pe care nimeni nu a vãzut-o încã sã aibã un cântar digital pe podea, lângã un perete. Sunt afectate doar camerele din zonele hãrþii neexplorate încã. 0: niciodatã. Implicit 20.",
 
 }

@@ -12,6 +12,14 @@ Sandbox_JP = {
 
     Sandbox_DeadWeight_ViewDistance = "読み取り距離",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "体重計から同じ部屋の中で何升目離れても読み取れるか。患者の体重を量る医師のように。0: 体重計に乗っているプレイヤーだけが読み取れます。デフォルトは 2。",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "体重計から同じ部屋の中で何升目離れても読み取れるか。患者の体重を量る医師のように。0: 体重計に乗っているプレイヤーだけが読み取れます。デフォルトは 1。",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "浴室のカウンターにあるデジタル体重計",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "浴室のカウンター（洗面台の下の収納）の中にデジタル体重計が現れる頻度。0: 現れない。デフォルトは 3。これから中身が入るコンテナのみ対象です。",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "浴室の床にあるデジタル体重計",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "誰も見たことのない十分な広さの浴室の床に、壁際にデジタル体重計が置かれている確率（％）。マップ上の未探索エリアの部屋のみ対象です。0: 置かれない。デフォルトは 20。",
 
 }

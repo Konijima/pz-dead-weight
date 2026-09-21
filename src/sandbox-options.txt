@@ -3,7 +3,7 @@ VERSION = 1,
 option DeadWeight.WeighCarried
 {
 	type = boolean,
-	default = false,
+	default = true,
 	page = DeadWeight,
 	translation = DeadWeight_WeighCarried,
 }
@@ -21,7 +21,27 @@ option DeadWeight.ViewDistance
 	type = integer,
 	min = 0,
 	max = 5,
-	default = 2,
+	default = 1,
 	page = DeadWeight,
 	translation = DeadWeight_ViewDistance,
+}
+
+option DeadWeight.HomeScaleSpawn
+{
+	type = integer,
+	min = 0,
+	max = 20,
+	default = 3,
+	page = DeadWeight,
+	translation = DeadWeight_HomeScaleSpawn,
+}
+
+option DeadWeight.HomeScaleFloor
+{
+	type = integer,
+	min = 0,
+	max = 100,
+	default = 20,
+	page = DeadWeight,
+	translation = DeadWeight_HomeScaleFloor,
 }

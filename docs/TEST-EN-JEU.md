@@ -29,7 +29,7 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
    rapidement (moins d'une demi-seconde), sans laisser de residu a l'ecran.
 4. **Clic gauche sur le releve.** Bascule kg <-> lb. Remonter sur la balance
    pour verifier que la nouvelle unite est utilisee.
-5. **Clic droit sur le releve.** Bascule entre le style "tete a fleau" et le
+5. **[PERIME depuis 1.3.0, voir 66j]** **Clic droit sur le releve.** Bascule entre le style "tete a fleau" et le
    style "panneau natif". Remonter sur la balance pour verifier le nouveau
    style. Sur le panneau natif, le fond sombre doit couvrir TOUT le nombre
    et l'unite (pas juste la partie gauche), en kg et en lb (corrige le
@@ -38,7 +38,7 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
 6. **Clic ailleurs a l'ecran.** Un clic hors du rectangle du releve (par
    exemple sur le monde ou un autre element d'UI) doit se comporter
    normalement, comme si le HUD n'etait pas la.
-7. **Redemarrer la partie.** L'unite et le style choisis a l'etape 4-5
+7. **Redemarrer la partie.** L'unite choisie a l'etape 4 (le style n'est plus un choix depuis 1.3.0)
    doivent avoir survecu (fichier `WeightScale_prefs.ini`).
 8. **Changer la resolution.** Depuis les options, changer la resolution
    d'ecran puis remonter sur la balance : le releve doit rester positionne
@@ -59,7 +59,7 @@ Ordre suggere. Un scale medical est `location_community_medical_01_8` ou
    Puis monter sur la balance et refaire le meme test a cote du releve. Le
    bug corrige ce jour-la tuait TOUS les menus contextuels du jeu des que le
    mod etait actif.
-10. **Clic droit sur le releve.** Sur la balance, clic droit dans le releve :
+10. **[PERIME depuis 1.3.0, voir 66j]** **Clic droit sur le releve.** Sur la balance, clic droit dans le releve :
     il change de style (fleau <-> panneau) et aucun menu du monde ne s'ouvre.
     Un pixel a cote du releve doit, lui, ouvrir le menu du monde.
 
@@ -225,9 +225,9 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 45. **Un zombie sur la balance.** Poser un zombie immobile sur la case : le
     releve affiche un poids plausible (environ 60 a 90 kg), le meme tant que
     ce zombie reste. Un autre zombie donne en general un autre poids.
-46. **Le docteur regarde.** Se tenir a 1 ou 2 cases de la balance (distance de lecture par defaut : 2), dans la meme
+46. **Le docteur regarde.** Se tenir a 1 case de la balance (distance de lecture par defaut : 1), dans la meme
     piece, un patient (autre joueur, animal ou zombie) sur la balance : le
-    releve du patient s'affiche, sans aucun son. A 2 cases, ou de l'autre
+    releve du patient s'affiche, sans aucun son. A 2 cases (distance par defaut), ou de l'autre
     cote d'une porte dans une autre piece : rien ne s'affiche.
 47. **Deux occupants.** Un deuxieme occupant monte sur la balance : la
     poutre glisse vers le nouveau total, sans rejouer l'animation d'entree,
@@ -245,7 +245,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     Aucun son quand un deuxieme occupant arrive ou repart. Le son "off" joue
     chez tout joueur qui voit le releve quand la balance redevient vide. En
     multijoueur, chaque client joue son propre son : rien n'est diffuse.
-50. **S'eloigner.** Le docteur qui s'eloigne a plus de 2 cases : le releve
+50. **S'eloigner.** Le docteur qui s'eloigne a plus de 1 case (distance par defaut) : le releve
     part tout de suite (animation de sortie, pas de son). Verifier qu'un clic
     droit dans le monde marche partout apres (l'element ne doit plus etre
     enregistre).
@@ -261,7 +261,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
     Le patient ajoute ou lache un objet : le total des deux clients suit.
     Option desactivee : les deux lisent le poids du corps seul.
 52c. **Distance de lecture.** Options de partie, page DeadWeight, "Distance de
-    lecture" (0 a 5, defaut 2, quitter et recharger la partie si l'editeur de
+    lecture" (0 a 5, defaut 1, quitter et recharger la partie si l'editeur de
     debug ne l'applique pas). A 2 : le docteur lit a 2 cases, pas a 3. A 0 :
     seul celui qui est sur la balance la lit. A 4 : lecture a 4 cases.
 52d. **Balance ramassee puis reposee.** Le docteur reste immobile a portee, un
@@ -288,7 +288,7 @@ ou la retirer (`--clean`), le jeu prefere la copie Workshop a la copie de dev.
 ## Ajout 2026-09-20, option bac a sable "Weigh what you carry"
 
 Option `DeadWeight.WeighCarried` (page "Dead Weight" des options de bac a
-sable, desactivee par defaut) : elle ne concerne QUE ce que porte chaque
+sable, activee par defaut) : elle ne concerne QUE ce que porte chaque
 joueur. Les objets poses sur la plaque comptent et sont releves sur la
 plaque dans tous les cas, option activee ou non. A tester en solo d'abord : en multijoueur le
 sac des AUTRES joueurs n'est pas releve (relais a venir), seul leur corps.
@@ -356,3 +356,86 @@ sac des AUTRES joueurs n'est pas releve (relais a venir), seul leur corps.
     `[DeadWeight] animal held at ...` puis `animal released, put back N times`
     (N > 0 : il a essaye de partir et a ete remis en place). En multijoueur : l'autre joueur voit-il l'animal
     apparaitre ? (non prouve, voir docs/API-COMPAT.md).
+
+## Ajout 2026-09-21, la Digital Scale (1.3.0, Build 42 uniquement)
+
+Meuble "Digital Scale" : petite balance de salle de bain, posee au sol ou sur
+un comptoir, 4 orientations (sprites `deadweight_digital_01_0..3`, S/E/N/W),
+lit 0 a 130 kg sur le panneau natif. Le mode debug aide (menu de debug pour
+faire apparaitre l'objet `Base.Mov_DeadWeightDigital`) ; pour le butin et
+l'apparition, commencer une NOUVELLE partie, ou explorer des zones jamais
+visitees. Le journal de l'apparition au sol (`[DeadWeight] spawn: ...` dans
+`console.txt`) ne s'ecrit qu'en mode debug.
+
+66. **Poser au sol, 4 orientations.** Avec l'objet en inventaire (ou via le
+    debug), utiliser le mode deplacement/pose des meubles : la "Digital Scale"
+    se pose sur une case de sol libre. La tourner dans les 4 orientations : le
+    sprite change de face a chaque fois, l'ecran LCD toujours du cote ou le
+    personnage le lit. Elle est praticable (on peut marcher sur sa case). La
+    ramasser : elle revient en inventaire.
+66b. **Poser sur un comptoir.** La poser sur un comptoir ou une table : elle
+    est dessinee sur le plan du comptoir, reculee du bord avant, sans etre
+    cachee par le comptoir ni le cacher (la carte de profondeur), dans les 4
+    orientations. Un objet pose sur elle est souleve sur sa plaque (pas
+    enfonce dessous). Clic droit sur une balance de comptoir : PAS d'option
+    "Step on Scale".
+66c. **Lecture au sol.** Monter sur la Digital Scale posee au sol : le releve
+    apparait en panneau natif (pas de tete a fleau), avec le son de montee, et
+    affiche le poids du personnage en kg, une decimale. Clic gauche : kg <-> lb.
+    Descendre : le releve disparait avec le son de descente. Un zombie ou un
+    animal sur la plaque est pese aussi ; un objet pose sur la plaque compte
+    (et une balance vide portant un objet est lue depuis une case voisine).
+    Le panneau reste dans la plage 0 a 130 kg (au dela, le nombre reste vrai,
+    la jauge butte a la fin).
+66d. **Se tourner vers l'ecran.** En montant sur la Digital Scale, le
+    personnage se tourne une fois pour regarder son ecran, dans les 4
+    orientations (verifier que ce n'est pas dos a l'ecran). Il peut ensuite se
+    retourner librement sans etre re-tourne.
+66e. **Ne lire que ce qu'on regarde.** Debout a une case d'une balance
+    occupee (au sol ou clinique), la regarder : le releve est la. Tourner le dos :
+    il disparait. Se retourner vers elle : il revient. Debout SUR la balance :
+    le releve reste quelle que soit la direction du regard. (Cette regle vaut
+    aussi pour la balance medicale, voir 66j.)
+66f. **Comptoir : traverser vs fenetre.** Une balance sur un comptoir bas
+    devant une fenetre. Marcher a travers la case (le comptoir bas se
+    traverse) : le personnage n'est PAS pese, pas de releve, pas de son, pas
+    de demi-tour. Escalader la fenetre par-dessus la balance : le releve
+    apparait pendant le passage (le personnage est alors au dessus du
+    comptoir). Poser un objet sur la balance de comptoir : il est pese.
+66g. **Butin : comptoirs de salle de bain.** Nouvelle partie (ou zone jamais
+    visitee), reglage "Digital Scale in bathroom counters" (`HomeScaleSpawn`)
+    a 20 : fouiller les placards sous les lavabos de plusieurs salles de bain
+    (maison, motel) : une Digital Scale y apparait de temps en temps, jamais
+    deux dans un meme comptoir, au plus une par salle de bain. Pas dans
+    l'armoire a pharmacie murale ni sur une etagere. A 0 : jamais. Par
+    defaut (3) : rare. Un comptoir deja fouille dans une sauvegarde
+    existante ne change pas.
+66h. **Apparition au sol : salle de bain de maison.** Nouvelle partie, reglage
+    "Digital Scale on bathroom floors" (`HomeScaleFloor`) a 100, aller dans une
+    zone jamais visitee (et pas encore chargee) : dans une salle de bain de
+    maison ou de motel assez grande (8 cases au moins, dont 3 restent libres a cote de la balance), une Digital
+    Scale est debout au sol CONTRE un mur, tournee dos au mur, jamais devant
+    la porte ni pres d'une fenetre-porte. Une piece qui chevauche une limite
+    de chunk peut ne pas en avoir (voir docs/BACKLOG.md).
+66i. **Pas dans les toilettes publiques, pas devant un sanitaire.** Sur le
+    meme test a 100 : une salle de bain de station-service, restaurant,
+    bureau ou autre toilette publique n'a AUCUNE balance au sol. Dans les
+    maisons et motels, jamais devant une toilette, un lavabo ou une baignoire :
+    la case en face du meuble (son orientation) reste libre. Une zone
+    deja visitee (meme rechargee) n'en recoit jamais.
+66j. **Balance medicale inchangee.** La balance de la clinique garde sa tete a
+    fleau en laiton, sa colonne, la plage habituelle (35 a 130 kg), le
+    demi-tour vers la colonne en montant, "Step on Scale" en haut du menu.
+    Clic droit sur le releve (fleau ou panneau) : ne change plus rien de
+    visible, et le menu du monde s'ouvre normalement a cote. Clic gauche :
+    kg <-> lb, le choix est retenu au redemarrage. Aucune ligne `style=` n'est
+    plus ecrite dans le fichier de preferences (un ancien fichier reste lu).
+66k. **Options de bac a sable.** Page "Dead Weight" : les deux nouvelles
+    options existent avec leurs textes (comptoirs 0 a 20, defaut 3 ; sols en
+    pourcentage, defaut 20), et les traductions s'affichent (pas de cle
+    brute). En Build 41 elles apparaissent mais n'ont aucun effet (pas de
+    Digital Scale en B41).
+66l. **Retirer le mod.** Sur une sauvegarde ou des Digital Scale ont ete
+    posees, desactiver le mod puis recharger : verifier que la partie se
+    charge et noter ce qui reste a la place (objet fantome, case vide) ; non
+    prouve, voir docs/BACKLOG.md.

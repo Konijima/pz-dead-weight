@@ -10,12 +10,18 @@
 -- cheap early return when another handler already confirmed an option, and
 -- `ISWorldObjectContextMenu.setTest()` once we know we would add ours.
 -- See docs/API-COMPAT.md for every call proven here.
+require "WeightScale/WeightScaleScales"
 require "WeightScale/WeightScaleDetect"
 require "WeightScale/WeightScaleOccupants"
 
 WeightScale = WeightScale or {}
 WeightScale.Menu = WeightScale.Menu or {}
 local Menu = WeightScale.Menu
+
+-- console notes about the animal hold, debug mode only
+local function debugLog(msg)
+    if type(getDebug) == "function" and getDebug() then print(msg) end
+end
 
 local TEX_PATH = "media/textures/WeightScale/weightscale_icon.png"
 local _icon    -- cached texture, requested once no matter how many opens
@@ -27,7 +33,7 @@ local function icon()
     return _icon or nil
 end
 
--- Reuses the mod's one sprite list (WeightScaleDetect.spriteNames): scans
+-- Reuses the mod's one scale table (WeightScale.Scales, by sprite name): scans
 -- the clicked objects, then that object's own square, exactly as vanilla
 -- handlers do (e.g. ISBBQMenu.lua walks worldobjects' squares). `worldobjects`
 -- is the plain Lua array table ISObjectClickHandler.doRClick builds with
@@ -41,9 +47,12 @@ local function findScaleSquare(worldobjects)
     for _, obj in ipairs(worldobjects) do
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
-        if name and WeightScale.Detect.spriteNames[name] then
+        if WeightScale.Scales.forSprite(name) then
+            -- a scale on a counter or table (drawn lifted by the surface's
+            -- render offset) cannot be stepped on and holds no animal
+            local lift = obj.getRenderYOffset and obj:getRenderYOffset()
             local square = obj.getSquare and obj:getSquare()
-            if square then return square end
+            if square and not (type(lift) == "number" and lift > 0) then return square end
         end
     end
     return nil
@@ -141,7 +150,7 @@ local function holdTick()
         if p.animal then
             if t >= p.releaseAt then
                 setBlock(p.animal, false)
-                print("[DeadWeight] animal released, put back " .. (p.pinned or 0) .. " times")
+                debugLog("[DeadWeight] animal released, put back " .. (p.pinned or 0) .. " times")
                 table.remove(pending, i)
             else
                 pin(p)
@@ -161,10 +170,10 @@ local function holdTick()
                     -- centred on the plate: it lands at the tile middle, which is
                     -- only near the plate's own centre
                     p.x, p.y = WeightScale.Occupants.plateCentre(p.square)
-                    print("[DeadWeight] animal held at " .. p.x .. "," .. p.y)
+                    debugLog("[DeadWeight] animal held at " .. p.x .. "," .. p.y)
                     pin(p)
                 elseif t >= p.giveUp then
-                    print("[DeadWeight] animal drop never seen, gave up")
+                    debugLog("[DeadWeight] animal drop never seen, gave up")
                     table.remove(pending, i)
                 end
             end

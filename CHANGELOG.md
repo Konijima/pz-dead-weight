@@ -8,6 +8,22 @@ note box.
 
 ## Unreleased
 
+- "Weigh what you carry" is now on by default, and the default reading distance is 1 square (was 2). Worlds that already saved these settings keep their values.
+
+## 1.3.0 - 2026-09-21
+
+The Digital Scale: a home scale you can place, and find in bathrooms. Build 42 only.
+
+- New furniture, Build 42 only: the Digital Scale, a small bathroom scale you can place on the floor or on a counter, in four facings, and pick up again.
+- The Digital Scale reads weight: people, animals and zombies on the floor, and items on it or on a counter. It shows the plain native panel and reads 0 to 130 kg. The clinic scale keeps its beam head readout.
+- The Digital Scale can now turn up: inside bathroom counters, the cupboards under a basin (new sandbox setting "Digital Scale in bathroom counters", 0 to 20, default 3, 0 is never), and standing on the floor against a wall in big enough bathrooms that nobody has seen yet (new sandbox setting "Digital Scale on bathroom floors", percent, default 20, 0 is never). Only new loot and areas of the map you have not explored are affected: rooms you have already visited never get one. A counter never holds two, and a bathroom gives out at most one from its counters. Only in homes and motels, never a public restroom, and never in front of a toilet, basin or other fixture. Build 42 only.
+- The right click style switch between the beam head and the panel is gone: each scale now has its own look. Left click still switches kg and lb.
+- Stepping onto the Digital Scale turns you to look at its screen, like the clinic scale's column.
+- You only read a scale you are facing. Turn away and the readout goes; turn back and it returns.
+- On a counter, the Digital Scale sits back from the front edge and items you set on it are lifted onto its plate. "Step on Scale" is not offered for a scale on a counter.
+- A survivor walking through the square of a scale on a counter (for example a low counter in front of a window) is no longer weighed, nor turned to face it. Climbing through the window over the scale still reads.
+- Fixed the step on and off sound with two scales in reach: it no longer plays just because a scale with something on it comes into view or goes out of view. It plays only when something is put on, or taken off, the scale you are watching.
+
 ## 1.2.0 - 2026-09-21
 
 The scale reads what lies on it and what you carry, and it works better with other people around.

@@ -12,6 +12,14 @@ Sandbox_DE = {
 
     Sandbox_DeadWeight_ViewDistance = "Ablesedistanz",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Wie viele Felder von der Waage entfernt, im selben Raum, man stehen und sie trotzdem ablesen kann, wie ein Arzt, der einen Patienten wiegt. 0: Nur der Spieler auf der Waage liest sie ab. Standard 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digitale Waage in Badezimmer-Waschtischen",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Wie oft eine digitale Waage in Badezimmer-Waschtischen auftaucht, den Schränken unter einem Waschbecken. 0: nie. Standard 3. Nur Behälter, die ab jetzt befüllt werden, sind betroffen.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Digitale Waage auf Badezimmerböden",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Prozentuale Chance, dass ein ausreichend großes Badezimmer, das noch nie jemand gesehen hat, eine digitale Waage auf dem Boden an einer Wand stehen hat. Nur Räume in noch unerforschten Bereichen der Karte sind betroffen. 0: nie. Standard 20.",
 
 }

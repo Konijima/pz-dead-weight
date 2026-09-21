@@ -303,7 +303,7 @@ tick(0, 2)
 NOW = NOW + Core.T.offEnd + 1
 hud(0):tick()
 
--- 7. different room sees nothing, 2 squares away sees nothing -----------------
+-- 7. different room sees nothing, 2 squares away sees nothing (the default reach is 1) -----------------
 put(pat, SX, SY)
 put(doc, 20, 20)
 tick(0)
@@ -318,15 +318,18 @@ put(doc, 13, 10)
 tick(0, 4)
 check(mode(0) == "idle" and Detect.players[0].scaleSquare == nil, "3 squares away sees nothing by default")
 put(doc, 12, 10)
+tick(0, 4)
+check(mode(0) == "idle" and Detect.players[0].scaleSquare == nil, "2 squares away sees nothing by default")
+put(doc, 11, 10)
 tick(0, 2)
-check(mode(0) == "on" and near(hud(0).target, 72.41), "2 squares away reads the scale by default")
+check(mode(0) == "on" and near(hud(0).target, 72.41), "1 square away reads the scale by default")
 local savedSandbox = SandboxVars
 local function leaveAndSettle()
     put(doc, 20, 20); tick(0, 4)
     NOW = NOW + Core.T.offEnd + 1
     hud(0):tick()
 end
-check(Detect.viewDistance() == 2, "ViewDistance defaults to 2 when the option is missing")
+check(Detect.viewDistance() == 1, "ViewDistance defaults to 1 when the option is missing")
 SandboxVars = { DeadWeight = { ViewDistance = 1 } }
 leaveAndSettle()
 put(doc, 12, 10); tick(0, 4)
@@ -335,6 +338,10 @@ SandboxVars = { DeadWeight = { ViewDistance = 0 } }
 put(doc, 20, 20); tick(0, 2)
 put(doc, 11, 10); tick(0, 4)
 check(Detect.viewDistance() == 0 and Detect.players[0].scaleSquare == nil, "ViewDistance 0: even 1 square away sees nothing")
+SandboxVars = { DeadWeight = { ViewDistance = 2 } }
+put(doc, 20, 20); tick(0, 2)
+put(doc, 12, 10); tick(0, 2)
+check(Detect.viewDistance() == 2 and mode(0) == "on", "ViewDistance 2: 2 squares away reads the scale")
 SandboxVars = { DeadWeight = { ViewDistance = 3 } }
 put(doc, 20, 20); tick(0, 2)
 put(doc, 13, 10); tick(0, 2)
@@ -342,7 +349,7 @@ check(Detect.viewDistance() == 3 and mode(0) == "on", "ViewDistance 3: 3 squares
 SandboxVars = { DeadWeight = { ViewDistance = 99 } }
 check(Detect.viewDistance() == Detect.maxRadius, "an absurd ViewDistance is clamped")
 SandboxVars = { DeadWeight = { ViewDistance = "x" } }
-check(Detect.viewDistance() == 2, "a non numeric ViewDistance falls back to the default")
+check(Detect.viewDistance() == 1, "a non numeric ViewDistance falls back to the default")
 SandboxVars = savedSandbox
 leaveAndSettle()
 put(doc, 11, 11)  -- dz 0, 1 square diagonally
@@ -830,7 +837,7 @@ do
     sqL.scale = true
     put(pat, 95, 95)
     put(doc, 20, 20); tick(0, 2)
-    put(doc, 97, 95); tick(0, 3)
+    put(doc, 96, 95); tick(0, 3)
     check(mode(0) == "on" and calls > 0, "clear line of sight: the scale is read")
     blocked = true                            -- a wall goes up, the viewer never moved
     tick(0, 2 * Detect.losEvery)
@@ -848,7 +855,7 @@ do
     NOW = NOW + Core.T.offEnd + 1
     hud(0):tick()
     blocked = true
-    put(doc, 97, 95); tick(0, 4)
+    put(doc, 96, 95); tick(0, 4)
     check(Detect.players[0].scaleSquare == nil, "arriving behind a wall: no scale found")
     put(doc, 95, 95); tick(0, 3)
     check(Detect.players[0].scaleSquare == sqL and mode(0) == "on", "standing on the scale needs no line of sight")
@@ -858,13 +865,13 @@ do
     put(doc, 20, 20); tick(0, 4)
     NOW = NOW + Core.T.offEnd + 1
     hud(0):tick()
-    put(doc, 97, 95); tick(0, 3)
+    put(doc, 96, 95); tick(0, 3)
     check(mode(0) == "on", "lineClear throwing counts as visible")
     LosUtil = nil
     put(doc, 20, 20); tick(0, 4)
     NOW = NOW + Core.T.offEnd + 1
     hud(0):tick()
-    put(doc, 97, 95); tick(0, 3)
+    put(doc, 96, 95); tick(0, 3)
     check(mode(0) == "on", "no LosUtil at all counts as visible")
     remove(pat)
     put(doc, 20, 20); tick(0, 4)
@@ -876,7 +883,7 @@ end
 
 -- 16d. two scales side by side: the nearest one with something to weigh wins --
 do
-    sandbox(nil)
+    sandbox({ DeadWeight = { ViewDistance = 2 } })   -- two scales, one and two squares from the viewer
     local sA, sB = squareAt(100, 100), squareAt(101, 100)
     sA.scale, sB.scale = true, true
     local p2 = makePlayer(7, 60)
@@ -917,6 +924,44 @@ do
     sA.occupants, sB.occupants = {}, {}
 end
 
+-- 16e. two scales: a cue belongs to one scale, another one entering or leaving reach is silent --
+do
+    sandbox({ DeadWeight = { ViewDistance = 2 } })
+    local sA, sB = squareAt(110, 100), squareAt(114, 100)
+    sA.scale, sB.scale = true, true
+    local vis = makePlayer(7, 60)
+    local function settle()
+        NOW = NOW + Core.T.offEnd + 1
+        hud(0):tick()
+    end
+    put(pat, 114, 100)                      -- a patient stays on B, out of reach from 111
+    put(vis, 30, 30)
+    put(doc, 30, 31); tick(0, 4)
+    SOUND = {}
+    put(doc, 111, 100); tick(0, 4)
+    check(Detect.players[0].scales[1] == sA and #Detect.players[0].scales == 1 and mode(0) ~= "on", "only the empty scale A is in reach")
+    put(doc, 112, 100); tick(0, 4)
+    check(mode(0) == "on" and Detect.players[0].scaleSquare == sB and #SOUND == 0,
+        "occupied B comes into reach beside an empty A watched before: read in silence, got " .. sounds())
+    put(doc, 111, 100); tick(0, 4)
+    check(mode(0) == "off" and #SOUND == 0, "occupied B leaves reach while empty A stays: off, in silence, got " .. sounds())
+    settle()
+    put(doc, 112, 100); tick(0, 4)
+    settle()
+    SOUND = {}
+    put(pat, 30, 32); tick(0, 4)            -- the patient leaves B, viewer still reads it
+    check(sounds() == "WeightScaleOff@0", "the patient leaving the shown scale is heard, got " .. sounds())
+    settle()
+    put(vis, 110, 100); tick(0, 4)          -- someone steps on A, which the viewer watched empty
+    check(mode(0) == "on" and sounds() == "WeightScaleOff@0,WeightScaleOn@0", "someone steps on the watched scale A: on cue, got " .. sounds())
+    remove(vis); remove(pat)
+    put(doc, 20, 20); tick(0, 4)
+    settle()
+    PLAYERS[7] = nil
+    sA.scale, sB.scale = false, false
+    sA.occupants, sB.occupants = {}, {}
+end
+
 -- 17. each scale sprite has its own plate spot in the tile -------------------
 local function spriteObj(name) return { getSprite = function() return { getName = function() return name end } end } end
 local function spriteSquare(x, y, name)
@@ -937,6 +982,116 @@ check(Occupants.onPlate(sq9, at(sq9, 0.48, 0.37)) == true, "sprite _9: its own p
 check(Occupants.onPlate(sq9, at(sq9, 0.5, 0.72)) == false, "sprite _9: the front of the tile is beside the plate")
 check(Occupants.onPlate(sq9, at(sq9, 0.33, 0.43)) == true, "sprite _9: a spot both plates share is on it")
 check(Occupants.onPlate(sqU, at(sqU, 0.5, 0.5)) == true and Occupants.onPlate(sqU, at(sqU, 0.9, 0.9)) == false, "an unknown sprite falls back to the middle of the tile")
+
+-- 18. a viewer turned away from the scale reads nothing --------------------
+do
+    sandbox({ DeadWeight = { ViewDistance = 2 } })
+    for i = #SOUND, 1, -1 do SOUND[i] = nil end
+    local viewer = makePlayer(0, 80)
+    local patient = makePlayer(1, 72.4)
+    put(patient, 10, 10)
+    put(viewer, 12, 10)
+    Detect.clear(0)
+    local heading = { x = -1, y = 0 }   -- towards the scale at (10.5, 10.5) from (12.5, 10.5)
+    function viewer:getForwardDirection()
+        return { getX = function() return heading.x end, getY = function() return heading.y end }
+    end
+    tick(0, 4)
+    check(mode(0) == "on" and near(hud(0).target, 72.4), "facing the scale from 2 squares: it reads")
+    heading.x, heading.y = 1, 0
+    tick(0)
+    check(mode(0) == "off", "turning away drops the reading at once")
+    check(not sounds():find("WeightScaleOff"), "turning away is silent, got " .. sounds())
+    NOW = NOW + Core.T.offEnd + 1
+    hud(0):tick()
+    tick(0, 4)
+    check(mode(0) ~= "on", "still turned away: nothing shows")
+    heading.x, heading.y = -1, 0
+    tick(0)
+    check(mode(0) == "on" and near(hud(0).target, 72.4), "turning back reads it again at once")
+    check(not sounds():find("WeightScaleOn@0,WeightScaleOn"), "turning back earns no second on cue, got " .. sounds())
+    heading.x, heading.y = 0, 1   -- 90 degrees off
+    tick(0)
+    check(mode(0) == "off", "a scale at the side is not faced")
+    -- standing on the plate needs no facing
+    put(viewer, 10, 10)
+    heading.x, heading.y = 1, 0
+    tick(0, 3)
+    check(mode(0) == "on", "on the scale itself the facing does not matter")
+    -- a player object without getForwardDirection still reads (API unproven)
+    viewer.getForwardDirection = nil
+    put(viewer, 12, 10)
+    tick(0, 4)
+    check(mode(0) == "on", "no getForwardDirection: counts as facing")
+    remove(patient)
+end
+
+-- 19. a scale on a counter: items sit on the counter, not on the floor beneath -
+do
+    sandbox({ DeadWeight = { ViewDistance = 2 } })
+    local sq = spriteSquare(90, 90, "deadweight_digital_01_0")
+    sq.objects[1].getRenderYOffset = function() return 34 end   -- a 34 px counter
+    local base = 34 / 96
+    local function itemAt(kg, oz)
+        local it = item(kg, 0.5, 0.5)
+        it.oz = oz
+        return it
+    end
+    local onCounter, underCounter, lifted = itemAt(1.1, base), itemAt(30, 0), itemAt(2, base + 0.03)
+    sq.floor = { onCounter, underCounter, lifted }
+    local out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 3.1), "counter scale: the item on the counter counts, the floor one does not, got " .. tostring(out[1]))
+    check(near(onCounter.oz, base + 0.03), "the counter item is raised onto the plate, got " .. tostring(onCounter.oz))
+    check((lifted.lifts or 0) == 0 and (underCounter.lifts or 0) == 0, "an item already on the plate, or beneath, is not written")
+    -- a survivor walking through a counter scale's square is at floor height:
+    -- not weighed, unless climbing through the window over it
+    sq.floor = {}
+    local walker = makePlayer(1, 80)
+    put(walker, 90, 90)
+    walker.sx, walker.sy = 0.5, 0.37   -- on the S plate
+    ClimbThroughWindowState = { instance = function() return "climb" end }
+    walker.getCurrentState = function() return "walk" end
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 0, "a survivor walking through a counter scale's square is not weighed, got " .. #out)
+    walker.getCurrentState = function() return "climb" end
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 80), "climbing through the window over a counter scale reads, got " .. #out)
+    walker.getCurrentState = nil
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 0, "no state API on a counter scale: not weighed")
+    remove(walker)
+    ClimbThroughWindowState = nil
+    -- and being in that square is not "on the scale": no cue, no turn
+    local guest = makePlayer(0, 70)
+    put(guest, 90, 90)
+    Detect.clear(0)
+    tick(0, 3)
+    check(not Detect.players[0].onScale and not Detect.players[0].pendingFace, "a square with a counter scale is not stood on")
+    remove(guest)
+    Detect.clear(0)
+    -- the same scale on the floor: floor items count as before
+    sq.objects[1].getRenderYOffset = nil
+    sq.floor = { itemAt(30, 0) }
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 30), "floor scale: an item at floor height counts")
+end
+
+
+-- 20. the readout style and range follow the scale that is read ---------------
+do
+    sandbox({ DeadWeight = { ViewDistance = 2 } })
+    local sqD = spriteSquare(90, 90, "deadweight_digital_01_0")
+    sqD.floor = { item(1.1, 0.5, 0.5) }
+    local viewer = makePlayer(0, 80)
+    put(viewer, 91, 90)
+    Detect.clear(0)
+    tick(0, 4)
+    check(mode(0) == "on" and hud(0).style == "panel" and hud(0).range == WeightScale.Geo.weightDigital,
+        "an item on a digital scale reads with the panel over 0..130, got " .. tostring(hud(0).style))
+    check(near(hud(0).target, 1.1), "the panel reads the item's true weight")
+    sqD.floor = {}
+    tick(0, 4)
+end
 
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

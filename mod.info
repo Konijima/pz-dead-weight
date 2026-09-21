@@ -1,4 +1,4 @@
 name=Dead Weight
 id=DeadWeight
-description=Step on the clinic's beam scale to read your exact weight, kg or lb, one decimal (left click switches unit, right click switches beam head / native panel). The character screen only shows the category in words. Turns you to face the scale, two short sounds, a right click "Step on Scale" option, splitscreen aware, 28 languages. Weighs everyone on the scale (survivors, animals, zombies) and lets you read a patient from a couple of squares away. Replaces the old "Weight Scale" (Workshop item 2833096579); disable it first.
+description=Step on the clinic's beam scale to read your exact weight, kg or lb, one decimal (left click switches unit). The character screen only shows the category in words. Turns you to face the scale, two short sounds, a right click "Step on Scale" option, splitscreen aware, 28 languages. Weighs everyone on the scale (survivors, animals, zombies) and lets you read a patient standing next to the scale. The Digital Scale furniture is Build 42 only. Replaces the old "Weight Scale" (Workshop item 2833096579); disable it first.
 poster=poster.png

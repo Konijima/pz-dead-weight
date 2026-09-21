@@ -14,14 +14,20 @@ Supports Build 41 and Build 42 from one repository.
 ```
 src/          hand edited source, the ONLY place to make changes
   lua/client/WeightScale/   Lua modules, see Module map below
+  lua/server/WeightScale/   Build 42 only: Digital Scale loot (Distributions) and world spawn (Spawn)
   translate/strings.json    every translation string, one file, all languages
-  sandbox-options.txt       the DeadWeight.* sandbox options (WeighCarried, WholeSquare, ViewDistance)
-  textures/, sounds/, scripts/
+  sandbox-options.txt       the DeadWeight.* sandbox options (WeighCarried, WholeSquare,
+                            ViewDistance, HomeScaleSpawn, HomeScaleFloor; the last two only
+                            act on Build 42, the file itself is shared with B41)
+  tiles/                    the Digital Scale's four faces (digital_scale_{S,E,N,W}.png), hand
+                            refinable art, the source of the tile pack
+  textures/, sounds/, scripts/   scripts/deadweight_items.txt (the movable item) is B42 only
 
 mod.info      Build 41 mod.info, root of the repo (root IS the mod folder)
 media/        Build 41 generated tree (lua, textures, sound, scripts, sandbox-options.txt)
 42/           Build 42 generated tree (mod.info, lua, icon, posters)
-common/       Build 42 generated tree (textures, sound, scripts, sandbox-options.txt)
+common/       Build 42 generated tree (textures, sound, scripts, sandbox-options.txt, and the
+              Digital Scale tile pack: DeadWeightDigital.tiles, texturepacks/, depthmaps/, tileGeometry.txt)
 ```
 
 Never hand edit `media/`, `42/` or `common/`. After any change under `src/`:
@@ -37,6 +43,17 @@ Generators:
   from `docs/maquettes/v2/assets/geometry.json`, the approved design
   contract (HUD layout, weight range, band thresholds and colours). Change
   the design there, never in `WeightScaleGeo.lua`. `--check` detects drift.
+- `tools/gen-tiles.py`: builds the Digital Scale's tile pack (`.pack` texture
+  page, binary `.tiles` definitions, depth map, empty `tileGeometry.txt`)
+  under `common/media/` from `src/tiles/*.png` and its `TILE_PROPS`. Called
+  by `sync.sh`; `--check` detects drift (also run by `tests/run.sh`, and
+  `tests/tiles_spec.py` parses the output back). `42/mod.info` `pack=` and
+  `tiledef=` point at it.
+- `tools/gen-scale-art.py`: draws the four `src/tiles/` faces (a flat slab in
+  the game's isometric projection). Run by hand, NOT by `sync.sh`, so a hand
+  refined PNG is never overwritten.
+- `tools/changelog-steam.py`: prints a `CHANGELOG.md` section as the Steam
+  change note (see README, Releasing).
 - `tools/gen-translate.py`: reads `src/translate/strings.json`, writes the
   per build, per language translation files below. Called by `sync.sh`;
   also takes a target directory for a drift check (used by `check-sync.sh`
@@ -54,28 +71,54 @@ maintained and must agree on `id=` and `name=` (`tests/modinfo_spec.py`).
 - `WeightScaleCore.lua`: pure logic, no game API (weight to screen X,
   `bandOf`, one decimal formatting, kg/lb conversion), ported from the
   maquette's own JS sampler so the bench can diff Lua against it.
-- `WeightScaleGeo.lua`: generated, see above. HUD geometry, weight range,
-  band thresholds and colours.
+- `WeightScaleGeo.lua`: generated, see above. HUD geometry, weight ranges
+  (the clinic scale's, and the Digital Scale's 0 to 130 kg), band thresholds
+  and colours.
+- `WeightScaleScales.lua`: pure data, no game API. The one table of every
+  scale sprite (the two clinic sprites and the four Digital Scale facings),
+  keyed by sprite name: kind (`medical`/`digital`), HUD style (`beam`/`panel`),
+  plate centre and half size, plate height, whether it can be stood on,
+  whether it has a column to face or a fixed `faceDir`, and which weight
+  range it maps. Detect, Occupants, HUD, Menu and Core look scales up here; a
+  new scale is one entry, not a lookup added in several modules.
 - `WeightScaleDetect.lua`: per local player presence detection (is this
   player standing on a scale tile, or within `DeadWeight.ViewDistance`
-  squares of one in the same room and in line of sight), occupancy polling
+  squares of one in the same room and in line of sight, and facing it: a
+  scale other than the one under the player is read only while in front of
+  them, which also applies to the clinic scale), occupancy polling
   of the nearest scale that has something on it, with a debounce,
-  splitscreen aware.
+  splitscreen aware. A scale drawn on a counter is never "stood on" (no
+  step cue, no turn to face it).
 - `WeightScaleOccupants.lua`: who stands on the scale tile and what each
-  weighs (player, animal, zombie); the game API for it lives here. With the
+  weighs (player, animal, zombie); the game API for it lives here. The plate
+  box comes from the `Scales` entry; items dropped on a plate are lifted onto
+  it, and a character in a counter scale's square counts only while above the
+  counter (climbing through a window over it), not walking past. With the
   `DeadWeight.WeighCarried` sandbox option on it also adds each local
   player's carried mass and the tile's floor items (`Occupants.remoteLoad`
   is the relay seam for remote players).
 - `WeightScaleHUD.lua`: the on screen readout, an `ISUIElement` sized to
-  the readout, added to and removed from the UI manager as it appears.
-- `WeightScalePrefs.lua`: per user prefs (unit, beam/panel style), read and
-  written with core Lua file APIs stable across both builds.
+  the readout, added to and removed from the UI manager as it appears. The look (beam
+  head or native panel) and weight range follow the scale's `Scales` entry;
+  there is no right click style switch any more.
+- `WeightScalePrefs.lua`: per user prefs (the unit only; an old file's
+  `style=` line still loads and is ignored), read and written with core Lua
+  file APIs stable across both builds.
 - `WeightScaleSound.lua`: step on/off cues, one shot per transition; every
   viewer plays them locally (no network) when the scale goes empty <-> occupied.
 - `WeightScaleMenu.lua`: the right click "Step on Scale" context menu option,
-  and "Put Animal on Scale" when the player holds an animal (Build 42).
+  and "Put Animal on Scale" when the player holds an animal (Build 42). Neither is offered for a scale drawn on a
+  counter.
 - `WeightScaleCharScreen.lua`: patches the Info tab's weight line to show
   the category word instead of the number.
+- `lua/server/WeightScale/WeightScaleDistributions.lua` (Build 42 only): adds the
+  Digital Scale to the bathroom counter loot lists at `OnPreDistributionMerge`,
+  weight from `DeadWeight.HomeScaleSpawn`.
+- `lua/server/WeightScale/WeightScaleSpawn.lua` (Build 42, server and single
+  player only): puts a Digital Scale on the floor of a big enough home or motel bathroom, in
+  new chunks only (`MapObjects.OnNewWithSprite` on toilet sprites, examined at
+  `LoadChunk`), against a wall, chance `DeadWeight.HomeScaleFloor`. Never uses
+  `RoomDef.explored`, see `docs/API-COMPAT.md`.
 - `WeightScaleMain.lua`: wires the modules to game events; computes
   nothing itself.
 
@@ -91,9 +134,12 @@ bash tools/sync.sh && bash tools/check-sync.sh && bash tests/run.sh
 and fails loud, not silently, if one is missing. It runs, in order: the
 geometry generator drift check, the `mod.info` guard (id/name match,
 poster/icon files exist, no U+2014 anywhere tracked, description tags
-space delimited), the translation bench, the `workshop.txt` generator
-drift check, six Lua unit suites (core math, HUD lifecycle, context menu,
-facing the scale, occupancy, the Info tab patch), and a JS/Lua parity check of the
+space delimited, Workshop description under Steam's 8000 character cap), the translation bench, the `workshop.txt` generator
+drift check, the tile pack drift check and its parse back bench, the
+changelog guard (top released version equals `42/mod.info` `modversion=`, an
+`Unreleased` section exists), nine Lua unit suites (core math, HUD lifecycle,
+step sound volume, context menu, facing the scale, occupancy, the scale
+table, loot and world spawn, the Info tab patch), and a JS/Lua parity check of the
 animation sampler against the maquette's own `anim.js`.
 
 Packing for the Workshop:

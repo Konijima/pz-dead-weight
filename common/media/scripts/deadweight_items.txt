@@ -1,0 +1,16 @@
+module Base
+{
+    /* The Digital Scale furniture (Build 42 only, see tools/gen-tiles.py): the
+       movable item that places the tile. Modelled on vanilla Mov_Microscope
+       (media/scripts/generated/items/moveable.txt). The sprite lives in the
+       mod's own tile pack, common/media/texturepacks/DeadWeightDigital.pack. */
+    item Mov_DeadWeightDigital
+    {
+        DisplayCategory = Furniture,
+        DisplayName = Digital Scale,
+        ItemType = base:moveable,
+        Icon = default,
+        Weight = 0.5,
+        WorldObjectSprite = deadweight_digital_01_0,
+    }
+}

@@ -12,6 +12,14 @@ Sandbox_FI = {
 
     Sandbox_DeadWeight_ViewDistance = "Lukuetäisyys",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Kuinka monen ruudun päässä vaa'asta samassa huoneessa voi seistä ja silti lukea sen, kuten lääkäri, joka punnitsee potilasta. 0: vain vaa'alla oleva pelaaja lukee sen. Oletus 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Kuinka monen ruudun päässä vaa'asta samassa huoneessa voi seistä ja silti lukea sen, kuten lääkäri, joka punnitsee potilasta. 0: vain vaa'alla oleva pelaaja lukee sen. Oletus 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Digitaalinen vaaka kylpyhuoneen pöytätasoissa",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Kuinka usein kylpyhuoneiden pöytätasoilta, eli pesualtaan alla olevista kaapeista, löytyy digitaalinen vaaka. 0: ei koskaan. Oletus 3. Vaikuttaa vain säiliöihin, jotka täytetään tästä lähtien.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Digitaalinen vaaka kylpyhuoneiden lattioilla",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Prosentin todennäköisyys sille, että riittävän suuressa kylpyhuoneessa, jota kukaan ei ole vielä nähnyt, on digitaalinen vaaka lattialla seinää vasten. Vaikuttaa vain kartan vielä tutkimattomien alueiden huoneisiin. 0: ei koskaan. Oletus 20.",
 
 }

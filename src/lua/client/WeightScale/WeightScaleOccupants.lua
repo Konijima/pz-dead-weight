@@ -18,13 +18,15 @@
 -- settings: world item getUnequippedWeight, a dropped bag includes its
 -- contents. A scale with something on it reads it for a viewer within reach,
 -- as if someone stood there (a dead body is a separate object and is not
--- weighed). Sandbox option DeadWeight.WeighCarried (default off) only decides
+-- weighed). Sandbox option DeadWeight.WeighCarried (default on in the sandbox file;
+-- a missing value reads as off) only decides
 -- whether each PLAYER occupant also adds what it carries
 -- (inventory:getContentsWeight(), worn items and bag contents at 100%, NOT
 -- getInventoryWeight which counts worn at 30% nor getCapacityWeight which is 0
 -- for unlimited carry admins). Zombies and animals stay body only.
 require "WeightScale/WeightScaleGeo"
 require "WeightScale/WeightScaleCore"
+require "WeightScale/WeightScaleScales"
 
 WeightScale = WeightScale or {}
 WeightScale.Occupants = WeightScale.Occupants or {}
@@ -162,23 +164,22 @@ local function massOf(o, carry)
 end
 
 -- Only what stands or lies on the plate counts, not everything in the square.
--- Each of the two scale sprites draws its plate at its own spot in the tile
--- and about 0.55 tile across, so the area is a box of half-size plateHalf
--- around a per sprite centre (tile fractions, x grows right-down on screen,
--- y grows left-down, i.e. towards the front). The centres were measured off
+-- Each scale sprite draws its plate at its own spot in the tile and about
+-- 0.55 tile across, so the area is a box of half-size `half` around a per
+-- sprite centre (tile fractions, x grows right-down on screen, y grows
+-- left-down, i.e. towards the front). Centre, half and plateTop come from the
+-- sprite's entry in WeightScale.Scales. The medical centres were measured off
 -- the sprite art itself (Tiles2x.pack, location_community_medical_01_8 and
 -- _9: the plate pixels below the column, converted to tile coordinates with
 -- the plate top about 4 px above the ground), not by eye. A square whose
--- sprite is unknown falls back to the middle of the tile. A character or item
+-- sprite is unknown falls back to the middle of the tile with plateHalf and
+-- plateTop below (also the medical values). A character or item
 -- outside the box is visibly beside the scale and is left out; anything that
 -- cannot tell where it is counts, as the whole tile did before. Sandbox
 -- option DeadWeight.WholeSquare (default off, nil reads as off) turns the
 -- area off, then the whole square counts as it did in 1.1.0.
 Occupants.plateHalf = 0.28
-Occupants.plateCentres = {
-    location_community_medical_01_8 = { 0.33, 0.43 },
-    location_community_medical_01_9 = { 0.48, 0.37 },
-}
+Occupants.plateTop = 0.04   -- see liftOntoPlate
 local MIDDLE = { 0.5, 0.5 }
 
 function Occupants.plateOnly()
@@ -186,54 +187,58 @@ function Occupants.plateOnly()
     return not (type(sv) == "table" and sv.WholeSquare == true)
 end
 
--- the plate centre of the scale sprite on this square, by sprite name; one
--- walk of the square's few objects, once per read
+-- the plate box of the scale sprite on this square, from its Scales entry
+-- ({plate, half, plateTop}); an unknown sprite gets the middle of the tile
+-- with the default half and plateTop. One walk of the square's few objects,
+-- once per read
+local DEFAULT_BOX = { plate = MIDDLE, half = Occupants.plateHalf, plateTop = Occupants.plateTop }
+
 local function plateOf(square)
-    if type(square.getObjects) ~= "function" then return MIDDLE end
+    if type(square.getObjects) ~= "function" then return DEFAULT_BOX end
     local objs = square:getObjects()
-    if not objs then return MIDDLE end
+    if not objs then return DEFAULT_BOX end
     for i = 0, objs:size() - 1 do
         local obj = objs:get(i)
         local sprite = obj and type(obj.getSprite) == "function" and obj:getSprite()
         local name = sprite and type(sprite.getName) == "function" and sprite:getName()
-        local c = name and Occupants.plateCentres[name]
-        if c then return c end
+        local e = name and WeightScale.Scales.forSprite(name)
+        if e then return e end   -- the entry itself, no allocation per read
     end
-    return MIDDLE
+    return DEFAULT_BOX
 end
 
 -- world x, y of the plate centre of the scale on this square (used to stand a
 -- dropped animal in the middle of the plate, WeightScaleMenu)
 function Occupants.plateCentre(square)
-    local c = plateOf(square)
+    local c = plateOf(square).plate
     return square:getX() + c[1], square:getY() + c[2]
 end
 
-local function inArea(plate, fx, fy)
-    local h = Occupants.plateHalf + 1e-6   -- float slack: a spot exactly on the edge is on
-    return math.abs(fx - plate[1]) <= h and math.abs(fy - plate[2]) <= h
+local function inArea(box, fx, fy)
+    local h = box.half + 1e-6   -- float slack: a spot exactly on the edge is on
+    return math.abs(fx - box.plate[1]) <= h and math.abs(fy - box.plate[2]) <= h
 end
 
 -- a floor item: its 0..1 offset inside the square
-local function itemOnPlate(plate, wo)
+local function itemOnPlate(box, wo)
     if not Occupants.plateOnly() then return true end
     if type(wo.getOffX) ~= "function" or type(wo.getOffY) ~= "function" then return true end
     local ox, oy = wo:getOffX(), wo:getOffY()
     if type(ox) ~= "number" or type(oy) ~= "number" then return true end
-    return inArea(plate, ox, oy)
+    return inArea(box, ox, oy)
 end
 
 -- a character (player, animal, zombie): world position minus the square's
--- corner, both floats and the square's ints in the same world units. plate is
--- optional, looked up from the square when a caller has not already done it.
-local function charOnPlate(plate, square, o)
+-- corner, both floats and the square's ints in the same world units. box is
+-- the plateOf result, looked up once per read by the caller.
+local function charOnPlate(box, square, o)
     if type(o.getX) ~= "function" or type(o.getY) ~= "function"
         or type(square.getX) ~= "function" or type(square.getY) ~= "function" then return true end
     local x, y, sx, sy = o:getX(), o:getY(), square:getX(), square:getY()
     if type(x) ~= "number" or type(y) ~= "number" or type(sx) ~= "number" or type(sy) ~= "number" then
         return true
     end
-    return inArea(plate, x - sx, y - sy)
+    return inArea(box, x - sx, y - sy)
 end
 
 function Occupants.onPlate(square, o)
@@ -247,31 +252,73 @@ end
 -- the plate's thickness, tune by eye) is raised onto it with the game's own
 -- setOffset, which redraws the chunk and syncs the item to the server and the
 -- other clients; an item already at that height is left alone, so this writes
--- once per item.
-Occupants.plateTop = 0.04
+-- once per item. plateTop is the scale's own (Scales entry), Occupants.plateTop
+-- for an unknown sprite.
+-- A scale standing on a counter or table is drawn lifted by the surface's
+-- height (the game's setRenderYOffset, in 1x pixels, 96 to a tile: a moveable
+-- onto a surface, ISMoveableSpriteProps), and an item dropped there lies at
+-- that same surface height. `base` is that height in tile fractions, 0 for a
+-- scale on the floor; the plate top is base + plateTop. Nil when the square
+-- has no scale object or the call is missing.
+local function baseZ(square)
+    if type(square.getObjects) ~= "function" then return 0 end
+    local objs = square:getObjects()
+    if not objs then return 0 end
+    for i = 0, objs:size() - 1 do
+        local obj = objs:get(i)
+        local sprite = obj and type(obj.getSprite) == "function" and obj:getSprite()
+        local name = sprite and type(sprite.getName) == "function" and sprite:getName()
+        if name and WeightScale.Scales.forSprite(name) then
+            local y = type(obj.getRenderYOffset) == "function" and obj:getRenderYOffset()
+            return type(y) == "number" and y > 0 and y / 96 or 0
+        end
+    end
+    return 0
+end
 
-local function liftOntoPlate(wo)
+local BASE_SLACK = 0.02   -- an item within this of the surface is on it, below it is on the floor under it
+
+local function liftOntoPlate(box, wo, base)
     if not Occupants.plateOnly() then return end   -- the whole square counts: nothing to sit on
     if type(wo.getOffX) ~= "function" or type(wo.getOffY) ~= "function"
         or type(wo.getOffZ) ~= "function" or type(wo.setOffset) ~= "function" then return end
     local oz = wo:getOffZ()
-    if type(oz) ~= "number" or oz >= Occupants.plateTop - 0.001 then return end
-    wo:setOffset(wo:getOffX(), wo:getOffY(), Occupants.plateTop)
+    local top = base + box.plateTop
+    if type(oz) ~= "number" or oz >= top - 0.001 then return end
+    wo:setOffset(wo:getOffX(), wo:getOffY(), top)
+end
+
+-- an item at floor height under a counter scale is not on the plate
+local function atPlateHeight(wo, base)
+    if base <= 0 or not Occupants.plateOnly() or type(wo.getOffZ) ~= "function" then return true end
+    local oz = wo:getOffZ()
+    return type(oz) ~= "number" or oz >= base - BASE_SLACK
+end
+
+-- A character in the square of a scale drawn on a counter is at floor height,
+-- not on the plate: walking past it (a low counter in front of a window can be
+-- walked through) must not weigh them. The one exception is climbing through
+-- the window over it (ClimbThroughWindowState, exposed to Lua, seen in game
+-- 2026-09-21): the survivor is then above the counter for a moment and reads.
+local function overCounter(o)
+    if type(o.getCurrentState) ~= "function" or type(ClimbThroughWindowState) == "nil" then return false end
+    local st = o:getCurrentState()
+    return st ~= nil and st == ClimbThroughWindowState.instance()
 end
 
 -- kg of the floor items lying on the plate. getWorldObjects is a Java
 -- ArrayList of IsoWorldInventoryObject (0-based); each holds one InventoryItem
 -- and its 0..1 offset inside the square (getOffX/getOffY). An object that
 -- cannot tell its offset counts, as the whole tile did before.
-local function floorWeight(square, plate)
+local function floorWeight(square, plate, base)
     if type(square.getWorldObjects) ~= "function" then return 0 end
     local list = square:getWorldObjects()
     if not list then return 0 end
     local sum = 0
     for i = 0, list:size() - 1 do
         local wo = list:get(i)
-        if wo and itemOnPlate(plate, wo) then
-            liftOntoPlate(wo)
+        if wo and itemOnPlate(plate, wo) and atPlateHeight(wo, base) then
+            liftOntoPlate(plate, wo, base)
             local item = type(wo.getItem) == "function" and wo:getItem()
             local w = item and type(item.getUnequippedWeight) == "function" and item:getUnequippedWeight()
             if type(w) == "number" then sum = sum + w end
@@ -299,7 +346,8 @@ function Occupants.read(square, out, selfObj)
     for i = #out, 1, -1 do out[i] = nil end
     if not square then return out end
     local carry = Occupants.weighCarried()
-    local plate = Occupants.plateOnly() and plateOf(square) or MIDDLE
+    local plate = Occupants.plateOnly() and plateOf(square) or DEFAULT_BOX
+    local base = Occupants.plateOnly() and baseZ(square) or 0
     if type(square.getMovingObjects) ~= "function" then
         if selfObj and (not Occupants.plateOnly() or charOnPlate(plate, square, selfObj)) then
             local body, carried = massOf(selfObj, carry)
@@ -311,7 +359,7 @@ function Occupants.read(square, out, selfObj)
         for i = 0, list:size() - 1 do
             local o = list:get(i)
             local w = Occupants.weightOf(o)
-            if w and (not Occupants.plateOnly() or charOnPlate(plate, square, o)) then
+            if w and (not Occupants.plateOnly() or (charOnPlate(plate, square, o) and (base <= 0 or overCounter(o)))) then
                 if isA(o, "IsoPlayer") and not isA(o, "IsoAnimal") then
                     local body, carried = massOf(o, carry)
                     if body then w = body + carried end
@@ -320,7 +368,7 @@ function Occupants.read(square, out, selfObj)
             end
         end
     end
-    local f = floorWeight(square, plate)
+    local f = floorWeight(square, plate, base)
     if f > 0 then out[#out + 1] = f end
     return out
 end

@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Pesar toda la casilla",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Desactivado (por defecto): solo se pesan los personajes y objetos que hay sobre la propia imagen de la balanza, en el centro de su casilla. Activado: cuenta todo lo que hay en la casilla de la balanza, incluso junto a la imagen.",
     "Sandbox_DeadWeight_ViewDistance": "Distancia de lectura",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "A cuántas casillas de la balanza, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la balanza la lee. Por defecto 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "A cuántas casillas de la balanza, en la misma habitación, puedes estar y aun así leerla, como un médico que pesa a un paciente. 0: solo el jugador que está sobre la balanza la lee. Por defecto 1.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Báscula Digital en encimeras de baño",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Con qué frecuencia aparece una Báscula Digital dentro de las encimeras de los baños, los armarios bajo un lavabo. 0: nunca. Por defecto 3. Solo se ven afectados los contenedores que se llenen a partir de ahora.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Báscula Digital en el suelo de los baños",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Probabilidad, en porcentaje, de que un baño lo bastante grande que nadie ha visto nunca tenga una Báscula Digital en el suelo, junto a una pared. Solo se ven afectadas las habitaciones de zonas del mapa aún sin explorar. 0: nunca. Por defecto 20."
 }

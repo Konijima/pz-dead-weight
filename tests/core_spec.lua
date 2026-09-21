@@ -76,7 +76,7 @@ local Prefs = WeightScale.Prefs
 
 _G.getFileReader = nil
 Prefs.load()
-check(Prefs.unit == "kg" and Prefs.style == "beam", "Prefs.load() with no getFileReader should default")
+check(Prefs.unit == "kg", "Prefs.load() with no getFileReader should default")
 
 local function makeReader(lines)
     local i = 0
@@ -92,11 +92,11 @@ end
 _G.getFileReader = function() return makeReader({"garbage!!", "unit=lb", "style=potato", "###"}) end
 Prefs.load()
 check(Prefs.unit == "lb", "Prefs.load() should parse unit=lb out of garbage, got " .. tostring(Prefs.unit))
-check(Prefs.style == "beam", "Prefs.load() should reject an unknown style, got " .. tostring(Prefs.style))
+check(Prefs.style == nil and Prefs.toggleStyle == nil, "the style pref is gone: an old style= line is ignored")
 
 _G.getFileReader = function() return nil end
 Prefs.load()
-check(Prefs.unit == "kg" and Prefs.style == "beam", "Prefs.load() with a nil reader should default")
+check(Prefs.unit == "kg", "Prefs.load() with a nil reader should default")
 
 _G.getFileReader = function() error("boom") end
 local ok = pcall(Prefs.load)
@@ -150,6 +150,21 @@ check(math.abs(Core.sample("on", T.settleStart - 0.001, 100, 90).reading - 100) 
 check(Core.sample("on", T.settleStart + 10, 100, 90).reading == 100, "from: settled reading is the target")
 local down = Core.sample("on", T.slideStart + T.slide / 2, 60, 120).reading
 check(down < 120 and down > 60, "from above the target slides downward, got " .. down)
+
+-- the digital scale's range: 0 to 130 kg, the medical default untouched
+do
+    local D = WeightScale.Geo.weightDigital
+    check(D.min == 0 and D.max == 130 and D.start == 0, "digital range is 0 to 130 kg")
+    check(Core.rangeFor(nil) == WeightScale.Geo.weight, "no entry: the medical range")
+    check(Core.rangeFor({ range = "medical" }) == WeightScale.Geo.weight, "a medical entry: the medical range")
+    check(Core.rangeFor({ range = "digital" }) == D, "a digital entry: the digital range")
+    check(Core.mapX(0, D) == WeightScale.Geo.track.x0 and Core.mapX(130, D) == WeightScale.Geo.track.x0 + WeightScale.Geo.track.w, "digital mapX spans the track")
+    check(Core.sample("on", 0, 12.5, nil, D).reading == 0, "a digital reading starts at 0.0, not 35")
+    local mid = Core.sample("on", Core.T.slideStart + Core.T.slide / 2, 12.5, nil, D).reading
+    check(mid > 0 and mid < 12.5, "a 12.5 kg item counts up from 0, got " .. tostring(mid))
+    check(Core.sample("on", Core.T.settleStart, 12.5, nil, D).reading == 12.5, "and settles on its true value")
+    check(Core.sample("on", 0, 12.5).reading == 35, "the medical default still starts at 35")
+end
 
 print(nAssert .. " assertions passed")
 check(nAssert > 0, "no assertions ran")

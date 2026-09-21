@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "Vej hele feltet",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "Fra (standard): kun personer og genstande, der står eller ligger på selve vægtens billede midt på dens felt, bliver vejet. Til: alt på vægtens felt tæller med, også ved siden af billedet.",
     "Sandbox_DeadWeight_ViewDistance": "Aflæsningsafstand",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "Hvor mange felter fra vægten, i samme rum, man kan stå og stadig aflæse den, som en læge, der vejer en patient. 0: kun spilleren på vægten aflæser den. Standard 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "Hvor mange felter fra vægten, i samme rum, man kan stå og stadig aflæse den, som en læge, der vejer en patient. 0: kun spilleren på vægten aflæser den. Standard 1.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "Digital vægt i badeværelsesbordplader",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "Hvor ofte en digital vægt dukker op i badeværelsets bordplader, skabene under en håndvask. 0: aldrig. Standard 3. Kun beholdere, der fyldes fra nu af, påvirkes.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "Digital vægt på badeværelsesgulve",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "Procentvis chance for, at et stort nok badeværelse, som ingen nogensinde har set, har en digital vægt på gulvet op ad en væg. Kun rum i områder af kortet, der endnu ikke er udforsket, påvirkes. 0: aldrig. Standard 20."
 }

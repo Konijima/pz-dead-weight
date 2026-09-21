@@ -12,6 +12,14 @@ Sandbox_IT = {
 
     Sandbox_DeadWeight_ViewDistance = "Distanza di lettura",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "A quante caselle dalla bilancia, nella stessa stanza, ci si può trovare e leggerla comunque, come un medico che pesa un paziente. 0: solo il giocatore sulla bilancia la legge. Predefinito 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quante caselle dalla bilancia, nella stessa stanza, ci si può trovare e leggerla comunque, come un medico che pesa un paziente. 0: solo il giocatore sulla bilancia la legge. Predefinito 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Bilancia Digitale nei piani del bagno",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Con quale frequenza una Bilancia Digitale compare nei piani dei bagni, i mobiletti sotto un lavabo. 0: mai. Predefinito 3. Sono interessati solo i contenitori riempiti da ora in poi.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Bilancia Digitale sul pavimento dei bagni",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Probabilità in percentuale che un bagno abbastanza grande che nessuno ha mai visto abbia una Bilancia Digitale sul pavimento, contro una parete. Sono interessate solo le stanze nelle zone della mappa non ancora esplorate. 0: mai. Predefinito 20.",
 
 }

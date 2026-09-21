@@ -12,29 +12,26 @@
 -- (cached as scales, nearest first, a few at most); while any is cached the
 -- nearest one that has something to weigh is read every throttled tick (the
 -- nearest one when none has; it is kept as scaleSquare) and onOccupancy(n, kg|nil, selfOn, wasEmpty,
--- wasSelf, inReach, settled) fires when the one decimal total changes. A change caused by
+-- wasSelf, inReach, settled, scaleEntry) fires when the one decimal total changes. A change caused by
 -- someone else must hold for Detect.debounce polls (a zombie crossing the
 -- tile must not flicker the readout); the viewer's own step on/off is instant.
 -- See docs/API-COMPAT.md for which calls are proven on which build.
 require "WeightScale/WeightScaleCore"
+require "WeightScale/WeightScaleScales"
 require "WeightScale/WeightScaleOccupants"
 
 WeightScale = WeightScale or {}
 WeightScale.Detect = WeightScale.Detect or {}
 local Detect = WeightScale.Detect
 
-Detect.spriteNames = {
-    ["location_community_medical_01_8"] = true,
-    ["location_community_medical_01_9"] = true,
-}
-
 Detect.tickEvery = 6          -- every few ticks, not every frame
-Detect.radius = 2             -- default squares a viewer may stand from the scale
+Detect.radius = 1             -- default squares a viewer may stand from the scale
 Detect.rescanEvery = 10       -- polls between scans for a scale put back after one was lost
 Detect.rescanFor = 600        -- polls the search lasts (about a minute), then it stops
 Detect.maxScales = 4          -- scales in reach that are ever considered, nearest first
 Detect.losEvery = 5           -- polls between line of sight checks of the watched scale
 Detect.maxRadius = 5          -- ceiling for the sandbox value (scan is (2R+1)^2 squares)
+Detect.faceCos = 0.35         -- a scale is faced when it is within about 70 degrees of the viewer's heading
 Detect.debounce = 2           -- polls a non self change must hold
 Detect.players = Detect.players or {}  -- [n] = {tick, onScale, lastSquare, ...}
 Detect.onScaleOn = nil        -- function(n, square)
@@ -48,11 +45,14 @@ local function stateFor(n)
               scales = {},        -- scale squares within reach, own tile then nearest first
               ownSquare = nil,    -- the viewer's own square while it holds a scale
               scaleSquare = nil,  -- the one shown: nearest with something to weigh, else nearest
+              scaleEntry = nil,   -- the WeightScale.Scales entry of that scale (kind, style, ...)
               rescanLeft = 0,     -- polls left to look for a scale put back after it vanished
               losTick = 0,        -- polls since the last line of sight check
               shownKey = false,   -- one decimal total on screen, false = empty
               selfOn = false,     -- viewer was on the tile at the last apply
-              settledEmpty = false, -- this viewer has watched the scale sit empty
+              emptySeen = {},     -- [scale square] = true once this viewer read THAT scale empty
+              faced = {},         -- [scale square] = false while the viewer is turned away from it
+              shownSquare = nil,  -- the scale the reading on screen belongs to
               pendKey = nil, pendN = 0, buf = {} }
         Detect.players[n] = s
     end
@@ -65,6 +65,8 @@ function Detect.clear(n)
     Detect.players[n] = nil
 end
 
+-- The scale object on a square and its WeightScale.Scales entry (looked up by
+-- sprite name, one walk of the square's few objects), nil when there is none.
 local function scaleObjectOn(square)
     if not square or not square.getObjects then return nil end
     local objs = square:getObjects()
@@ -74,8 +76,9 @@ local function scaleObjectOn(square)
         local obj = objs:get(i)
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
-        if name and Detect.spriteNames[name] then
-            return obj
+        local entry = WeightScale.Scales.forSprite(name)
+        if entry then
+            return obj, entry
         end
     end
     return nil
@@ -83,6 +86,23 @@ end
 
 local function hasScaleSprite(square)
     return scaleObjectOn(square) ~= nil
+end
+
+-- Can a character stand on the scale of this square: not when it is drawn on
+-- a counter or table (render offset above 0), where anyone in the square is
+-- at floor height. Such a scale is still read from a distance, it just never
+-- counts as "on the scale" (no step on cue, no turn to face it).
+local function standableOn(square)
+    local obj, entry = scaleObjectOn(square)
+    if not obj or entry.standable == false then return false end
+    local lift = type(obj.getRenderYOffset) == "function" and obj:getRenderYOffset()
+    return not (type(lift) == "number" and lift > 0)
+end
+
+-- the Scales entry of the scale on a square, nil when there is none
+function Detect.scaleEntryOn(square)
+    local _, entry = scaleObjectOn(square)
+    return entry
 end
 
 -- Face the scale's column (task 2026-09-18, point B): each placed scale
@@ -104,8 +124,14 @@ if IsoDirections then
 end
 
 function Detect.facingFor(square)
-    local obj = scaleObjectOn(square)
-    if not obj or type(obj.getFacing) ~= "function" then return nil end
+    local obj, entry = scaleObjectOn(square)
+    if not obj then return nil end
+    -- no column: a scale may name the direction to look instead (the digital
+    -- scale's screen reads from the side it faces, so the player looks away
+    -- from that side, at the screen)
+    if entry.faceDir and IsoDirections then return IsoDirections[entry.faceDir] end
+    if entry.faceColumn == false then return nil end   -- nothing to face
+    if type(obj.getFacing) ~= "function" then return nil end
     local facing = obj:getFacing()
     if facing == nil then return nil end
     return OPPOSITE_FACING[facing] or facing
@@ -148,7 +174,7 @@ local function lineOfSight(from, to)
 end
 
 -- Squares a viewer may stand from the scale: sandbox DeadWeight.ViewDistance
--- (integer, default 2), read where the scan runs (viewer square change only).
+-- (integer, default 1), read where the scan runs (viewer square change only).
 -- Missing, non numeric or out of range falls back to Detect.radius / clamps.
 function Detect.viewDistance()
     local sv = type(SandboxVars) == "table" and SandboxVars.DeadWeight
@@ -199,6 +225,24 @@ local function findScales(square)
     return out
 end
 
+-- Facing: a scale the viewer is not turned towards has nothing to show them,
+-- so a scale other than the one they stand on is read only while it lies in
+-- front of them. IsoGameCharacter:getForwardDirection() is a Vector2 in world
+-- x, y, the same axes as the squares (PROVEN client lua, see docs/API-COMPAT.md);
+-- anything unexpected counts as facing, the behaviour before this check.
+local function facing(playerObj, sq)
+    if type(playerObj.getForwardDirection) ~= "function" or type(playerObj.getX) ~= "function"
+        or type(sq.getX) ~= "function" then return true end
+    local ok, r = pcall(function()
+        local f = playerObj:getForwardDirection()
+        local dx, dy = sq:getX() + 0.5 - playerObj:getX(), sq:getY() + 0.5 - playerObj:getY()
+        local len = math.sqrt(dx * dx + dy * dy)
+        if not f or len < 0.6 then return true end   -- standing on or against it
+        return (f:getX() * dx + f:getY() * dy) / len >= Detect.faceCos
+    end)
+    return not ok or r ~= false
+end
+
 -- One poll of the scales in reach. The nearest scale that has something to
 -- weigh wins (a scale is read only while it is the one shown); when none has,
 -- the nearest one stands for the empty reading. key is the one decimal total
@@ -206,6 +250,11 @@ end
 -- empty. The viewer counts only while standing on the plate itself, not
 -- anywhere in the square (Occupants.onPlate); s.onScale stays square based
 -- for the facing turn.
+-- Cues belong to ONE scale (docs/BACKLOG.md, two scales in reach): the on cue
+-- needs this viewer to have read that very scale empty first (emptySeen), the
+-- off cue needs the scale that was on screen to still be in reach and now
+-- empty (shownSquare). A different scale coming into or leaving reach only
+-- moves the reading, in silence.
 local function poll(n, s, playerObj)
     local Occ, Core = WeightScale.Occupants, WeightScale.Core
     local vs = playerSquare(playerObj)
@@ -229,6 +278,7 @@ local function poll(n, s, playerObj)
         local sq = s.scales[i]
         if not hasScaleSprite(sq) or (checkSight and not lineOfSight(vs, sq)) then
             table.remove(s.scales, i)
+            s.emptySeen[sq] = nil
             dropped = true
         else
             i = i + 1
@@ -239,44 +289,73 @@ local function poll(n, s, playerObj)
         s.rescanLeft = Detect.rescanFor
     end
     local chosen, total, selfOn
+    local nRead = #s.scales
+    -- a scale that is not faced is skipped, and what was known of it is dropped
+    -- so turning back to it earns no cue; a change of what is faced applies at once
+    local facedNow, facedChanged = {}, false
     for j = 1, #s.scales do
         local sq = s.scales[j]
-        local on = s.onScale and sq == s.ownSquare and Occ.onPlate(sq, playerObj)
-        local occ = Occ.read(sq, s.buf, on and playerObj or nil)
-        local t = Core.sumWeights(occ)
-        if t then chosen, total, selfOn = sq, t, on break end
+        facedNow[sq] = sq == s.ownSquare or facing(playerObj, sq)
+        if facedNow[sq] ~= (s.faced[sq] ~= false) then facedChanged = true end
     end
+    s.faced = facedNow
+    for j = 1, #s.scales do
+        local sq = s.scales[j]
+        if not facedNow[sq] then
+            s.emptySeen[sq] = nil
+        else
+            local on = s.onScale and sq == s.ownSquare and Occ.onPlate(sq, playerObj)
+            local occ = Occ.read(sq, s.buf, on and playerObj or nil)
+            local t = Core.sumWeights(occ)
+            if t then chosen, total, selfOn = sq, t, on nRead = j break end
+            s.emptySeen[sq] = true
+        end
+    end
+    -- scales past the occupied one were not read this poll: their state is unknown
+    for j = nRead + 1, #s.scales do s.emptySeen[s.scales[j]] = nil end
     if not chosen and #s.scales > 0 then
         chosen = s.scales[1]
         selfOn = s.onScale and chosen == s.ownSquare and Occ.onPlate(chosen, playerObj)
     end
     selfOn = selfOn and true or false
+    -- the entry is looked up again only when the shown scale changed (a
+    -- dropped scale clears it above), not on every poll
+    if chosen ~= s.scaleSquare or (chosen and not s.scaleEntry) or dropped then
+        s.scaleEntry = chosen and Detect.scaleEntryOn(chosen) or nil
+    end
     s.scaleSquare = chosen
     local key = total and WeightScale.Core.format(total, "kg") or false
-    -- settled: this viewer had already watched the scale sit empty before the
-    -- change being applied, so the reading appearing is something happening
-    -- at the scale (someone or an item lands) and not the viewer walking up
-    -- to a scale that was already occupied. Only the former earns a cue.
-    local settled = s.settledEmpty
-    if not s.scaleSquare then s.settledEmpty = false
-    elseif key == false then s.settledEmpty = true end   -- kept through the debounce
-    local selfChanged = selfOn ~= s.selfOn
+    -- settled: this viewer had already watched THIS scale sit empty before
+    -- the change being applied, so the reading appearing is something
+    -- happening at the scale (someone or an item lands) and not the viewer
+    -- walking up to a scale that was already occupied. Only the former earns
+    -- a cue. The flag is kept through the debounce and cleared once applied.
+    local settled = total ~= nil and s.emptySeen[chosen] == true
+    -- the scale that was on screen is out of reach (or gone): the reading
+    -- leaves in silence and at once, even if another scale is still in reach
+    local shownInReach = false
+    for j = 1, #s.scales do
+        if s.scales[j] == s.shownSquare and facedNow[s.scales[j]] then shownInReach = true break end
+    end
+    local lost = s.shownSquare ~= nil and not shownInReach
+    local selfChanged = selfOn ~= s.selfOn or facedChanged
     if key == s.shownKey then
+        if total then s.shownSquare = chosen end   -- same total, maybe read off another scale
         s.pendKey, s.pendN = nil, 0
         s.selfOn = selfOn
         return
     end
     -- someone else's arrival or departure must survive Detect.debounce polls;
     -- the viewer's own move, or the scale going out of reach, applies at once.
-    if not selfChanged and s.scaleSquare then
+    if not selfChanged and s.scaleSquare and not lost then
         if s.pendKey == key then s.pendN = s.pendN + 1 else s.pendKey, s.pendN = key, 1 end
         if s.pendN < Detect.debounce then return end
     end
     local wasEmpty, wasSelf = s.shownKey == false, s.selfOn
     s.shownKey, s.selfOn = key, selfOn
-    if key then s.settledEmpty = false end
+    if key then s.emptySeen[chosen], s.shownSquare = nil, chosen else s.shownSquare = nil end
     s.pendKey, s.pendN = nil, 0
-    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, s.scaleSquare ~= nil, settled) end
+    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, shownInReach, settled, s.scaleEntry) end
 end
 
 -- n is the player index (0-based, as getSpecificPlayer/getPlayerNum use it).
@@ -297,7 +376,7 @@ function Detect.update(n, playerObj)
         local prev = s.lastSquare
         s.lastSquare = square
 
-        local onNow = square ~= nil and hasScaleSprite(square)
+        local onNow = square ~= nil and standableOn(square)
 
         if onNow and s.onScale and prev and prev ~= square then
             -- stepped straight from one scale onto the next: a new scale to
@@ -314,8 +393,13 @@ function Detect.update(n, playerObj)
             if Detect.onScaleOff then Detect.onScaleOff(n) end
         end
         s.scales = square and findScales(square) or {}
+        -- what was read empty only counts for scales still in reach
+        local seen = {}
+        for _, sq in ipairs(s.scales) do seen[sq] = s.emptySeen[sq] end
+        s.emptySeen = seen
         s.ownSquare = onNow and square or nil
         s.scaleSquare = s.scales[1]
+        s.scaleEntry = s.scaleSquare and Detect.scaleEntryOn(s.scaleSquare) or nil
     end
 
     -- Idle away from every scale: none in reach and nothing on screen, no call.

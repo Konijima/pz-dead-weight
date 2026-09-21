@@ -117,6 +117,19 @@ Menu.OnFillWorldObjectContextMenu(0, ctxOnScale, list({ scaleObj(square) }), fal
 check(#ctxOnScale.options == 0, "hidden when the player already stands on the scale's square")
 PLAYERS[0] = player(nil)
 
+-- 5b: a scale drawn lifted onto a counter (render offset > 0) offers no step on.
+PLAYERS[0] = player(nil)
+local liftedObj = scaleObj(square)
+liftedObj.getRenderYOffset = function() return 34 end
+local ctxLift = newContext(true)
+Menu.OnFillWorldObjectContextMenu(0, ctxLift, list({ liftedObj }), false)
+check(#ctxLift.options == 0, "no Step on Scale for a scale sitting on a counter")
+local floorObj = scaleObj(square)
+floorObj.getRenderYOffset = function() return 0 end
+local ctxFloor = newContext(true)
+Menu.OnFillWorldObjectContextMenu(0, ctxFloor, list({ floorObj }), false)
+check(#ctxFloor.options == 1, "Step on Scale kept for a scale on the floor")
+
 -- 6: selecting queues one walk for the RIGHT player to the RIGHT square,
 --    a two player case.
 local squareA, squareB = { id = "A" }, { id = "B" }

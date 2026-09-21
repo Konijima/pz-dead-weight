@@ -12,6 +12,14 @@ Sandbox_ID = {
 
     Sandbox_DeadWeight_ViewDistance = "Jarak baca",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Berapa kotak jauhnya dari timbangan, di ruangan yang sama, Anda boleh berdiri dan tetap bisa membacanya, seperti dokter yang menimbang pasien. 0: hanya pemain di atas timbangan yang membacanya. Bawaan 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Timbangan Digital di meja kamar mandi",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Seberapa sering Timbangan Digital muncul di dalam meja kamar mandi, yaitu lemari di bawah wastafel. 0: tidak pernah. Bawaan 3. Hanya wadah yang diisi mulai sekarang yang terpengaruh.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Timbangan Digital di lantai kamar mandi",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Persentase peluang kamar mandi yang cukup besar dan belum pernah dilihat siapa pun memiliki Timbangan Digital di lantainya, bersandar di dinding. Hanya ruangan di area peta yang belum dijelajahi yang terpengaruh. 0: tidak pernah. Bawaan 20.",
 
 }

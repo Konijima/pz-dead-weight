@@ -12,6 +12,14 @@ Sandbox_PL = {
 
     Sandbox_DeadWeight_ViewDistance = "Odleg³oœæ odczytu",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "Ile pól od wagi, w tym samym pomieszczeniu, mo¿na staæ i nadal j¹ odczytaæ, jak lekarz wa¿¹cy pacjenta. 0: odczytuje j¹ tylko gracz stoj¹cy na wadze. Domyœlnie 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "Ile pól od wagi, w tym samym pomieszczeniu, mo¿na staæ i nadal j¹ odczytaæ, jak lekarz wa¿¹cy pacjenta. 0: odczytuje j¹ tylko gracz stoj¹cy na wadze. Domyœlnie 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Waga cyfrowa w ³azienkowych blatach",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Jak czêsto waga cyfrowa pojawia siê w ³azienkowych blatach, czyli szafkach pod umywalk¹. 0: nigdy. Domyœlnie 3. Dotyczy tylko pojemników wype³nionych od teraz.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Waga cyfrowa na pod³ogach ³azienek",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Procentowa szansa, ¿e dostatecznie du¿a ³azienka, której nikt jeszcze nie widzia³, ma na pod³odze przy œcianie wagê cyfrow¹. Dotyczy tylko pomieszczeñ w jeszcze nieodkrytych obszarach mapy. 0: nigdy. Domyœlnie 20.",
 
 }

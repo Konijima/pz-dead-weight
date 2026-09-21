@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bench: mapX contact points, bandOf inclusivity, one-decimal format, prefs
+# Bench: the Digital Scale tile pack, mapX contact points, bandOf inclusivity, one-decimal format, prefs
 # parser robustness, the HUD's UI manager lifecycle, the context menu option,
 # the Info tab weight-word patch, facing the scale's column on foot or by
 # menu, and JS/Lua parity on the animation sampler.
@@ -33,6 +33,12 @@ python3 tools/gen-geo.py --check
 echo "-- mod.info guard (id/name match, poster/icon files exist, no U+2014) --"
 python3 tests/modinfo_spec.py
 
+echo "-- tile pack generator drift check --"
+python3 tools/gen-tiles.py --check
+
+echo "-- tile pack round trip (.tiles and .pack parsed back) --"
+python3 tests/tiles_spec.py
+
 echo "-- translation bench (both builds, both langs) --"
 python3 tests/translate_spec.py
 
@@ -59,6 +65,12 @@ echo "-- lua face-the-scale bench ($LUA) --"
 
 echo "-- lua occupancy bench ($LUA) --"
 "$LUA" tests/occupancy_spec.lua
+
+echo "-- lua scale table bench ($LUA) --"
+"$LUA" tests/scales_spec.lua
+
+echo "-- lua loot and world spawn bench ($LUA) --"
+"$LUA" tests/spawn_spec.lua
 
 echo "-- lua char screen bench ($LUA) --"
 "$LUA" tests/charscreen_spec.lua

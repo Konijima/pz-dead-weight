@@ -71,10 +71,18 @@ if CLIENT_EN.is_dir():
         check(vanilla_path.is_file(), f"client install has {vanilla_path.name} for prefix {prefix}")
         if vanilla_path.is_file():
             vanilla_keys = json.loads(vanilla_path.read_text(encoding="utf-8")).keys()
-            check(
-                any(vk.startswith(prefix + "_") for vk in vanilla_keys),
-                f"{vanilla_path.name}: holds at least one vanilla {prefix}_ key",
-            )
+            if "vanilla_key" in mapping:
+                # our own prefix (a moveable's GroupName): prove the file by a
+                # vanilla key of the same shape instead.
+                check(
+                    mapping["vanilla_key"] in vanilla_keys,
+                    f"{vanilla_path.name}: holds the vanilla key {mapping['vanilla_key']}",
+                )
+            else:
+                check(
+                    any(vk.startswith(prefix + "_") for vk in vanilla_keys),
+                    f"{vanilla_path.name}: holds at least one vanilla {prefix}_ key",
+                )
 else:
     print(
         f"NOTICE: client install not found at {CLIENT_EN}, skipping "
@@ -120,19 +128,20 @@ for lang in LANGS:
 
     for prefix, group_keys in groups.items():
         mapping = PREFIX_TO_FILE[prefix]
-        b41 = b41_dir / f"{mapping['b41_stem']}_{lang}.txt"
         b42 = b42_dir / f"{mapping['b42_stem']}.json"
 
-        raw41 = b41.read_bytes() if b41.is_file() else b""
-        check(b41.is_file(), f"{b41}: exists")
-        try:
-            text41 = raw41.decode(codec)
-        except UnicodeDecodeError as exc:
-            failures.append(f"{b41}: decodes as {codec} ({exc})")
-            text41 = ""
-        check(text41.startswith(f"{mapping['b41_table']}_{lang} = {{"), f"{b41}: header matches vanilla pattern")
-        for k in group_keys:
-            check(f'{k} = "{source[k][lang]}"' in text41, f"{b41}: {k} round trips through {codec}")
+        if mapping["b41_stem"] is not None:  # None: Build 42 only keys
+            b41 = b41_dir / f"{mapping['b41_stem']}_{lang}.txt"
+            raw41 = b41.read_bytes() if b41.is_file() else b""
+            check(b41.is_file(), f"{b41}: exists")
+            try:
+                text41 = raw41.decode(codec)
+            except UnicodeDecodeError as exc:
+                failures.append(f"{b41}: decodes as {codec} ({exc})")
+                text41 = ""
+            check(text41.startswith(f"{mapping['b41_table']}_{lang} = {{"), f"{b41}: header matches vanilla pattern")
+            for k in group_keys:
+                check(f'{k} = "{source[k][lang]}"' in text41, f"{b41}: {k} round trips through {codec}")
 
         raw42 = b42.read_bytes() if b42.is_file() else b""
         check(b42.is_file(), f"{b42}: exists")
@@ -149,7 +158,7 @@ for lang in LANGS:
     # No stray generated file for a prefix outside the mapping: every stem
     # we could plausibly have generated is enumerated by PREFIX_TO_FILE, so
     # any other file under our own Translate/<lang> dirs is unexpected.
-    allowed_b41 = {f"{m['b41_stem']}_{lang}.txt" for m in PREFIX_TO_FILE.values()}
+    allowed_b41 = {f"{m['b41_stem']}_{lang}.txt" for m in PREFIX_TO_FILE.values() if m["b41_stem"] is not None}
     allowed_b42 = {f"{m['b42_stem']}.json" for m in PREFIX_TO_FILE.values()}
     if b41_dir.is_dir():
         for f in b41_dir.iterdir():

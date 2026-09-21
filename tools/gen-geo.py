@@ -39,6 +39,8 @@ def build(g):
     out.append("")
     out.append("WeightScaleGeo.weight = { min = %s, max = %s, start = %s }" % (
         g["weight"]["min"], g["weight"]["max"], g["weight"]["start"]))
+    out.append("WeightScaleGeo.weightDigital = { min = %s, max = %s, start = %s }" % (
+        g["weightDigital"]["min"], g["weightDigital"]["max"], g["weightDigital"]["start"]))
     out.append("")
     out.append("WeightScaleGeo.bands = {")
     out.append(gen_bands(g["bands"]))

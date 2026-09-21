@@ -16,7 +16,11 @@ goes with you; nowhere else in the game can you read it that precisely.
 - A brass and cream beam head readout, the poise sliding to your weight and
   settling instead of snapping, because a real scale wobbles.
 - One decimal of precision.
-- Your unit and display style are remembered between sessions.
+- Your unit choice (kg or lb) is remembered between sessions. Each scale has
+  its own look: the clinic scale its beam head, the Digital Scale a plain
+  native panel.
+- New in 1.3.0, Build 42 only: the Digital Scale, a small home scale you can
+  place on the floor or on a counter, see below.
 - The character screen's Info tab shows only your weight category in words
   (Emaciated to Obese) with its trend arrow; the exact number stays on the
   scale.
@@ -28,12 +32,39 @@ goes with you; nowhere else in the game can you read it that precisely.
   weighed without you.
 - Every local splitscreen player gets their own readout.
 - The scale reads everyone on it: survivors, animals and zombies, added up.
-  Stand a couple of squares away (a sandbox option, 2 by default, blocked by
+  Stand next to it (a sandbox option, 1 by default, blocked by
   walls and shut doors) and you read them too, like a doctor weighing a
   patient.
 - No per frame scanning: the reading only exists while someone is on the
   scale and you are next to it.
 - 28 languages, every one the game ships.
+
+## The Digital Scale (Build 42 only)
+
+A small bathroom scale, furniture you place, turn (four facings) and pick up
+again, on the floor or on a counter. It reads 0 to 130 kg on a plain native
+panel; the clinic scale keeps its beam head. On the floor it weighs people,
+animals and zombies standing on it, and items lying on it; on a counter it
+weighs the items you set on it (they are lifted onto its plate), and a
+survivor walking through a counter scale's square is not weighed, though
+climbing through a window over it reads. Stepping onto a Digital Scale turns
+you to look at its screen, and you only read a scale you are facing: turn
+away and the readout goes, turn back and it returns.
+
+It also turns up in the world, only in new loot and in areas of the map nobody
+has explored yet (a room you already visited never gets one), only in homes
+and motels, never in a public restroom, and never in front of a toilet, basin
+or other fixture:
+
+- inside bathroom counters (the cupboards under a basin), a counter never
+  holding two and a bathroom giving out at most one from its counters;
+- on the floor against a wall in a big enough bathroom.
+
+![A survivor on the Digital Scale, reading in lb](workshop/art/deadweight-digital.png)
+
+![A banana on a counter Digital Scale](workshop/art/deadweight-digital-counter.png)
+
+Build 41 has no Digital Scale, only the clinic scale.
 
 ## Weigh others, and anything else
 
@@ -58,22 +89,26 @@ the sound when the scale goes from empty to occupied or back.
 
 Page "Dead Weight" in the sandbox options:
 
-- **Weigh what you carry** (off by default): adds worn items and bag contents
-  to each survivor's reading. Zombies and animals stay body weight only.
+- **Weigh what you carry** (on by default): adds worn items and bag contents
+  to each survivor's reading, so strip naked to read your true body weight. Zombies and animals stay body weight only.
 - **Weigh the whole square** (off by default): count anything in the scale's
   square instead of only what is on the plate.
-- **Reading distance** (0 to 5, default 2): how many squares away you can
+- **Reading distance** (0 to 5, default 1): how many squares away you can
   stand and still read the scale.
+- **Digital Scale in bathroom counters** (0 to 20, default 3, Build 42 only):
+  the weight of the Digital Scale in bathroom counter loot; 0 is never.
+- **Digital Scale on bathroom floors** (percent, default 20, Build 42 only):
+  the chance that a big enough home or motel bathroom, in an area of the map
+  nobody has explored, gets a Digital Scale standing on its floor; 0 is
+  never.
 
 ## Controls
 
 - Left click the readout: switch between kg and lb.
-- Right click the readout: switch between the beam head look and a plain
-  native panel.
 
 ## Compatibility
 
-Built for Build 42, keeps Build 41 support. Singleplayer and multiplayer
+Built for Build 42, keeps Build 41 support (the Digital Scale is Build 42 only). Singleplayer and multiplayer
 (client side), splitscreen aware. If another mod replaces the character
 screen, this fails safe: the scale keeps working and the Info tab simply
 stays as that mod or vanilla draws it. Incompatible with the original
@@ -119,11 +154,18 @@ Build 42 can load from the same copy.
 - `workshop/art/deadweight-banner.png` and `workshop/art/deadweight-banner-2.png`
   are the Workshop page banners (also the README images above); neither is
   shipped to players, see the `pack-workshop.sh` bullet above.
+- `workshop/art/320/` holds the images the Workshop page shows, scaled to 320 px
+  wide (a wider image makes Steam's mobile page scroll sideways);
+  `tools/gen-workshop-art.py` regenerates them from the full size originals in
+  `workshop/art/`, which the README uses. A new Workshop image goes into that
+  script's list. `deadweight-sprites.png` there (the clinic scale next to the
+  Digital Scale's four faces) comes from `tools/gen-workshop-sprites.py`, which
+  needs a Project Zomboid install.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
   lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
   which already holds the gif's raw GitHub URL
-  (`https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/deadweight-animation.gif`);
+  (`https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/320/deadweight-animation.gif`);
   an empty file emits no `[img]` tag rather than a broken one. That URL
   only resolves once this repository is public, so **at release, make the
   repository public before making the Workshop item public**, or Steam

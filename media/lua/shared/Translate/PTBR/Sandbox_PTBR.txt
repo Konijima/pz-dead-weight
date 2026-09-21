@@ -12,6 +12,14 @@ Sandbox_PTBR = {
 
     Sandbox_DeadWeight_ViewDistance = "Distância de leitura",
 
-    Sandbox_DeadWeight_ViewDistance_tooltip = "A quantos quadrados da balança, no mesmo cômodo, você pode ficar e ainda assim lê-la, como um médico que pesa um paciente. 0: só o jogador que está na balança a lê. Padrão 2.",
+    Sandbox_DeadWeight_ViewDistance_tooltip = "A quantos quadrados da balança, no mesmo cômodo, você pode ficar e ainda assim lê-la, como um médico que pesa um paciente. 0: só o jogador que está na balança a lê. Padrão 1.",
+
+    Sandbox_DeadWeight_HomeScaleSpawn = "Balança Digital em bancadas de banheiro",
+
+    Sandbox_DeadWeight_HomeScaleSpawn_tooltip = "Com que frequência uma Balança Digital aparece dentro das bancadas dos banheiros, os armários sob uma pia. 0: nunca. Padrão 3. Só são afetados os recipientes preenchidos a partir de agora.",
+
+    Sandbox_DeadWeight_HomeScaleFloor = "Balança Digital no chão dos banheiros",
+
+    Sandbox_DeadWeight_HomeScaleFloor_tooltip = "Chance, em porcentagem, de um banheiro grande o bastante que ninguém nunca viu ter uma Balança Digital no chão, encostada em uma parede. Só são afetados os cômodos em áreas do mapa ainda não exploradas. 0: nunca. Padrão 20.",
 
 }

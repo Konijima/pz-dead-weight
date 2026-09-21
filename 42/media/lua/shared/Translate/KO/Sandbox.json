@@ -5,5 +5,9 @@
     "Sandbox_DeadWeight_WholeSquare": "칸 전체를 측정",
     "Sandbox_DeadWeight_WholeSquare_tooltip": "끔(기본값): 체중계 칸 중앙의 체중계 그림 위에 서 있거나 놓인 캐릭터와 물건만 측정합니다. 켬: 그림 옆이라도 체중계 칸 안에 있는 모든 것을 측정합니다.",
     "Sandbox_DeadWeight_ViewDistance": "읽기 거리",
-    "Sandbox_DeadWeight_ViewDistance_tooltip": "체중계에서 같은 방 안에서 몇 칸 떨어진 곳까지 서서 읽을 수 있는지를 정합니다. 환자의 체중을 재는 의사처럼요. 0: 체중계에 올라선 플레이어만 읽을 수 있습니다. 기본값 2."
+    "Sandbox_DeadWeight_ViewDistance_tooltip": "체중계에서 같은 방 안에서 몇 칸 떨어진 곳까지 서서 읽을 수 있는지를 정합니다. 환자의 체중을 재는 의사처럼요. 0: 체중계에 올라선 플레이어만 읽을 수 있습니다. 기본값 1.",
+    "Sandbox_DeadWeight_HomeScaleSpawn": "욕실 카운터 속 디지털 체중계",
+    "Sandbox_DeadWeight_HomeScaleSpawn_tooltip": "욕실 카운터, 즉 세면대 아래 수납장 안에 디지털 체중계가 나타나는 빈도입니다. 0: 나타나지 않음. 기본값 3. 지금부터 채워지는 컨테이너에만 적용됩니다.",
+    "Sandbox_DeadWeight_HomeScaleFloor": "욕실 바닥의 디지털 체중계",
+    "Sandbox_DeadWeight_HomeScaleFloor_tooltip": "아직 아무도 본 적 없는 충분히 넓은 욕실의 바닥, 벽 쪽에 디지털 체중계가 놓여 있을 확률(%)입니다. 지도에서 아직 탐험하지 않은 지역의 방에만 적용됩니다. 0: 놓이지 않음. 기본값 20."
 }
