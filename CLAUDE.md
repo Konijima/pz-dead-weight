@@ -53,7 +53,7 @@ Generators:
   the game's isometric projection). Run by hand, NOT by `sync.sh`, so a hand
   refined PNG is never overwritten.
 - `tools/changelog-steam.py`: prints a `CHANGELOG.md` section as the Steam
-  change note (see README, Releasing).
+  change note (see docs/DEVELOPMENT.md, Releasing).
 - `tools/gen-translate.py`: reads `src/translate/strings.json`, writes the
   per build, per language translation files below. Called by `sync.sh`;
   also takes a target directory for a drift check (used by `check-sync.sh`
