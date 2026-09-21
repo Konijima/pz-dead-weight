@@ -10,6 +10,7 @@
 -- cheap early return when another handler already confirmed an option, and
 -- `ISWorldObjectContextMenu.setTest()` once we know we would add ours.
 -- See docs/API-COMPAT.md for every call proven here.
+require "WeightScale/WeightScaleScales"
 require "WeightScale/WeightScaleDetect"
 require "WeightScale/WeightScaleOccupants"
 
@@ -27,7 +28,7 @@ local function icon()
     return _icon or nil
 end
 
--- Reuses the mod's one sprite list (WeightScaleDetect.spriteNames): scans
+-- Reuses the mod's one scale table (WeightScale.Scales, by sprite name): scans
 -- the clicked objects, then that object's own square, exactly as vanilla
 -- handlers do (e.g. ISBBQMenu.lua walks worldobjects' squares). `worldobjects`
 -- is the plain Lua array table ISObjectClickHandler.doRClick builds with
@@ -41,7 +42,7 @@ local function findScaleSquare(worldobjects)
     for _, obj in ipairs(worldobjects) do
         local sprite = obj and obj.getSprite and obj:getSprite()
         local name = sprite and sprite.getName and sprite:getName()
-        if name and WeightScale.Detect.spriteNames[name] then
+        if WeightScale.Scales.forSprite(name) then
             local square = obj.getSquare and obj:getSquare()
             if square then return square end
         end

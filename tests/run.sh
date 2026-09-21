@@ -60,6 +60,9 @@ echo "-- lua face-the-scale bench ($LUA) --"
 echo "-- lua occupancy bench ($LUA) --"
 "$LUA" tests/occupancy_spec.lua
 
+echo "-- lua scale table bench ($LUA) --"
+"$LUA" tests/scales_spec.lua
+
 echo "-- lua char screen bench ($LUA) --"
 "$LUA" tests/charscreen_spec.lua
 
