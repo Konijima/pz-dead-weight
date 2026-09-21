@@ -23,7 +23,8 @@ reads from there.
 Usage: python3 tools/gen-scale-art.py
 """
 import os
-from PIL import Image, ImageDraw
+import random
+from PIL import Image, ImageDraw, ImageFilter
 
 SS = 4                      # supersampling, downscaled with a box filter
 FRAME_W, FRAME_H = 128, 256
@@ -34,18 +35,18 @@ BEVEL = 0.018               # width of the silver rim line around the glass, til
 # Look after the concept art Mathieu supplied (2026-09-21): black glass top,
 # thin silver rim, brushed silver sides, two silver foot pads, an LCD at the
 # far edge.
-GLASS = (24, 27, 34, 255)
-GLASS_LIT = (38, 43, 53, 255)   # soft reflection band across the glass
-RIM = (206, 206, 200, 255)      # the thin silver frame line around the top
-LEFT = (150, 150, 146, 255)     # the +v face, lit more
-RIGHT = (98, 98, 96, 255)       # the +u face, in shade
-EDGE = (52, 52, 52, 255)
-PAD = (150, 148, 142, 255)
-PAD_HI = (176, 174, 168, 255)
-PAD_LINE = (84, 82, 78, 255)
-LCD = (160, 174, 148, 255)
-LCD_EDGE = (36, 44, 34, 255)
-DIGIT = (26, 38, 24, 255)
+GLASS = (18, 21, 27, 255)
+GLASS_LIT = (40, 45, 55, 255)    # far corner of the glass
+GLASS_SHEEN = (48, 54, 66, 255)  # soft reflection band across the glass
+RIM_FAR = (150, 152, 152, 255)   # silver frame, the two far edges
+RIM_NEAR = (226, 228, 226, 255)  # silver frame, the two near edges (catch light)
+LEFT_TOP, LEFT_BOT = (176, 178, 178, 255), (112, 114, 116, 255)     # the +v face
+RIGHT_TOP, RIGHT_BOT = (128, 130, 132, 255), (74, 76, 80, 255)      # the +u face, in shade
+PAD = (128, 132, 136, 255)
+PAD_HI = (158, 162, 166, 255)
+LCD = (150, 168, 140, 255)
+LCD_BEZEL = (14, 16, 20, 255)
+DIGIT = (36, 50, 36, 255)
 
 # up (away from the reader) and right (reader's right hand) in (u, v), per facing
 FACING = {
@@ -91,35 +92,65 @@ def rect(face, r0, r1, u0, u1):
     return [local(face, r0, u0), local(face, r1, u0), local(face, r1, u1), local(face, r0, u1)]
 
 
+def lerp(c0, c1, t):
+    return tuple(int(round(c0[i] + (c1[i] - c0[i]) * t)) for i in range(4))
+
+
+def strips(d, pts_fn, c0, c1, n):
+    """Fill a shape in n slices whose colour runs c0 -> c1 (a cheap gradient).
+    pts_fn(t0, t1) gives the polygon of the slice between t0 and t1."""
+    for i in range(n):
+        t0, t1 = i / n, (i + 1) / n
+        poly(d, pts_fn(t0, t1), lerp(c0, c1, (t0 + t1) / 2))
+
+
 def draw_face(face):
+    # No outline strokes: the game's own sprites shade edges with a darker or
+    # lighter tone of the surface, never a black line (Mathieu, 2026-09-21).
     img = Image.new("RGBA", (FRAME_W * SS, FRAME_H * SS), (0, 0, 0, 0))
+    shadow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    grow = 0.05
+    poly(sd, [(LO - grow, LO - grow, 0), (HI + grow, LO - grow, 0), (HI + grow, HI + grow, 0), (LO - grow, HI + grow, 0)],
+         (0, 0, 0, 70))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(SS * 1.6))
     d = ImageDraw.Draw(img)
-    # the two visible sides, then the silver rim, then the glass
-    poly(d, [(LO, HI, H), (HI, HI, H), (HI, HI, 0), (LO, HI, 0)], LEFT, EDGE)
-    poly(d, [(HI, LO, H), (HI, HI, H), (HI, HI, 0), (HI, LO, 0)], RIGHT, EDGE)
-    poly(d, [(LO, LO, H), (HI, LO, H), (HI, HI, H), (LO, HI, H)], RIM, EDGE)
+    # the two visible sides, shaded top (chrome catch light) to bottom (in shade)
+    strips(d, lambda t0, t1: [(LO, HI, H * (1 - t0)), (HI, HI, H * (1 - t0)), (HI, HI, H * (1 - t1)), (LO, HI, H * (1 - t1))],
+           LEFT_TOP, LEFT_BOT, 6)
+    strips(d, lambda t0, t1: [(HI, LO, H * (1 - t0)), (HI, HI, H * (1 - t0)), (HI, HI, H * (1 - t1)), (HI, LO, H * (1 - t1))],
+           RIGHT_TOP, RIGHT_BOT, 6)
+    # silver frame: dull on the far edges, bright on the two near edges
+    poly(d, [(LO, LO, H), (HI, LO, H), (HI, HI, H), (LO, HI, H)], RIM_FAR)
+    for a_, b_ in (((LO, HI), (HI, HI)), ((HI, LO), (HI, HI))):
+        d.line([pt(a_[0], a_[1], H), pt(b_[0], b_[1], H)], fill=RIM_NEAR, width=SS)
     b = BEVEL
-    poly(d, [(LO + b, LO + b, H), (HI - b, LO + b, H), (HI - b, HI - b, H), (LO + b, HI - b, H)], GLASS)
-    # a soft reflection band across the glass, on the reader's diagonal
+    lo, hi = LO + b, HI - b
+    # the glass, lit from the far corner to the near corner
+    strips(d, lambda t0, t1: [(lo + (hi - lo) * t0, lo, H), (lo + (hi - lo) * t1, lo, H),
+                             (lo + (hi - lo) * t1, hi, H), (lo + (hi - lo) * t0, hi, H)],
+           GLASS_LIT, GLASS, 8)
     half = 0.5 * (HI - LO) - b
-    poly(d, [local(face, -half, half * 0.2), local(face, -half, half * 0.75),
-             local(face, half * 0.35, -half), local(face, half * 0.8, -half)], GLASS_LIT)
-    # two silver foot pads, a thin split across each
+    # a soft reflection band across the glass
+    poly(d, [local(face, -half, half * 0.25), local(face, -half, half * 0.7),
+             local(face, half * 0.3, -half), local(face, half * 0.75, -half)], GLASS_SHEEN)
+    # two silver foot pads
     for side in (-1, 1):
         x0, x1 = side * PAD_X - PAD_W / 2, side * PAD_X + PAD_W / 2
         y0, y1 = -PAD_LEN / 2 - 0.02, PAD_LEN / 2 - 0.02
-        poly(d, rect(face, x0, x1, y0, y1), PAD, PAD_LINE)
-        poly(d, rect(face, x0 + 0.006, x1 - 0.006, (y0 + y1) / 2 + 0.004, y1 - 0.006), PAD_HI)
-        d.line([pt(*local(face, x0, (y0 + y1) / 2 - 0.004)), pt(*local(face, x1, (y0 + y1) / 2 - 0.004))],
-               fill=PAD_LINE, width=SS)
+        poly(d, rect(face, x0, x1, y0, y1), PAD)
+        poly(d, rect(face, x0, x1, (y0 + y1) / 2 + 0.006, y1), PAD_HI)
     # the LCD window and its digits, in the top plane, at the far edge
     top = 0.5 * (HI - LO) - LCD_MARGIN
-    ur0, ur1 = top - LCD_D, top
+    ur1 = top
 
     def lp(a, b_):
         return local(face, (a - 0.5) * LCD_W, ur1 - b_ * LCD_D)
 
-    poly(d, [lp(0, 0), lp(1, 0), lp(1, 1), lp(0, 1)], LCD, LCD_EDGE)
+    m = 0.012   # the dark bezel around the LCD
+    poly(d, [local(face, -LCD_W / 2 - m, ur1 + m), local(face, LCD_W / 2 + m, ur1 + m),
+             local(face, LCD_W / 2 + m, ur1 - LCD_D - m), local(face, -LCD_W / 2 - m, ur1 - LCD_D - m)], LCD_BEZEL)
+    poly(d, [lp(0, 0), lp(1, 0), lp(1, 1), lp(0, 1)], LCD)
     cols = sum(len(FONT[c][0]) for c in TEXT) + (len(TEXT) - 1)   # glyph gaps of 1
     rows = 5
     padx, pady = 1.5, 1.0
@@ -134,7 +165,21 @@ def draw_face(face):
                     b0, b1 = (pady + r) / gh, (pady + r + 1) / gh
                     poly(d, [lp(a0, b0), lp(a1, b0), lp(a1, b1), lp(a0, b1)], DIGIT)
         x += len(glyph[0]) + 1
-    return img.resize((FRAME_W, FRAME_H), Image.BOX)
+    out = Image.alpha_composite(shadow, img).resize((FRAME_W, FRAME_H), Image.BOX)
+    return grain(out, face)
+
+
+def grain(im, face):
+    """A little fixed noise on opaque pixels, like the game's own tiles."""
+    rnd = random.Random("dw-" + face)
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            if a > 200:
+                n = rnd.randint(-3, 3)
+                px[x, y] = (max(0, min(255, r + n)), max(0, min(255, g + n)), max(0, min(255, b + n)), a)
+    return im
 
 
 def main():
