@@ -43,6 +43,45 @@ function D.merge()
     return added
 end
 
+-- A weighted roll can pick the item more than once per container (rolls = 4
+-- on a counter, seen in game 2026-09-21: "Digital Scale (2)"), and a bathroom
+-- has several counters. After a container is filled, keep one scale in it and
+-- take the extras out; and once a container of a room has one, the room's
+-- other containers get none (best effort: remembered for the session, a room
+-- is filled in one go when its chunk loads). OnFillContainer runs right after
+-- the fill, before anything is shown or sent, so removing needs no transmit.
+local givenRoom = {}
+
+local function roomKeyOf(container)
+    local parent = type(container.getParent) == "function" and container:getParent()
+    local sq = parent and type(parent.getSquare) == "function" and parent:getSquare()
+    local room = sq and type(sq.getRoom) == "function" and sq:getRoom()
+    if not room then return nil end
+    local def = type(room.getRoomDef) == "function" and room:getRoomDef()
+    return def and type(def.getID) == "function" and def:getID() or room
+end
+
+function D.limit(roomName, containerType, container)
+    if type(container) ~= "table" and type(container) ~= "userdata" then return end
+    if type(container.getItems) ~= "function" then return end
+    local items = container:getItems()
+    local mine = {}
+    for i = 0, items:size() - 1 do
+        local it = items:get(i)
+        if it and type(it.getType) == "function" and it:getType() == D.item then mine[#mine + 1] = it end
+    end
+    if #mine == 0 then return end
+    local key = roomKeyOf(container)
+    local keep = 1
+    if key and givenRoom[key] ~= nil and givenRoom[key] ~= container then keep = 0 end
+    for i = keep + 1, #mine do container:Remove(mine[i]) end
+    if keep == 1 and key then givenRoom[key] = container end
+end
+
+if Events and Events.OnFillContainer and Events.OnFillContainer.Add then
+    Events.OnFillContainer.Add(D.limit)
+end
+
 if Events and Events.OnPreDistributionMerge and Events.OnPreDistributionMerge.Add then
     Events.OnPreDistributionMerge.Add(D.merge)
 end

@@ -14,7 +14,7 @@ end
 local LOADED = {}
 local function mkEvent() return { Add = function(_, f) end } end
 local handlers = {}
-Events = { OnPreDistributionMerge = { Add = function(f) handlers.merge = f end },
+Events = { OnFillContainer = { Add = function(f) handlers.fill = f end }, OnPreDistributionMerge = { Add = function(f) handlers.merge = f end },
            LoadChunk = { Add = function(f) handlers.chunk = f end } }
 SandboxVars = nil
 local CLIENT = false
@@ -110,6 +110,37 @@ check(D.weight() == 20, "the weight is clamped to 20")
 ProceduralDistributions = nil
 check(D.merge() == 0, "no ProceduralDistributions table: no crash")
 SandboxVars = nil
+
+-- 1b. one scale per container, one per room -------------------------------------
+check(handlers.fill == D.limit, "the fill is checked on OnFillContainer")
+local function itemOf(t) return { getType = function() return t end } end
+local function container(items, roomId)
+    local c = { list = items }
+    function c:getItems()
+        local l = {}
+        function l:size() return #c.list end
+        function l:get(i) return c.list[i + 1] end
+        return l
+    end
+    function c:Remove(it) for i, x in ipairs(c.list) do if x == it then table.remove(c.list, i) break end end end
+    if roomId then
+        c.getParent = function() return { getSquare = function() return { getRoom = function() return {
+            getRoomDef = function() return { getID = function() return roomId end } end } end } end } end
+    end
+    return c
+end
+local twice = container({ itemOf("Comb"), itemOf("Mov_DeadWeightDigital"), itemOf("Mov_DeadWeightDigital") }, 5)
+D.limit("bathroom", "counter", twice)
+check(#twice.list == 2 and twice.list[1]:getType() == "Comb", "a container holding two scales keeps one and its other items")
+local other = container({ itemOf("Mov_DeadWeightDigital") }, 5)
+D.limit("bathroom", "counter", other)
+check(#other.list == 0, "a second counter of the same room gets none")
+local elsewhere = container({ itemOf("Mov_DeadWeightDigital") }, 6)
+D.limit("bathroom", "counter", elsewhere)
+check(#elsewhere.list == 1, "another room keeps its scale")
+D.limit("bathroom", "counter", twice)
+check(#twice.list == 2, "re-checking the container that already holds the room's scale changes nothing")
+D.limit("x", "y", nil)
 
 -- 2. the toilet hook and queue ---------------------------------------------------
 check(handlers.chunk == Spawn.process, "the rooms are examined at LoadChunk")
