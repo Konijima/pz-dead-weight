@@ -154,11 +154,16 @@ Build 42 can load from the same copy.
 - `workshop/art/deadweight-banner.png` and `workshop/art/deadweight-banner-2.png`
   are the Workshop page banners (also the README images above); neither is
   shipped to players, see the `pack-workshop.sh` bullet above.
+- `workshop/art/320/` holds the images the Workshop page shows, scaled to 320 px
+  wide (a wider image makes Steam's mobile page scroll sideways);
+  `tools/gen-workshop-art.py` regenerates them from the full size originals in
+  `workshop/art/`, which the README uses. A new Workshop image goes into that
+  script's list.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
   lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
   which already holds the gif's raw GitHub URL
-  (`https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/deadweight-animation.gif`);
+  (`https://raw.githubusercontent.com/Konijima/pz-dead-weight/main/workshop/art/320/deadweight-animation.gif`);
   an empty file emits no `[img]` tag rather than a broken one. That URL
   only resolves once this repository is public, so **at release, make the
   repository public before making the Workshop item public**, or Steam
