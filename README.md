@@ -60,6 +60,8 @@ or other fixture:
   holding two and a bathroom giving out at most one from its counters;
 - on the floor against a wall in a big enough bathroom.
 
+![A survivor on the Digital Scale, reading in lb](workshop/art/deadweight-digital.png)
+
 Build 41 has no Digital Scale, only the clinic scale.
 
 ## Weigh others, and anything else

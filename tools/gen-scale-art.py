@@ -29,6 +29,9 @@ from PIL import Image, ImageDraw, ImageFilter
 SS = 4                      # supersampling, downscaled with a box filter
 FRAME_W, FRAME_H = 128, 256
 LO, HI = 0.33, 0.67         # footprint of the slab in the tile (0.34 tile square, a real bathroom scale is about 30 cm)
+# No baked drop shadow: on a counter the game drew it as a pale halo around the
+# slab (seen in game, 2026-09-21). The game already darkens the floor under objects.
+SHADOW_ALPHA = 0
 H = 5                       # slab thickness in 2x pixels (about 2.5/96 of a tile, 2.5 cm)
 BEVEL = 0.018               # width of the silver rim line around the glass, tile units
 
@@ -120,11 +123,12 @@ def draw_face(face):
     OFF[0], OFF[1] = -BACK_SHIFT * reader[0], -BACK_SHIFT * reader[1]
     img = Image.new("RGBA", (FRAME_W * SS, FRAME_H * SS), (0, 0, 0, 0))
     shadow = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    sd = ImageDraw.Draw(shadow)
-    grow = 0.05
-    poly(sd, [(LO - grow, LO - grow, 0), (HI + grow, LO - grow, 0), (HI + grow, HI + grow, 0), (LO - grow, HI + grow, 0)],
-         (0, 0, 0, 70))
-    shadow = shadow.filter(ImageFilter.GaussianBlur(SS * 1.6))
+    if SHADOW_ALPHA:
+        sd = ImageDraw.Draw(shadow)
+        grow = 0.05
+        poly(sd, [(LO - grow, LO - grow, 0), (HI + grow, LO - grow, 0), (HI + grow, HI + grow, 0), (LO - grow, HI + grow, 0)],
+             (0, 0, 0, SHADOW_ALPHA))
+        shadow = shadow.filter(ImageFilter.GaussianBlur(SS * 1.6))
     d = ImageDraw.Draw(img)
     # the two visible sides, shaded top (chrome catch light) to bottom (in shade)
     strips(d, lambda t0, t1: [(LO, HI, H * (1 - t0)), (HI, HI, H * (1 - t0)), (HI, HI, H * (1 - t1)), (LO, HI, H * (1 - t1))],
