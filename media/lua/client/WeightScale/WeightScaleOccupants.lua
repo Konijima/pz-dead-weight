@@ -294,19 +294,28 @@ local function atPlateHeight(wo, base)
     return type(oz) ~= "number" or oz >= base - BASE_SLACK
 end
 
+-- A character in the square of a scale drawn on a counter is at floor height,
+-- not on the plate: walking past it (a low counter in front of a window can be
+-- walked through) must not weigh them. The one exception is climbing through
+-- the window over it (ClimbThroughWindowState, exposed to Lua, seen in game
+-- 2026-09-21): the survivor is then above the counter for a moment and reads.
+local function overCounter(o)
+    if type(o.getCurrentState) ~= "function" or type(ClimbThroughWindowState) == "nil" then return false end
+    local st = o:getCurrentState()
+    return st ~= nil and st == ClimbThroughWindowState.instance()
+end
+
 -- kg of the floor items lying on the plate. getWorldObjects is a Java
 -- ArrayList of IsoWorldInventoryObject (0-based); each holds one InventoryItem
 -- and its 0..1 offset inside the square (getOffX/getOffY). An object that
 -- cannot tell its offset counts, as the whole tile did before.
-local function floorWeight(square, plate)
+local function floorWeight(square, plate, base)
     if type(square.getWorldObjects) ~= "function" then return 0 end
     local list = square:getWorldObjects()
     if not list then return 0 end
     local sum = 0
-    local base
     for i = 0, list:size() - 1 do
         local wo = list:get(i)
-        base = base or baseZ(square)
         if wo and itemOnPlate(plate, wo) and atPlateHeight(wo, base) then
             liftOntoPlate(plate, wo, base)
             local item = type(wo.getItem) == "function" and wo:getItem()
@@ -337,6 +346,7 @@ function Occupants.read(square, out, selfObj)
     if not square then return out end
     local carry = Occupants.weighCarried()
     local plate = Occupants.plateOnly() and plateOf(square) or DEFAULT_BOX
+    local base = Occupants.plateOnly() and baseZ(square) or 0
     if type(square.getMovingObjects) ~= "function" then
         if selfObj and (not Occupants.plateOnly() or charOnPlate(plate, square, selfObj)) then
             local body, carried = massOf(selfObj, carry)
@@ -348,7 +358,7 @@ function Occupants.read(square, out, selfObj)
         for i = 0, list:size() - 1 do
             local o = list:get(i)
             local w = Occupants.weightOf(o)
-            if w and (not Occupants.plateOnly() or charOnPlate(plate, square, o)) then
+            if w and (not Occupants.plateOnly() or (charOnPlate(plate, square, o) and (base <= 0 or overCounter(o)))) then
                 if isA(o, "IsoPlayer") and not isA(o, "IsoAnimal") then
                     local body, carried = massOf(o, carry)
                     if body then w = body + carried end
@@ -357,7 +367,7 @@ function Occupants.read(square, out, selfObj)
             end
         end
     end
-    local f = floorWeight(square, plate)
+    local f = floorWeight(square, plate, base)
     if f > 0 then out[#out + 1] = f end
     return out
 end

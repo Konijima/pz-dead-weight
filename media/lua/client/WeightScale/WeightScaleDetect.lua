@@ -88,6 +88,17 @@ local function hasScaleSprite(square)
     return scaleObjectOn(square) ~= nil
 end
 
+-- Can a character stand on the scale of this square: not when it is drawn on
+-- a counter or table (render offset above 0), where anyone in the square is
+-- at floor height. Such a scale is still read from a distance, it just never
+-- counts as "on the scale" (no step on cue, no turn to face it).
+local function standableOn(square)
+    local obj, entry = scaleObjectOn(square)
+    if not obj or entry.standable == false then return false end
+    local lift = type(obj.getRenderYOffset) == "function" and obj:getRenderYOffset()
+    return not (type(lift) == "number" and lift > 0)
+end
+
 -- the Scales entry of the scale on a square, nil when there is none
 function Detect.scaleEntryOn(square)
     local _, entry = scaleObjectOn(square)
@@ -365,7 +376,7 @@ function Detect.update(n, playerObj)
         local prev = s.lastSquare
         s.lastSquare = square
 
-        local onNow = square ~= nil and hasScaleSprite(square)
+        local onNow = square ~= nil and standableOn(square)
 
         if onNow and s.onScale and prev and prev ~= square then
             -- stepped straight from one scale onto the next: a new scale to

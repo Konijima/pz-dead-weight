@@ -1036,6 +1036,32 @@ do
     check(#out == 1 and near(out[1], 3.1), "counter scale: the item on the counter counts, the floor one does not, got " .. tostring(out[1]))
     check(near(onCounter.oz, base + 0.03), "the counter item is raised onto the plate, got " .. tostring(onCounter.oz))
     check((lifted.lifts or 0) == 0 and (underCounter.lifts or 0) == 0, "an item already on the plate, or beneath, is not written")
+    -- a survivor walking through a counter scale's square is at floor height:
+    -- not weighed, unless climbing through the window over it
+    sq.floor = {}
+    local walker = makePlayer(1, 80)
+    put(walker, 90, 90)
+    walker.sx, walker.sy = 0.5, 0.37   -- on the S plate
+    ClimbThroughWindowState = { instance = function() return "climb" end }
+    walker.getCurrentState = function() return "walk" end
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 0, "a survivor walking through a counter scale's square is not weighed, got " .. #out)
+    walker.getCurrentState = function() return "climb" end
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 1 and near(out[1], 80), "climbing through the window over a counter scale reads, got " .. #out)
+    walker.getCurrentState = nil
+    out = Occupants.read(sq, {}, nil)
+    check(#out == 0, "no state API on a counter scale: not weighed")
+    remove(walker)
+    ClimbThroughWindowState = nil
+    -- and being in that square is not "on the scale": no cue, no turn
+    local guest = makePlayer(0, 70)
+    put(guest, 90, 90)
+    Detect.clear(0)
+    tick(0, 3)
+    check(not Detect.players[0].onScale and not Detect.players[0].pendingFace, "a square with a counter scale is not stood on")
+    remove(guest)
+    Detect.clear(0)
     -- the same scale on the floor: floor items count as before
     sq.objects[1].getRenderYOffset = nil
     sq.floor = { itemAt(30, 0) }
