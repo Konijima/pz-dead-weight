@@ -19,7 +19,7 @@ Events = { OnFillContainer = { Add = function(f) handlers.fill = f end }, OnPreD
 SandboxVars = nil
 local CLIENT = false
 function isClient() return CLIENT end
-IsoDirections = { N = "N", S = "S", E = "E", W = "W" }
+IsoDirections = { N = "N", S = "S", E = "E", W = "W", NW = "NW", NE = "NE", SW = "SW", SE = "SE" }
 local NEXT = 0
 function ZombRand(n) NEXT = NEXT + 1 return 0 end
 function getCell() return {} end
@@ -48,8 +48,8 @@ local function key(x, y) return x .. "," .. y end
 local function inRoom(x, y) return x >= 0 and x <= 2 and y >= 0 and y <= 3 end
 local FACE = {}                       -- "x,y" -> the Facing tile property of the furniture there
 local function propsOf(furn, at)
-    return { has = function(_, p) return furn and p == "IsMoveAble" end,
-             Val = function(_, p) return p == "Facing" and furn and at and FACE[at] or nil end }
+    return { has = function(_, p) return furn and (p == "IsMoveAble" or (p == "Facing" and at ~= nil and FACE[at] ~= nil)) or false end,
+             get = function(_, p) return p == "Facing" and furn and at and FACE[at] or nil end }
 end
 local function mk(x, y)
     local sq = { x = x, y = y, added = {} }
@@ -70,7 +70,8 @@ local function mk(x, y)
     end
     function sq:getAdjacentSquare(d)
         local dx, dy = 0, 0
-        if d == "N" then dy = -1 elseif d == "S" then dy = 1 elseif d == "W" then dx = -1 else dx = 1 end
+        if d:find("N") then dy = -1 elseif d:find("S") then dy = 1 end
+        if d:find("W") then dx = -1 elseif d:find("E") then dx = 1 end
         return grid[key(x + dx, y + dy)]
     end
     function sq:isWallTo(n)
@@ -219,6 +220,21 @@ grid[key(2, 1)].getWindowTo = function(_, n) return n.x == 3 and {} or nil end
 check(spots(ROOM)[key(2, 1)] == "E", "a window wall is a wall")
 grid[key(2, 1)].isWallTo = function(_, n) return inRoom(2, 1) ~= inRoom(n.x, n.y) end
 grid[key(2, 1)].getWindowTo = nil
+
+-- 5b2. the open stretch of wall wins over a squeezed corner ------------------------
+reset()
+SandboxVars = { DeadWeight = { HomeScaleFloor = 100 } }
+FURN[key(0, 0)] = true      -- a toilet and a basin in the north west corner
+FURN[key(0, 1)] = true
+local placedAt = Spawn.tryRoom(grid[key(0, 0)], 0)
+check(placedAt ~= nil, "still placed")
+local w = 0
+for dx = -1, 1 do for dy = -1, 1 do
+    local n = grid[key(placedAt.x + dx, placedAt.y + dy)]
+    if n and inRoom(n.x, n.y) and FURN[key(n.x, n.y)] then w = w + 1 end
+end end
+check(w == 0, "the scale is put where no fixture is around it, got crowd " .. w .. " at " .. placedAt.x .. "," .. placedAt.y)
+reset()
 
 -- 5c. a home scale belongs in a home ------------------------------------------------
 local function buildingOf(names)

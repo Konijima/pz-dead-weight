@@ -106,6 +106,20 @@ local function hasOpening(sq)
     return false
 end
 
+local DIRS8 = { "N", "S", "E", "W", "NW", "NE", "SW", "SE" }
+
+-- How crowded the square's surroundings are: furniture on the room's squares
+-- around it, diagonals included. The scale goes where this is lowest, in the
+-- open stretch of wall, not in a corner squeezed between a tub and a toilet.
+local function crowd(sq, room)
+    local c = 0
+    for _, name in ipairs(DIRS8) do
+        local n = neighbour(sq, name)
+        if n and n:getRoom() == room and hasFurniture(n) then c = c + 1 end
+    end
+    return c
+end
+
 local OPPOSITE = { N = "S", S = "N", E = "W", W = "E" }
 
 -- Is this square the front of a piece of furniture next to it (the space in
@@ -121,7 +135,9 @@ local function inFrontOfFurniture(sq)
                 local o = objs:get(i)
                 local sprite = o and type(o.getSprite) == "function" and o:getSprite()
                 local props = sprite and type(sprite.getProperties) == "function" and sprite:getProperties()
-                if props and type(props.Val) == "function" and props:Val("Facing") == OPPOSITE[name] then
+                -- ISMoveableSpriteProps reads it as props:has("Facing") / props:get("Facing")
+                if props and type(props.has) == "function" and props:has("Facing")
+                    and props:get("Facing") == OPPOSITE[name] then
                     return true
                 end
             end
@@ -184,7 +200,7 @@ function Spawn.candidates(room)
                     end
                     if nearDoor then why.neardoor = why.neardoor + 1
                     elseif inFrontOfFurniture(sq) then why.front = why.front + 1
-                    else out[#out + 1] = { sq = sq, side = side } end
+                    else out[#out + 1] = { sq = sq, side = side, crowd = crowd(sq, room) } end
                 end
             end
         end
@@ -253,7 +269,12 @@ function Spawn.tryRoom(square, roll)
             .. "; squares not free " .. why.notfree .. ", with furniture " .. why.furn .. ")")
         return nil
     end
-    local pick = list[(roll and 1) or (ZombRand(#list) + 1)]
+    -- only the roomiest spots stay in the running
+    local best = list[1].crowd
+    for _, c in ipairs(list) do if c.crowd < best then best = c.crowd end end
+    local open = {}
+    for _, c in ipairs(list) do if c.crowd == best then open[#open + 1] = c end end
+    local pick = open[(roll and 1) or (ZombRand(#open) + 1)]
     local sq = pick.sq
     local obj = IsoObject.new(getCell(), sq, getSprite(Spawn.spriteFor[pick.side]))
     sq:AddSpecialObject(obj)
