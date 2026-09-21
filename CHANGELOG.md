@@ -8,6 +8,8 @@ note box.
 
 ## Unreleased
 
+- Fixed the step on and off sound with two scales in reach: it no longer plays just because a scale with something on it comes into view or goes out of view. It plays only when something is put on, or taken off, the scale you are watching.
+
 ## 1.2.0 - 2026-09-21
 
 The scale reads what lies on it and what you carry, and it works better with other people around.

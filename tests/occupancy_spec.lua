@@ -917,6 +917,44 @@ do
     sA.occupants, sB.occupants = {}, {}
 end
 
+-- 16e. two scales: a cue belongs to one scale, another one entering or leaving reach is silent --
+do
+    sandbox(nil)
+    local sA, sB = squareAt(110, 100), squareAt(114, 100)
+    sA.scale, sB.scale = true, true
+    local vis = makePlayer(7, 60)
+    local function settle()
+        NOW = NOW + Core.T.offEnd + 1
+        hud(0):tick()
+    end
+    put(pat, 114, 100)                      -- a patient stays on B, out of reach from 111
+    put(vis, 30, 30)
+    put(doc, 30, 31); tick(0, 4)
+    SOUND = {}
+    put(doc, 111, 100); tick(0, 4)
+    check(Detect.players[0].scales[1] == sA and #Detect.players[0].scales == 1 and mode(0) ~= "on", "only the empty scale A is in reach")
+    put(doc, 112, 100); tick(0, 4)
+    check(mode(0) == "on" and Detect.players[0].scaleSquare == sB and #SOUND == 0,
+        "occupied B comes into reach beside an empty A watched before: read in silence, got " .. sounds())
+    put(doc, 111, 100); tick(0, 4)
+    check(mode(0) == "off" and #SOUND == 0, "occupied B leaves reach while empty A stays: off, in silence, got " .. sounds())
+    settle()
+    put(doc, 112, 100); tick(0, 4)
+    settle()
+    SOUND = {}
+    put(pat, 30, 32); tick(0, 4)            -- the patient leaves B, viewer still reads it
+    check(sounds() == "WeightScaleOff@0", "the patient leaving the shown scale is heard, got " .. sounds())
+    settle()
+    put(vis, 110, 100); tick(0, 4)          -- someone steps on A, which the viewer watched empty
+    check(mode(0) == "on" and sounds() == "WeightScaleOff@0,WeightScaleOn@0", "someone steps on the watched scale A: on cue, got " .. sounds())
+    remove(vis); remove(pat)
+    put(doc, 20, 20); tick(0, 4)
+    settle()
+    PLAYERS[7] = nil
+    sA.scale, sB.scale = false, false
+    sA.occupants, sB.occupants = {}, {}
+end
+
 -- 17. each scale sprite has its own plate spot in the tile -------------------
 local function spriteObj(name) return { getSprite = function() return { getName = function() return name end } end } end
 local function spriteSquare(x, y, name)

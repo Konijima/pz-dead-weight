@@ -52,7 +52,8 @@ local function stateFor(n)
               losTick = 0,        -- polls since the last line of sight check
               shownKey = false,   -- one decimal total on screen, false = empty
               selfOn = false,     -- viewer was on the tile at the last apply
-              settledEmpty = false, -- this viewer has watched the scale sit empty
+              emptySeen = {},     -- [scale square] = true once this viewer read THAT scale empty
+              shownSquare = nil,  -- the scale the reading on screen belongs to
               pendKey = nil, pendN = 0, buf = {} }
         Detect.players[n] = s
     end
@@ -206,6 +207,11 @@ end
 -- empty. The viewer counts only while standing on the plate itself, not
 -- anywhere in the square (Occupants.onPlate); s.onScale stays square based
 -- for the facing turn.
+-- Cues belong to ONE scale (docs/BACKLOG.md, two scales in reach): the on cue
+-- needs this viewer to have read that very scale empty first (emptySeen), the
+-- off cue needs the scale that was on screen to still be in reach and now
+-- empty (shownSquare). A different scale coming into or leaving reach only
+-- moves the reading, in silence.
 local function poll(n, s, playerObj)
     local Occ, Core = WeightScale.Occupants, WeightScale.Core
     local vs = playerSquare(playerObj)
@@ -229,6 +235,7 @@ local function poll(n, s, playerObj)
         local sq = s.scales[i]
         if not hasScaleSprite(sq) or (checkSight and not lineOfSight(vs, sq)) then
             table.remove(s.scales, i)
+            s.emptySeen[sq] = nil
             dropped = true
         else
             i = i + 1
@@ -239,13 +246,17 @@ local function poll(n, s, playerObj)
         s.rescanLeft = Detect.rescanFor
     end
     local chosen, total, selfOn
+    local nRead = #s.scales
     for j = 1, #s.scales do
         local sq = s.scales[j]
         local on = s.onScale and sq == s.ownSquare and Occ.onPlate(sq, playerObj)
         local occ = Occ.read(sq, s.buf, on and playerObj or nil)
         local t = Core.sumWeights(occ)
-        if t then chosen, total, selfOn = sq, t, on break end
+        if t then chosen, total, selfOn = sq, t, on nRead = j break end
+        s.emptySeen[sq] = true
     end
+    -- scales past the occupied one were not read this poll: their state is unknown
+    for j = nRead + 1, #s.scales do s.emptySeen[s.scales[j]] = nil end
     if not chosen and #s.scales > 0 then
         chosen = s.scales[1]
         selfOn = s.onScale and chosen == s.ownSquare and Occ.onPlate(chosen, playerObj)
@@ -253,30 +264,37 @@ local function poll(n, s, playerObj)
     selfOn = selfOn and true or false
     s.scaleSquare = chosen
     local key = total and WeightScale.Core.format(total, "kg") or false
-    -- settled: this viewer had already watched the scale sit empty before the
-    -- change being applied, so the reading appearing is something happening
-    -- at the scale (someone or an item lands) and not the viewer walking up
-    -- to a scale that was already occupied. Only the former earns a cue.
-    local settled = s.settledEmpty
-    if not s.scaleSquare then s.settledEmpty = false
-    elseif key == false then s.settledEmpty = true end   -- kept through the debounce
+    -- settled: this viewer had already watched THIS scale sit empty before
+    -- the change being applied, so the reading appearing is something
+    -- happening at the scale (someone or an item lands) and not the viewer
+    -- walking up to a scale that was already occupied. Only the former earns
+    -- a cue. The flag is kept through the debounce and cleared once applied.
+    local settled = total ~= nil and s.emptySeen[chosen] == true
+    -- the scale that was on screen is out of reach (or gone): the reading
+    -- leaves in silence and at once, even if another scale is still in reach
+    local shownInReach = false
+    for j = 1, #s.scales do
+        if s.scales[j] == s.shownSquare then shownInReach = true break end
+    end
+    local lost = s.shownSquare ~= nil and not shownInReach
     local selfChanged = selfOn ~= s.selfOn
     if key == s.shownKey then
+        if total then s.shownSquare = chosen end   -- same total, maybe read off another scale
         s.pendKey, s.pendN = nil, 0
         s.selfOn = selfOn
         return
     end
     -- someone else's arrival or departure must survive Detect.debounce polls;
     -- the viewer's own move, or the scale going out of reach, applies at once.
-    if not selfChanged and s.scaleSquare then
+    if not selfChanged and s.scaleSquare and not lost then
         if s.pendKey == key then s.pendN = s.pendN + 1 else s.pendKey, s.pendN = key, 1 end
         if s.pendN < Detect.debounce then return end
     end
     local wasEmpty, wasSelf = s.shownKey == false, s.selfOn
     s.shownKey, s.selfOn = key, selfOn
-    if key then s.settledEmpty = false end
+    if key then s.emptySeen[chosen], s.shownSquare = nil, chosen else s.shownSquare = nil end
     s.pendKey, s.pendN = nil, 0
-    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, s.scaleSquare ~= nil, settled) end
+    if Detect.onOccupancy then Detect.onOccupancy(n, total, selfOn, wasEmpty, wasSelf, shownInReach, settled) end
 end
 
 -- n is the player index (0-based, as getSpecificPlayer/getPlayerNum use it).
@@ -314,6 +332,10 @@ function Detect.update(n, playerObj)
             if Detect.onScaleOff then Detect.onScaleOff(n) end
         end
         s.scales = square and findScales(square) or {}
+        -- what was read empty only counts for scales still in reach
+        local seen = {}
+        for _, sq in ipairs(s.scales) do seen[sq] = s.emptySeen[sq] end
+        s.emptySeen = seen
         s.ownSquare = onNow and square or nil
         s.scaleSquare = s.scales[1]
     end
