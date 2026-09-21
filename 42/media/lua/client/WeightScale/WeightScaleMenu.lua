@@ -18,6 +18,11 @@ WeightScale = WeightScale or {}
 WeightScale.Menu = WeightScale.Menu or {}
 local Menu = WeightScale.Menu
 
+-- console notes about the animal hold, debug mode only
+local function debugLog(msg)
+    if type(getDebug) == "function" and getDebug() then print(msg) end
+end
+
 local TEX_PATH = "media/textures/WeightScale/weightscale_icon.png"
 local _icon    -- cached texture, requested once no matter how many opens
 
@@ -145,7 +150,7 @@ local function holdTick()
         if p.animal then
             if t >= p.releaseAt then
                 setBlock(p.animal, false)
-                print("[DeadWeight] animal released, put back " .. (p.pinned or 0) .. " times")
+                debugLog("[DeadWeight] animal released, put back " .. (p.pinned or 0) .. " times")
                 table.remove(pending, i)
             else
                 pin(p)
@@ -165,10 +170,10 @@ local function holdTick()
                     -- centred on the plate: it lands at the tile middle, which is
                     -- only near the plate's own centre
                     p.x, p.y = WeightScale.Occupants.plateCentre(p.square)
-                    print("[DeadWeight] animal held at " .. p.x .. "," .. p.y)
+                    debugLog("[DeadWeight] animal held at " .. p.x .. "," .. p.y)
                     pin(p)
                 elseif t >= p.giveUp then
-                    print("[DeadWeight] animal drop never seen, gave up")
+                    debugLog("[DeadWeight] animal drop never seen, gave up")
                     table.remove(pending, i)
                 end
             end

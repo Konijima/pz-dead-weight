@@ -96,6 +96,17 @@ end
 require("WeightScale/WeightScaleDistributions")
 require("WeightScale/WeightScaleSpawn")
 local D, Spawn = WeightScale.Distributions, WeightScale.Spawn
+-- the console line only exists in debug mode
+local printed = {}
+local realPrint = print
+print = function(m) printed[#printed + 1] = m end
+getDebug = function() return false end
+Spawn.log("quiet")
+getDebug = function() return true end
+Spawn.log("loud")
+print = realPrint
+check(#printed == 1 and printed[1]:find("loud", 1, true), "spawn lines print in debug mode only")
+getDebug = nil
 local LOG = {}
 Spawn.log = function(m) LOG[#LOG + 1] = m end
 

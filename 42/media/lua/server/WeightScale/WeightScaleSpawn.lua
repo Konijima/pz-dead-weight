@@ -43,8 +43,11 @@ Spawn.spriteFor = {
 local DIRS = { "N", "W", "S", "E" }
 
 -- One console line per bathroom examined (a new chunk only, a handful per
--- town), to diagnose "why no scale here" from console.txt.
-function Spawn.log(msg) print("[DeadWeight] spawn: " .. msg) end
+-- town), to diagnose "why no scale here" from console.txt. Debug mode only:
+-- a normal game prints nothing.
+function Spawn.log(msg)
+    if type(getDebug) == "function" and getDebug() then print("[DeadWeight] spawn: " .. msg) end
+end
 local function where(sq) return sq.getX and (sq:getX() .. "," .. sq:getY()) or (tostring(sq.x) .. "," .. tostring(sq.y)) end
 
 function Spawn.chance()
