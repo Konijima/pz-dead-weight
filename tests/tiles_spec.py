@@ -129,12 +129,24 @@ for f in FACES:
     src = Image.open(ROOT / f"src/tiles/digital_scale_{f}.png")
     check(src.size == (128, 256), f"src/tiles/digital_scale_{f}.png is {src.size}, needs 128x256")
 
-# every face is assigned a depth map (else the game uses a whole tile box and a
-# survivor on the slab is drawn behind it)
-depth = (ROOT / "common/media/tileDepthTextureAssignments.txt").read_text()
-check("VERSION = 1" in depth, "tileDepthTextureAssignments.txt needs VERSION = 1")
-for i in range(4):
-    check(f"{SHEET}_{i} = " in depth, f"no depth assignment for {SHEET}_{i}")
+# every visible pixel of every face has a depth (alpha 0 in the depth map means the
+# game does not draw it), the slab is nearer than the floor plane it stands on, and
+# the mod ships the tileGeometry.txt the game needs before it reads depth maps
+geom = (ROOT / "common/media/tileGeometry.txt").read_text()
+check("VERSION = 2" in geom, "tileGeometry.txt needs VERSION = 2")
+dm = Image.open(ROOT / f"common/media/depthmaps/DEPTH_{SHEET}.png").convert("RGBA")
+check(dm.size == (8 * 128, 256), f"depth map is {dm.size}, needs 1024x256 (8 tiles wide)")
+for i, f in enumerate(FACES):
+    src = Image.open(ROOT / f"src/tiles/digital_scale_{f}.png").convert("RGBA")
+    sa, da = src.getchannel("A").load(), dm.crop((i * 128, 0, i * 128 + 128, 256)).load()
+    bad = [(x, y) for y in range(256) for x in range(128) if (sa[x, y] > 0) != (da[x, y][3] > 0)]
+    check(not bad, f"face {f}: depth map coverage differs from the sprite at {bad[:3]}")
+    zero = [(x, y) for y in range(256) for x in range(128) if da[x, y][3] > 0 and da[x, y][2] == 0]
+    check(not zero, f"face {f}: depth 0 discards the pixel ({zero[:3]})")
+    # a slab pixel is nearer than the floor plane on its own row (floor d = 1 - (y - 192) / 128)
+    slab = [(x, y) for y in range(256) for x in range(128) if sa[x, y] > 200]
+    worse = [(x, y) for x, y in slab if da[x, y][2] / 255.0 >= 1 - (y - 192) / 128.0]
+    check(slab and not worse, f"face {f}: slab pixels not nearer than the floor at {worse[:3]}")
 
 if failures:
     for m in failures:

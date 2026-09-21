@@ -4,7 +4,8 @@ hand edited faces in src/tiles/:
 
   common/media/texturepacks/DeadWeightDigital.pack   (PZPK texture pack)
   common/media/DeadWeightDigital.tiles               (binary tdef tile definitions)
-  common/media/tileDepthTextureAssignments.txt       (depth map of each face, see DEPTH_ASSIGN)
+  common/media/tileGeometry.txt                      (empty geometry list, see build_geometry)
+  common/media/depthmaps/DEPTH_deadweight_digital_01.png   (depth map of the four faces, see build_depth)
 
 Never hand edit the two outputs. Edit src/tiles/digital_scale_{S,E,N,W}.png (the
 game's 2x frame, 128x256 RGBA) or TILE_PROPS below and rerun (tools/sync.sh does).
@@ -42,13 +43,22 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(ROOT, "src", "tiles")
 PACK_REL = os.path.join("common", "media", "texturepacks", "DeadWeightDigital.pack")
 TILES_REL = os.path.join("common", "media", "DeadWeightDigital.tiles")
-DEPTH_REL = os.path.join("common", "media", "tileDepthTextureAssignments.txt")
-# A sprite with no depth map gets the game's whole tile box (TileDepthTextureManager
-# default), so a survivor standing on the slab is hidden behind it. The vanilla
-# "Floor" preset depth map (preset_depthmaps_01_0) is a flat plane at floor level:
-# the slab is 2.5 cm high, so a person or an animal always draws over it.
-# TileDepthTextureAssignments reads it from the mod's common/media dir.
-DEPTH_ASSIGN = "preset_depthmaps_01_0"
+GEOM_REL = os.path.join("common", "media", "tileGeometry.txt")
+DEPTH_REL = os.path.join("common", "media", "depthmaps", "DEPTH_deadweight_digital_01.png")
+# Depth. A sprite with no depth map gets the game's whole tile box, so a survivor
+# standing on the slab is hidden behind it. The vanilla floor preset (a flat plane)
+# fixes that but is invisible on a counter: the game lifts a counter object by
+# shifting its depth nearer by exactly the lift, so a flat floor plane ties with
+# the counter top. So the slab ships its own depth map, in the game's encoding
+# (TileDepthTexture.load, shaders/tileWithDepth.frag): per pixel alpha 0 = not drawn
+# (so EVERY visible pixel, shadow included, needs one), else blue/255 = d, and the
+# fragment depth is front + (far - front) * d over the tile's box. Measured on the
+# vanilla depth maps at 2x: the floor plane is d = 1 - (u + v) / 4 (screen row
+# y = 192 + (u + v) * 32 at h = 0) and each pixel of height is 0.0026 nearer.
+# The slab (opaque pixels) is 5 px high plus a small bias nearer than the floor.
+DEPTH_COLS = 8      # depth maps are always 8 tiles wide
+D_PER_H = 0.0026
+D_BIAS = 0.008      # about 2 steps of 1/255, keeps the sprite in front of a counter top
 
 SHEET = "deadweight_digital_01"
 PAGE_NAME = "DeadWeightDigital0"  # fixed, like FoodDrying's "<pack>0"
@@ -56,6 +66,7 @@ PAGE_NAME = "DeadWeightDigital0"  # fixed, like FoodDrying's "<pack>0"
 FACES = ["S", "E", "N", "W"]
 FRAME_W, FRAME_H = 128, 256  # the game's 2x tile frame
 PAGE_MAX_W = 256
+SLAB_H = 5  # the slab height gen-scale-art.py draws (H), in 2x pixels
 PAD = 2  # gap between packed faces so bilinear sampling never bleeds
 
 # Modelled on vanilla location_community_medical_01_136 (Microscope), a movable
@@ -160,16 +171,40 @@ def build_tiles():
     return b"".join(out)
 
 
-def build_depth():
-    lines = ["tileDepthTextureAssignments", "{", "    VERSION = 1,"]
-    for i in range(len(FACES)):
-        lines.append("    %s_%d = %s," % (SHEET, i, DEPTH_ASSIGN))
-    lines.append("}")
-    return ("\n".join(lines) + "\n").encode("utf-8")
+def build_geometry():
+    # TileDepthTextureManager.init only reads a mod's depth maps when this file
+    # exists; it needs VERSION and no tileset.
+    return b"tileGeometry\n{\n    VERSION = 2,\n}\n"
+
+
+def build_depth_image(full_faces):
+    """8 x 1 tiles of 128x256 (2x); tile i holds the depth of face i."""
+    out = Image.new("RGBA", (DEPTH_COLS * FRAME_W, FRAME_H), (0, 0, 0, 0))
+    px = out.load()
+    for i, full in enumerate(full_faces):
+        a = full.getchannel("A").load()
+        for y in range(FRAME_H):
+            for x in range(FRAME_W):
+                al = a[x, y]
+                if al == 0:
+                    continue
+                # opaque pixels are the slab (5 px high), the soft shadow is on the floor
+                h = SLAB_H if al > 200 else 0
+                d = 1.0 - (y + h - 192) / 128.0 - D_PER_H * h - D_BIAS
+                v = max(1, min(255, int(round(d * 255))))
+                px[i * FRAME_W + x, y] = (v, v, v, 255)
+    return out
+
+
+def png_bytes(im):
+    buf = io.BytesIO()
+    im.save(buf, format="PNG", optimize=False, compress_level=9)
+    return buf.getvalue()
 
 
 def generate(base_dir):
     faces = load_faces()
+    fulls = [Image.open(os.path.join(SRC_DIR, "digital_scale_%s.png" % f)).convert("RGBA") for f in FACES]
     pack_path = os.path.join(base_dir, PACK_REL)
     tiles_path = os.path.join(base_dir, TILES_REL)
     os.makedirs(os.path.dirname(pack_path), exist_ok=True)
@@ -177,10 +212,14 @@ def generate(base_dir):
         f.write(build_pack(faces))
     with open(tiles_path, "wb") as f:
         f.write(build_tiles())
+    geom_path = os.path.join(base_dir, GEOM_REL)
+    with open(geom_path, "wb") as f:
+        f.write(build_geometry())
     depth_path = os.path.join(base_dir, DEPTH_REL)
+    os.makedirs(os.path.dirname(depth_path), exist_ok=True)
     with open(depth_path, "wb") as f:
-        f.write(build_depth())
-    return pack_path, tiles_path, depth_path
+        f.write(png_bytes(build_depth_image(fulls)))
+    return pack_path, tiles_path, geom_path, depth_path
 
 
 def split_pack(data):
@@ -209,18 +248,29 @@ def same_pack(a, b):
     return ha == hb and ia.size == ib.size and ia.tobytes() == ib.tobytes()
 
 
+def same_png(a, b):
+    if a == b:
+        return True
+    try:
+        ia, ib = Image.open(io.BytesIO(a)).convert("RGBA"), Image.open(io.BytesIO(b)).convert("RGBA")
+    except Exception:
+        return False
+    return ia.size == ib.size and ia.tobytes() == ib.tobytes()
+
+
 def main():
     if "--check" not in sys.argv:
         for p in generate(ROOT):
             print("wrote " + os.path.relpath(p, ROOT))
         return
     with tempfile.TemporaryDirectory() as tmp:
-        pack_new, tiles_new, depth_new = generate(tmp)
+        pack_new, tiles_new, geom_new, depth_new = generate(tmp)
         bad = []
         for new, rel, same in (
             (pack_new, PACK_REL, same_pack),
             (tiles_new, TILES_REL, lambda a, b: a == b),
-            (depth_new, DEPTH_REL, lambda a, b: a == b),
+            (geom_new, GEOM_REL, lambda a, b: a == b),
+            (depth_new, DEPTH_REL, same_png),
         ):
             live = os.path.join(ROOT, rel)
             if not os.path.isfile(live):

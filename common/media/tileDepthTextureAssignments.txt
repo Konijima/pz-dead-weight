@@ -1,8 +1,0 @@
-tileDepthTextureAssignments
-{
-    VERSION = 1,
-    deadweight_digital_01_0 = preset_depthmaps_01_0,
-    deadweight_digital_01_1 = preset_depthmaps_01_0,
-    deadweight_digital_01_2 = preset_depthmaps_01_0,
-    deadweight_digital_01_3 = preset_depthmaps_01_0,
-}
