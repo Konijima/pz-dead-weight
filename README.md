@@ -158,7 +158,9 @@ Build 42 can load from the same copy.
   wide (a wider image makes Steam's mobile page scroll sideways);
   `tools/gen-workshop-art.py` regenerates them from the full size originals in
   `workshop/art/`, which the README uses. A new Workshop image goes into that
-  script's list.
+  script's list. `deadweight-sprites.png` there (the clinic scale next to the
+  Digital Scale's four faces) comes from `tools/gen-workshop-sprites.py`, which
+  needs a Project Zomboid install.
 - `workshop/description.bbcode` is the hand edited source of the Workshop
   page text; `tools/gen-workshop-txt.py` regenerates the `description=`
   lines of `workshop/workshop.txt` from it and from `workshop/gif_url.txt`,
