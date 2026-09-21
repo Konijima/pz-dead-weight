@@ -14,8 +14,8 @@
 --   range       which weight range the HUD maps ("medical" = Geo.weight)
 -- The medical numbers were measured off the sprite art (Tiles2x.pack,
 -- location_community_medical_01_8 and _9), see WeightScaleOccupants. The
--- digital sprites do not exist in game yet: their plate and plateTop are
--- placeholders until the tile pack ships.
+-- digital slab is drawn by tools/gen-scale-art.py: 0.6 tile square centred
+-- (half 0.3), 4/96 tile thick; plateTop is unproven until placed in game.
 WeightScale = WeightScale or {}
 WeightScale.Scales = WeightScale.Scales or {}
 local Scales = WeightScale.Scales
@@ -29,7 +29,7 @@ end
 
 local function digital()
     return {
-        kind = "digital", style = "panel", plate = { 0.5, 0.5 }, half = 0.28,
+        kind = "digital", style = "panel", plate = { 0.5, 0.5 }, half = 0.3,
         plateTop = 0.04, standable = true, faceColumn = false, range = "digital",
     }
 end

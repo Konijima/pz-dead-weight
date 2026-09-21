@@ -114,12 +114,12 @@ and pass it into `read`.
 (0.04). The centres come from the sprite art; the half size and the lift height
 are still estimates.
 
-## Digital Scale art origin and licensing
+## Digital Scale art
 
-`src/tiles/digital_scale_{S,E,N,W}.png` is placeholder art derived from the
-vanilla scale sprites (`location_community_medical_01_8` and `_9`, 2x): plate
-kept, column removed, shrunk to about 60 percent, a small LCD painted on top;
-N and W are the S and E faces mirrored horizontally, not drawn faces. The
-plate pixels are Indie Stone's. Whether a mod may ship art derived from them
-(Workshop and the LICENSE notes) is an open question: settle it, or redraw the
-plate from scratch, before the Digital Scale goes public.
+`src/tiles/digital_scale_{S,E,N,W}.png` is drawn from scratch by
+`tools/gen-scale-art.py` (a flat slab in the game's isometric projection, the
+LCD drawn in the top plane so it follows the iso surface, one true rotation per
+face), run by hand, not by sync. It uses no vanilla pixels, so there is no
+licensing question left; only the look is first pass and open to hand
+refinement (a hand edited PNG must not be regenerated over). Still to check in
+game: height on a floor versus a counter, and the LCD's legibility at 1x.

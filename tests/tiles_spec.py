@@ -79,11 +79,12 @@ check(r.p == len(r.d), f".tiles has {len(r.d) - r.p} trailing bytes")
 for i, (props, face) in enumerate(zip(tiles, FACES)):
     tag = f"{SHEET}_{i}"
     check(props.get("Facing") == face, f"{tag}: Facing {props.get('Facing')!r} != {face}")
-    for flag in ("IsMoveAble", "IsTableTop", "IsSurfaceOffset", "BlocksPlacement", "CanScrap"):
+    for flag in ("IsMoveAble", "IsTableTop", "BlocksPlacement", "CanScrap"):
         check(flag in props and props[flag] == "", f"{tag}: has flag {flag}")
     check(props.get("CustomName") == "Digital Scale", f"{tag}: CustomName")
     check(props.get("GroupName") == "DeadWeight", f"{tag}: GroupName is ours, not vanilla's Weighing")
-    check(props.get("Surface") == "34", f"{tag}: Surface")
+    check(props.get("Surface") == "4", f"{tag}: Surface")
+    check("IsSurfaceOffset" not in props, f"{tag}: art is at floor level, no IsSurfaceOffset")
     for solid in ("solid", "solidtrans", "collideN", "collideW"):
         check(solid not in props, f"{tag}: walkable, must not have {solid}")
     check(props.keys() == tiles[0].keys(), f"{tag}: same props as the other faces")

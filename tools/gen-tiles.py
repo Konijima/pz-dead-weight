@@ -53,6 +53,10 @@ PAD = 2  # gap between packed faces so bilinear sampling never bleeds
 # Modelled on vanilla location_community_medical_01_136 (Microscope), a movable
 # tabletop object that also stands on the floor. No solid/solidtrans: walkable.
 # GroupName differs from vanilla's "Weighing" so the two never merge into one
+# No IsSurfaceOffset: the art sits at floor level and the game lifts a tabletop
+# object by the counter's own height (ISMoveableSpriteProps); IsSurfaceOffset
+# would subtract Surface and sink it on the floor. Surface=4 is the slab top in
+# 1x pixels (4/96 tile, Occupants plateTop), where items snap when dropped on it.
 # movable group; the display name key is "<GroupName>_<CustomName>" in
 # Moveables.json (DeadWeight_Digital_Scale). Noffset and friends are added by
 # the loader itself from the sprite order (at most 3, well inside -96..96).
@@ -62,12 +66,11 @@ TILE_PROPS = {
     "CustomName": "Digital Scale",
     "GroupName": "DeadWeight",
     "IsMoveAble": "",
-    "IsSurfaceOffset": "",
     "IsTableTop": "",
     "Material": "Electric",
     "Material2": "SmallMetalPlates",
     "PickUpWeight": "5",
-    "Surface": "34",
+    "Surface": "4",
 }
 
 

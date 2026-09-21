@@ -597,13 +597,14 @@ Client install decompiled (`projectzomboid.jar`, CFR; `ChooseGameInfo` via
   (`Base.Mov_DeadWeightDigital`).
 - Tabletop placement (`ISMoveableSpriteProps.canPlaceMoveableInternal`): with
   `IsTableTop` and `BlocksPlacement` the object also places on a free floor tile;
-  with `IsSurfaceOffset` and `Surface=34` the render offset is the table height
-  minus 34. The placeholder art is NOT derived from that math: its content
-  bottom sits at row 174 of the 256 frame, copied from the vanilla Microscope's
-  pack entry (`oy=106`, `h=68`), which carries the same three properties (the
-  vanilla floor scale bottoms at about row 231). Whether that height is right on
-  the floor and on a counter is unverified until placed in game beside a
-  Microscope.
+  the game sets the object's render offset to the table's own surface height
+  (`setRenderYOffset(currentSurface)`, minus the object's own `Surface` when it
+  carries `IsSurfaceOffset`, which the vanilla Microscope does because its art is
+  drawn raised). The Digital Scale therefore has NO `IsSurfaceOffset`: its art
+  (`tools/gen-scale-art.py`) is drawn at floor level, footprint 0.6 tile
+  centred, and the same sprite sits right on a floor and, lifted by the game, on
+  a counter. `Surface=4` is the slab top in 1x pixels. Unverified until placed in
+  game on a floor and on a counter.
 - NOT verified: that 1x tile scale (`Core.tileScale == 1`) finds the 2x sprite
   (only 2x art is shipped); that Build 41 ignores or survives `deadweight_items.txt`
   (it is therefore staged for Build 42 only). In game placement is the open gate.
